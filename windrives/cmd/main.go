@@ -17,5 +17,5 @@ func main() {
 		fmt.Println("This program is suited only for Windows OS!")
 		return
 	}
-	fmt.Printf("Available letters: %v\n", a.WinAvailableLetterDrives())
+	fmt.Printf("Available drive letters: %v\n", a.WinAvailableLetterDrives())
 }

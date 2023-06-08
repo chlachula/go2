@@ -1,22 +1,14 @@
-package windrives 
+package windrives
 
-import (
-	"os"
-)
+import "os"
 
-func WinAvailableLetterDrives() []string {
-	letters := make([]string, 0)
+// available letter drives in windows OS like C: etc.
+func WinAvailableLetterDrives() (letters []string) {
 	for ch := 'A'; ch <= 'Z'; ch++ {
-		if isDriveLetterAvailable(byte(ch)) {
-			letters = append(letters, string(ch)+":")
+		d := string(ch) + ":"
+		if _, err := os.Stat(d + "\\"); err == nil {
+			letters = append(letters, d)
 		}
 	}
 	return letters
-}
-func isDriveLetterAvailable(ch byte) bool {
-	root := string(ch) + ":\\"
-	if _, err := os.Stat(root); err == nil {
-		return true
-	}
-	return false
 }
