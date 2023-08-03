@@ -40,5 +40,5 @@ func main() {
 		help("Error: " + err.Error())
 		os.Exit(1)
 	}
-	a.CreateTable(year, moonAgeJanuary1st)
+	a.CreateWebpageWithTable(year, moonAgeJanuary1st)
 }
