@@ -41,12 +41,12 @@ package moonEphem
 
 import (
 	"fmt"
-	"math"
+	. "math"
 	"time"
 )
 
-var degreesToRadians = math.Pi / 180.0
-var radiansToDegrees = 180.0 / math.Pi
+var degreesToRadians = Pi / 180.0
+var radiansToDegrees = 180.0 / Pi
 
 var a = [][]float64{
 	{383.0, 31.5, 10.6, 6.2, 3.2, 2.3, 0.8},
@@ -65,23 +65,66 @@ var d = [][]float64{
 }
 
 func to0_360(x float64) float64 {
-	x360 := math.Remainder(x, 360.0)
+	x360 := Remainder(x, 360.0)
 	if x360 < 0.0 {
 		x360 += 360.0
 	}
 	return x360
 }
+func sinD(a float64) float64 {
+	return Sin(a * degreesToRadians)
+}
+func cosD(a float64) float64 {
+	return Cos(a * degreesToRadians)
+}
+func tanD(a float64) float64 {
+	return Tan(a * degreesToRadians)
+}
 
 // J2000.0 Moon cartese coordinates in metres, t is in Julian centuries
-func MoonJ2000XYZ(t float64) (x [3]float64) {
+func MoonJ2000XYZ_legacy(t float64) (xyz [3]float64) {
+	lambda := 218.32 + 481267.883*t +
+		6.29*sinD((477198.85*t+134.9)) -
+		1.27*sinD((-413335.38*t+259.2)) +
+		0.66*sinD((890534.23*t+235.7)) +
+		0.21*sinD((954397.70*t+269.9)) +
+		0.19*sinD((35999.05*t+357.5)) +
+		0.11*sinD((966404.05*t+186.6))
+
+	beta := 5.13*sinD((483202.03*t+93.3)) +
+		0.28*sinD((960400.87*t+228.2)) -
+		0.28*sinD((6003.18*t+318.3)) -
+		0.17*sinD((-407332.20*t+217.6))
+	piM := 0.9508 +
+		0.0518*cosD(477198.85*t+134.9) +
+		0.0095*cosD(-413335.38*t+259.2) +
+		0.0078*cosD(890534.23*t+235.7) +
+		0.0028*cosD(954397.70*t+269.9)
+	Rearth := 6378140.0 // m
+	r := Rearth / sinD(piM)
+	eps0 := 23.43929111111111111 // 23° 26' 21.448"
+	//precession constants a,b,c
+	a := t * (1.396971 + 0.0003086*t)
+	b := t * (0.013056 - 0.0000092*t)
+	c := 5.12362 - t*(1.155358+0.0001964*t)
+	beta0 := beta - b*sinD((lambda+c))
+	lambda0 := lambda - a + b*cosD((lambda+c))*tanD(beta0)
+	xyz[0] = r * cosD(beta0) * cosD(lambda0)
+	xyz[1] = r * (cosD(beta0)*sinD(lambda0)*cosD(eps0) - sinD(beta0)*sinD(eps0))
+	xyz[2] = r * (cosD(beta0)*sinD(lambda0)*sinD(eps0) + sinD(beta0)*cosD(eps0))
+	return xyz
+}
+
+// J2000.0 Moon cartese coordinates in metres, t is in Julian centuries
+func MoonJ2000XYZ(t float64) (xyz [3]float64) {
 	for n := 0; n < 3; n++ {
-		x[n] = 0.0
+		xyz[n] = 0.0
 		for m := 0; m < 2; m++ {
-			x[n] = a[n][m] * math.Sin(w[n][m]*t+d[n][m])
+			xyz[n] = a[n][m] * Sin(w[n][m]*t+d[n][m])
 		}
-		x[n] *= 1.0e6
+		xyz[n] *= 1.0e6
 	}
-	return x
+	return xyz
 }
 
 // julian days  since J2000
@@ -114,14 +157,14 @@ func MeanLongitudeOfTheSun(d float64) float64 {
 func GeocentricApparentEclipticLongitudeOfTheSunAdjustedForAberration(d float64) float64 {
 	gRad := MeanAnomalyOfTheSun(d) * degreesToRadians
 	q := MeanLongitudeOfTheSun(d)
-	L := q + 1.915*math.Sin(gRad) + 0.020*math.Sin(2.0*gRad)
+	L := q + 1.915*Sin(gRad) + 0.020*Sin(2.0*gRad)
 	return to0_360(L)
 }
 
 // distance to Sun in AU
 func DistanceToSun(g float64) float64 {
 	gRad := g * degreesToRadians
-	R := 1.00014 - 0.01671*math.Cos(gRad) - 0.00014*math.Cos(2.0*gRad)
+	R := 1.00014 - 0.01671*Cos(gRad) - 0.00014*Cos(2.0*gRad)
 	return R
 }
 
@@ -138,9 +181,9 @@ func RightAccessionOfTheSun(d float64) float64 {
 	L := GeocentricApparentEclipticLongitudeOfTheSunAdjustedForAberration(d)
 	Lrad := L * degreesToRadians
 	e := EclipticLongitudeofTheSun(d)
-	numerator := math.Cos(e*degreesToRadians) * math.Sin(Lrad)
-	denominator := math.Cos(Lrad)
-	ra := math.Atan2(numerator, denominator)
+	numerator := Cos(e*degreesToRadians) * Sin(Lrad)
+	denominator := Cos(Lrad)
+	ra := Atan2(numerator, denominator)
 	return ra * radiansToDegrees
 }
 
@@ -151,8 +194,8 @@ func DeclinationOfTheSun(d float64) float64 {
 	Lrad := L * degreesToRadians
 	e := EclipticLongitudeofTheSun(d)
 
-	sinD := math.Sin(e*degreesToRadians) * math.Sin(Lrad)
-	return math.Asin(sinD) * radiansToDegrees
+	sinD := Sin(e*degreesToRadians) * Sin(Lrad)
+	return Asin(sinD) * radiansToDegrees
 }
 
 // rectascention and declination of the Sun
@@ -163,13 +206,13 @@ func RA_Dec_OfTheSun(date time.Time) (ra float64, decl float64) {
 	e := EclipticLongitudeofTheSun(d)
 	eRad := e * degreesToRadians
 
-	numerator := math.Cos(eRad) * math.Sin(Lrad)
-	denominator := math.Cos(Lrad)
-	ra = math.Atan2(numerator, denominator) * radiansToDegrees
+	numerator := Cos(eRad) * Sin(Lrad)
+	denominator := Cos(Lrad)
+	ra = Atan2(numerator, denominator) * radiansToDegrees
 	ra = to0_360(ra)
 
-	sinD := math.Sin(e*degreesToRadians) * math.Sin(Lrad)
-	decl = math.Asin(sinD) * radiansToDegrees
+	sinD := Sin(e*degreesToRadians) * Sin(Lrad)
+	decl = Asin(sinD) * radiansToDegrees
 
 	//fmt.Printf("DEBUG days=%.2f L=%.2f e=%.2f ra=%.2f decl=%.2f       ", d, L, e, ra, decl)
 	return
@@ -185,11 +228,11 @@ func RA_Dec_OfTheMoon(date time.Time) (ra float64, decl float64) {
 	z := xyz[2]
 	numerator := y
 	denominator := x
-	ra = math.Atan2(numerator, denominator) * radiansToDegrees
+	ra = Atan2(numerator, denominator) * radiansToDegrees
 	ra = to0_360(ra)
 
-	tanD := z / math.Sqrt(x*x+y*y)
-	decl = math.Atan(tanD) * radiansToDegrees
+	tanD := z / Sqrt(x*x+y*y)
+	decl = Atan(tanD) * radiansToDegrees
 	return
 }
 func RAstring(deg float64) string {
@@ -203,7 +246,7 @@ func DeclString(deg float64) string {
 	if deg < 0.0 {
 		sign = "-"
 	}
-	deg = math.Abs(deg)
+	deg = Abs(deg)
 	dd := int(deg)
 	mm := int(60.0 * (deg - float64(dd)))
 	ss := 3600.0*deg - 60.0*(float64(mm)+60.0*float64(dd))

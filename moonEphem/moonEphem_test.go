@@ -46,3 +46,14 @@ func TestDeclStringPlus1s(t *testing.T) {
 		t.Errorf("Unexpected error - WANT: %s; GOT: %s", want, got)
 	}
 }
+
+// MoonJ2000XYZ_legacy(t float64) (xyz [3]float64)
+func TestMoonJ2000XYZ(t *testing.T) {
+	want := "a"
+	got := "b"
+	wantXYZ := MoonJ2000XYZ_legacy(0.0)
+	gotXYZ := MoonJ2000XYZ(0.0)
+	if got != want {
+		t.Errorf("Unexpected error\nWANT legacy: %v\n        GOT: %v", wantXYZ, gotXYZ)
+	}
+}
