@@ -1,4 +1,4 @@
-Program *moonYear* generates webpages moonYearYYYY.htm with year calendar.
+Program **moonYear** generates webpages *moonYearYYYY.htm* with year calendar.
 Calendar rows have four weeks. Each day has icon of the Moon phase. 
 Days of week are in the same colums, so it help to plan astronomical events based on Moon phase.
 
