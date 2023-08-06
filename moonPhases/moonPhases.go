@@ -14,6 +14,10 @@ import (
 var svgBase = `<?xml version="1.0" encoding="utf-8"?>
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
      width="300" height="300" viewBox="-150 -150 300 300">
+<desc>
+  MIT License Josef Chlachula 2023
+  Icon for Moon age %.2fdays (%.2fd..%.2fd) - angle  %.2f°(%.2f°..%.2f°)
+</desc>	 
 <style id="style1">
  .SunLight {
    fill: yellow;
@@ -59,7 +63,18 @@ func createMoonPhaseSvgIcon(n int) {
 			i2 = 1
 		}
 	}
-	text := fmt.Sprintf(svgBase, n, i1, x, i2, n)
+	synodicMoon := 29.530589
+	a28half := 360.0 / float64(2*PhasesNumber)
+	mAngle := a28half * float64(2*n)
+	mAngleN := mAngle - a28half
+	if mAngleN < 0.0 {
+		mAngleN += 360.0
+	}
+	mAngleP := mAngle + a28half
+	mAge := mAngle / 360.0 * synodicMoon
+	mAgeN := mAngleN / 360.0 * synodicMoon
+	mAgeP := mAngleP / 360.0 * synodicMoon
+	text := fmt.Sprintf(svgBase, mAge, mAgeN, mAgeP, mAngle, mAngleN, mAngleP, n, i1, x, i2, n)
 	filename := fmt.Sprintf("moon28f%02d.svg", n)
 	createFile(filename, text)
 }
