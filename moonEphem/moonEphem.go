@@ -81,6 +81,14 @@ func tanD(a float64) float64 {
 	return Tan(a * degreesToRadians)
 }
 
+// or body diagonal
+func SpaceDiagonal(xyz [3]float64) (r float64) {
+	for n := 0; n < 3; n++ {
+		r += xyz[n] * xyz[n]
+	}
+	return Sqrt(r)
+}
+
 // J2000.0 Moon cartese coordinates in metres, t is in Julian centuries
 func MoonJ2000XYZ_legacy(t float64) (xyz [3]float64) {
 	lambda := 218.32 + 481267.883*t +
@@ -119,8 +127,8 @@ func MoonJ2000XYZ_legacy(t float64) (xyz [3]float64) {
 func MoonJ2000XYZ(t float64) (xyz [3]float64) {
 	for n := 0; n < 3; n++ {
 		xyz[n] = 0.0
-		for m := 0; m < 2; m++ {
-			xyz[n] = a[n][m] * Sin(w[n][m]*t+d[n][m])
+		for m := 0; m < 7; m++ {
+			xyz[n] += a[n][m] * Sin(w[n][m]*t+d[n][m])
 		}
 		xyz[n] *= 1.0e6
 	}

@@ -54,6 +54,9 @@ func TestMoonJ2000XYZ(t *testing.T) {
 	wantXYZ := MoonJ2000XYZ_legacy(0.0)
 	gotXYZ := MoonJ2000XYZ(0.0)
 	if got != want {
-		t.Errorf("Unexpected error\nWANT legacy: %v\n        GOT: %v", wantXYZ, gotXYZ)
+		rw := SpaceDiagonal(wantXYZ)
+		rg := SpaceDiagonal(gotXYZ)
+		rate := (rw - rg) / rg * 100.0
+		t.Errorf("Unexpected error\nWANT legacy: %v\nspaceDiagoval %.4e\n        GOT: %v\nspaceDiagoval %.4e\nrate = %.2f \n", wantXYZ, rw, gotXYZ, rg, rate)
 	}
 }
