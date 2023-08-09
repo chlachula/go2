@@ -64,6 +64,10 @@ var d = [][]float64{
 	{3.807, 1.629, 4.595, 6.162, 5.167, 2.555, 6.248},
 }
 
+func AngularDistance(raA, deA, raB, deB float64) float64 {
+	cosT := Cos(deA)*Cos(deB)*Cos(raA-raB) + Sin(deA)*Sin(deB)
+	return Acos(cosT)
+}
 func to0_360(x float64) float64 {
 	x360 := Remainder(x, 360.0)
 	if x360 < 0.0 {
@@ -226,11 +230,7 @@ func RA_Dec_OfTheSun(date time.Time) (ra float64, decl float64) {
 	return
 }
 
-// rectascention and declination of the Sun
-func RA_Dec_OfTheMoon(date time.Time) (ra float64, decl float64) {
-	t := J2000Centuries(date)
-	fmt.Println("DEBUG time", date, t)
-	xyz := MoonJ2000XYZ(t)
+func RA_Dec_From_XYZ(xyz [3]float64) (ra float64, decl float64) {
 	x := xyz[0]
 	y := xyz[1]
 	z := xyz[2]
@@ -242,6 +242,19 @@ func RA_Dec_OfTheMoon(date time.Time) (ra float64, decl float64) {
 	tanD := z / Sqrt(x*x+y*y)
 	decl = Atan(tanD) * radiansToDegrees
 	return
+}
+
+// rectascention and declination of the Moon
+func RA_Dec_OfTheMoon(date time.Time) (ra float64, decl float64) {
+	t := J2000Centuries(date)
+	//fmt.Println("DEBUG time", date, t)
+	xyz := MoonJ2000XYZ(t)
+	return RA_Dec_From_XYZ(xyz)
+}
+func RA_Dec_OfTheMoon_Legacy(date time.Time) (ra float64, decl float64) {
+	t := J2000Centuries(date)
+	xyz := MoonJ2000XYZ_legacy(t)
+	return RA_Dec_From_XYZ(xyz)
 }
 func RAstring(deg float64) string {
 	hh := int(deg / 15.0) // 355deg = 23h 40m
@@ -276,6 +289,10 @@ func MoonEphemerides(date time.Time, stepDays float64, stepsNumber int) {
 	for i := 0; i < stepsNumber; i++ {
 		iDate := date.Add(time.Second * time.Duration(86400.0*stepDays*float64(i)))
 		ra, decl := RA_Dec_OfTheMoon(iDate)
-		fmt.Println(iDate.Format("2006-01-02 15:04:05"), RAstring(ra), DeclString(decl))
+		fmt.Printf("%s %s %s \n", iDate.Format("  2006-01-02 15:04:05-"), RAstring(ra), DeclString(decl))
+		raL, declL := RA_Dec_OfTheMoon_Legacy(iDate)
+		fmt.Printf("%s %s %s", iDate.Format("L 2006-01-02 15:04:05-"), RAstring(raL), DeclString(declL))
+		a := AngularDistance(ra, decl, raL, declL)
+		fmt.Printf("  angular distance = %f (rad) %7.3f° \n", a, a*radiansToDegrees)
 	}
 }
