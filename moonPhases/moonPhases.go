@@ -55,7 +55,9 @@ var htmlBase = `<html>
 const PhasesNumber = 28 //should be divisible by 4
 
 func CreateAllPhasesPage() {
-	tdFmt := "  <td>%.1f-%.1f°-%.1f<br/>%.1f - %.1f d<br/>%.1f d<br/>%d<br/><img src=\"%s\" width=\"150\" /></td>\n"
+	tdFmt := `  <td>%.1f-%.1f°-%.1f<br/>%.1f - %.1f d<br/>%.1f d<br/>%d<br/>
+	<a href="%s" target="blank" title="#%02d: Click to open in new tab"><img src="%s" width="150" /></a></td>
+`
 	text := ""
 	numInQuarter := PhasesNumber / 4
 	for m := 0; m < 4; m++ {
@@ -64,7 +66,7 @@ func CreateAllPhasesPage() {
 			phaseNum := m*numInQuarter + n
 			mAngleN, mAngle, mAngleP, mAgeN, mAge, mAgeP := moonAgePhaseNumbers(phaseNum)
 			fname := fmt.Sprintf("moon28f%02d.svg", phaseNum)
-			td := fmt.Sprintf(tdFmt, mAngleN, mAngle, mAngleP, mAgeN, mAgeP, mAge, phaseNum, fname)
+			td := fmt.Sprintf(tdFmt, mAngleN, mAngle, mAngleP, mAgeN, mAgeP, mAge, phaseNum, fname, phaseNum, fname)
 			text += td
 		}
 		text += "</tr>\n"
