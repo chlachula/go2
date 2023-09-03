@@ -41,11 +41,11 @@ var htmlBase = `<html>
 	margin-left: auto;
 	margin-right: auto;
  }
- td {color:blue; text-align: center;}
+ td {color:black; text-align: center;}
 </style>
 <body bgcolor="lightblue">
  <table class="center">
-	<caption>All 28 phases<br/>Synodic orbital period: 29.530589 d</caption>
+	<caption>All 28 phases - clickable<br/>Synodic orbital period: 29.530589 d</caption>
 	%s
  </table>
  </body>
@@ -55,7 +55,7 @@ var htmlBase = `<html>
 const PhasesNumber = 28 //should be divisible by 4
 
 func CreateAllPhasesPage() {
-	tdFmt := `  <td>%.1f-%.1f°-%.1f<br/>%.1f - %.1f d<br/>%.1f d<br/>%d<br/>
+	tdFmt := `  <td>%.1f-%.1f°-%.1f<br/>%.1f - %.1f d<br/>%.1f d<br/><b>%d</b><br/>
 	<a href="%s" target="blank" title="#%02d: Click to open in new tab"><img src="%s" width="150" /></a></td>
 `
 	text := ""
