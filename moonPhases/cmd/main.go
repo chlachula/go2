@@ -13,4 +13,5 @@ func main() {
 	}(time.Now())
 
 	a.CreateMoonPhaseSvgIcons()
+	a.CreateAllPhasesPage()
 }

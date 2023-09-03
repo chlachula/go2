@@ -34,8 +34,60 @@ var svgBase = `<?xml version="1.0" encoding="utf-8"?>
 
 </svg>  
 `
+var htmlBase = `<html>
+<title>All Phases</title>
+<style>
+ .center {
+	margin-left: auto;
+	margin-right: auto;
+ }
+ td {color:blue; text-align: center;}
+</style>
+<body bgcolor="lightblue">
+ <table class="center">
+	<caption>All 28 phases<br/>Synodic orbital period: 29.530589 d</caption>
+	%s
+ </table>
+ </body>
+</html>
+`
 
-const PhasesNumber = 28
+const PhasesNumber = 28 //should be divisible by 4
+
+func CreateAllPhasesPage() {
+	tdFmt := "  <td>%.1f-%.1f°-%.1f<br/>%.1f - %.1f d<br/>%.1f d<br/>%d<br/><img src=\"%s\" width=\"150\" /></td>\n"
+	text := ""
+	numInQuarter := PhasesNumber / 4
+	for m := 0; m < 4; m++ {
+		text += "<tr>"
+		for n := 0; n < numInQuarter; n++ {
+			phaseNum := m*numInQuarter + n
+			mAngleN, mAngle, mAngleP, mAgeN, mAge, mAgeP := moonAgePhaseNumbers(phaseNum)
+			fname := fmt.Sprintf("moon28f%02d.svg", phaseNum)
+			td := fmt.Sprintf(tdFmt, mAngleN, mAngle, mAngleP, mAgeN, mAgeP, mAge, phaseNum, fname)
+			text += td
+		}
+		text += "</tr>\n"
+	}
+	page := fmt.Sprintf(htmlBase, text)
+	filename := fmt.Sprintf("All%02dPhasesPage.html", PhasesNumber)
+	createFile(filename, page)
+}
+
+func moonAgePhaseNumbers(n int) (mAngleN, mAngle, mAngleP, mAgeN, mAge, mAgeP float64) {
+	synodicMoon := 29.530589
+	a28half := 360.0 / float64(2*PhasesNumber)
+	mAngle = a28half * float64(2*n)
+	mAngleN = mAngle - a28half
+	if mAngleN < 0.0 {
+		mAngleN += 360.0
+	}
+	mAngleP = mAngle + a28half
+	mAge = mAngle / 360.0 * synodicMoon
+	mAgeN = mAngleN / 360.0 * synodicMoon
+	mAgeP = mAngleP / 360.0 * synodicMoon
+	return
+}
 
 // Create Moon phase SVG icon file in current directory
 func CreateMoonPhaseSvgIcons() {
@@ -63,17 +115,20 @@ func createMoonPhaseSvgIcon(n int) {
 			i2 = 1
 		}
 	}
-	synodicMoon := 29.530589
-	a28half := 360.0 / float64(2*PhasesNumber)
-	mAngle := a28half * float64(2*n)
-	mAngleN := mAngle - a28half
-	if mAngleN < 0.0 {
-		mAngleN += 360.0
-	}
-	mAngleP := mAngle + a28half
-	mAge := mAngle / 360.0 * synodicMoon
-	mAgeN := mAngleN / 360.0 * synodicMoon
-	mAgeP := mAngleP / 360.0 * synodicMoon
+	/*
+		synodicMoon := 29.530589
+		a28half := 360.0 / float64(2*PhasesNumber)
+		mAngle := a28half * float64(2*n)
+		mAngleN := mAngle - a28half
+		if mAngleN < 0.0 {
+			mAngleN += 360.0
+		}
+		mAngleP := mAngle + a28half
+		mAge := mAngle / 360.0 * synodicMoon
+		mAgeN := mAngleN / 360.0 * synodicMoon
+		mAgeP := mAngleP / 360.0 * synodicMoon
+	*/
+	mAngleN, mAngle, mAngleP, mAgeN, mAge, mAgeP := moonAgePhaseNumbers(n)
 	text := fmt.Sprintf(svgBase, mAge, mAgeN, mAgeP, mAngle, mAngleN, mAngleP, n, i1, x, i2, n)
 	filename := fmt.Sprintf("moon28f%02d.svg", n)
 	createFile(filename, text)
