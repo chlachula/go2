@@ -35,6 +35,8 @@ var svgBase = `<?xml version="1.0" encoding="utf-8"?>
 </svg>  
 `
 var htmlBase = `<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="license" content="MIT License Josef Chlachula 2023">
 <title>All Phases</title>
 <style>
  .center {
