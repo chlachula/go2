@@ -55,6 +55,7 @@ var htmlBase = `<html>
 `
 
 const PhasesNumber = 28 //should be divisible by 4
+const synodicMoon = 29.530589
 
 func CreateAllPhasesPage() {
 	tdFmt := `  <td>%.1f-%.1f°-%.1f<br/>%.1f - %.1f d<br/>%.1f d<br/><b>%d</b><br/>
@@ -79,7 +80,6 @@ func CreateAllPhasesPage() {
 }
 
 func moonAgePhaseNumbers(n int) (mAngleN, mAngle, mAngleP, mAgeN, mAge, mAgeP float64) {
-	synodicMoon := 29.530589
 	a28half := 360.0 / float64(2*PhasesNumber)
 	mAngle = a28half * float64(2*n)
 	mAngleN = mAngle - a28half
@@ -120,7 +120,6 @@ func createMoonPhaseSvgIcon(n int) {
 		}
 	}
 	/*
-		synodicMoon := 29.530589
 		a28half := 360.0 / float64(2*PhasesNumber)
 		mAngle := a28half * float64(2*n)
 		mAngleN := mAngle - a28half
