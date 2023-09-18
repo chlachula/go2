@@ -58,6 +58,15 @@ func isFirstQuaterFriday(date time.Time, moonAngle float64) bool {
 	}
 	return true
 }
+func isSecondTuesdayMonth(date time.Time) bool {
+	if date.Weekday() != time.Tuesday {
+		return false
+	}
+	if date.Day() < 8 || date.Day() > 14 {
+		return false
+	}
+	return true
+}
 func createTable(y int, moonAgeDaysJanuary1st float64) string {
 	moonAngle := 360.0 * moonAgeDaysJanuary1st / SynodicMoon
 	date := time.Date(y, time.January, 1, 0, 0, 0, 0, time.UTC)
@@ -83,6 +92,8 @@ func createTable(y int, moonAgeDaysJanuary1st float64) string {
 			if isFirstQuaterFriday(date, moonAngle) {
 				class = "highlight"
 				day = date.Format("<a href=\"https://www.cleardarksky.com/cgi-bin/sunmoondata.py?id=RchstrMN&year=2006&month=1&day=2&&tz=-6.0&lat=None&long=None\" target=\"_blank\">2</a>")
+			} else if isSecondTuesdayMonth(date) {
+				class = "secondTue"
 			}
 			s += fmt.Sprintf("\n<td align=\"center\" bgcolor=\"%s\" class=\"%s\">%s<br/>%s</td>", bgcolor, class, getMoonIcon(moonAngle), day)
 			date = date.Add(24 * time.Hour)
@@ -100,10 +111,9 @@ func CreateWebpageWithTable(y int, moonAgeDaysJanuary1st float64) {
  <title>%s</title>
  <style>
   td {border:2px none solid;}
-  .highlight {
-	  border:2px blue solid;
-  }
- </style>
+  .highlight {border:2px blue solid;}
+  .secondTue {border:2px purple solid;}
+</style>
 </head>
 <body>
  %s
