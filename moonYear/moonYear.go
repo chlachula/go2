@@ -18,7 +18,7 @@ func monthColor(date time.Time) string {
 	}
 	return s
 }
-func getMoonIcon(moonAngle float64) string {
+func getMoonIcon(moonAngle float64, date time.Time) string {
 	moonAngle += 90.0 / (2.0 * 7.0)
 	moonAngle = to0_360(moonAngle)
 	n := int(moonAngle / (90.0 / 7.0))
@@ -26,7 +26,10 @@ func getMoonIcon(moonAngle float64) string {
 	moonAngle = to0_360(moonAngle)
 	age := moonAngle / 360. * SynodicMoon
 	imgFormat := `<img src="../moonPhases/moon28f%02d.svg" width="30" title="%.1fd"/>`
-	return fmt.Sprintf(imgFormat, n, age)
+	moonSunData := date.Format("<a href=\"https://www.cleardarksky.com/cgi-bin/sunmoondata.py?id=RchstrMN&year=2006&month=1&day=2&&tz=-6.0&lat=None&long=None\" target=\"_blank\">")
+
+	icon := fmt.Sprintf(imgFormat, n, age)
+	return moonSunData + icon + "</a>"
 }
 func rowMonthNameCell(date time.Time) string {
 	d2 := date.Add(13 * 24 * time.Hour)
@@ -95,7 +98,7 @@ func createTable(y int, moonAgeDaysJanuary1st float64) string {
 			} else if isSecondTuesdayMonth(date) {
 				class = "secondTue"
 			}
-			s += fmt.Sprintf("\n<td align=\"center\" bgcolor=\"%s\" class=\"%s\">%s<br/>%s</td>", bgcolor, class, getMoonIcon(moonAngle), day)
+			s += fmt.Sprintf("\n<td align=\"center\" bgcolor=\"%s\" class=\"%s\">%s<br/>%s</td>", bgcolor, class, getMoonIcon(moonAngle, date), day)
 			date = date.Add(24 * time.Hour)
 			moonAngle += 360.0 / SynodicMoon
 		}
@@ -113,6 +116,7 @@ func CreateWebpageWithTable(y int, moonAgeDaysJanuary1st float64) {
   td {border:2px none solid;}
   .highlight {border:2px blue solid;}
   .secondTue {border:2px purple solid;}
+  .example_background {background-image: url(PATH/TO/IMAGE.JPG); }
 </style>
 </head>
 <body>
