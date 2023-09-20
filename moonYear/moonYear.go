@@ -2,8 +2,11 @@ package moonYear
 
 import (
 	"fmt"
+	"log"
 	"math"
 	"os"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -70,6 +73,46 @@ func isSecondTuesdayMonth(date time.Time) bool {
 	}
 	return true
 }
+func isCSVfileEventDay(date time.Time) bool {
+	return false
+}
+func showCsvFile(fname string) {
+	// Read entire file content
+	// No need to close the file
+	bytes, err := os.ReadFile(fname)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Convert []byte to string and print
+	text := string(bytes)
+	fmt.Printf("\nContent of the file %s\n---\n%s\n---\n\n", fname, text)
+
+	fmt.Printf("\nColums values separated byr semicolons\n---\n")
+	lines := strings.Split(text, "\n")
+	sumHeight := 0.0
+	count := 0
+	for i := 0; i < len(lines); i++ {
+		cols := strings.Split(lines[i], ",")
+		if len(lines[i]) > 0 {
+			delim := ""
+			fmt.Printf("%d. ", i)
+			for j := 0; j < len(cols); j++ {
+				fmt.Printf("%s%s", delim, cols[j])
+				delim = ";"
+			}
+			fmt.Printf("\n")
+
+			if h, err := strconv.ParseFloat(cols[1], 32); err == nil {
+				count += 1
+				sumHeight += h
+			}
+		}
+	}
+	fmt.Printf("Average height:%f\n", sumHeight/float64(count))
+	fmt.Printf("---\n\n")
+}
+
 func createTable(y int, moonAgeDaysJanuary1st float64) string {
 	moonAngle := 360.0 * moonAgeDaysJanuary1st / SynodicMoon
 	date := time.Date(y, time.January, 1, 0, 0, 0, 0, time.UTC)
@@ -95,6 +138,8 @@ func createTable(y int, moonAgeDaysJanuary1st float64) string {
 			if isFirstQuaterFriday(date, moonAngle) {
 				class = "highlight"
 				day = date.Format("<a href=\"https://www.cleardarksky.com/cgi-bin/sunmoondata.py?id=RchstrMN&year=2006&month=1&day=2&&tz=-6.0&lat=None&long=None\" target=\"_blank\">2</a>")
+			} else if isCSVfileEventDay(date) {
+				class = "highlight"
 			} else if isSecondTuesdayMonth(date) {
 				class = "secondTue"
 			}
