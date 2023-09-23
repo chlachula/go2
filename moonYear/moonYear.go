@@ -2,10 +2,8 @@ package moonYear
 
 import (
 	"fmt"
-	"log"
 	"math"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -13,6 +11,14 @@ import (
 var SynodicMoon = 29.530589
 var satColor = "#eec0c0"
 var sunColor = "#ef6c6c"
+
+type EventRecord struct {
+	url_prefix   string
+	date_time    string
+	duration_min string
+	name         string
+	location     string
+}
 
 func monthColor(date time.Time) string {
 	s := "lightgray"
@@ -76,41 +82,27 @@ func isSecondTuesdayMonth(date time.Time) bool {
 func isCSVfileEventDay(date time.Time) bool {
 	return false
 }
-func showCsvFile(fname string) {
-	// Read entire file content
-	// No need to close the file
-	bytes, err := os.ReadFile(fname)
+func showCsvFile(fname string) ([]EventRecord, error) {
+	bytes, err := os.ReadFile(fname) //Read entire file content. No need to close the file
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
-
-	// Convert []byte to string and print
 	text := string(bytes)
-	fmt.Printf("\nContent of the file %s\n---\n%s\n---\n\n", fname, text)
-
-	fmt.Printf("\nColums values separated byr semicolons\n---\n")
 	lines := strings.Split(text, "\n")
-	sumHeight := 0.0
-	count := 0
+	var prevEvent EventRecord
+	events := make([]EventRecord, 0)
 	for i := 0; i < len(lines); i++ {
 		cols := strings.Split(lines[i], ",")
 		if len(lines[i]) > 0 {
-			delim := ""
-			fmt.Printf("%d. ", i)
+			event := prevEvent
 			for j := 0; j < len(cols); j++ {
-				fmt.Printf("%s%s", delim, cols[j])
-				delim = ";"
-			}
-			fmt.Printf("\n")
+				col := cols[j]
 
-			if h, err := strconv.ParseFloat(cols[1], 32); err == nil {
-				count += 1
-				sumHeight += h
 			}
+			events = append(events, event)
+			prevEvent = event
 		}
 	}
-	fmt.Printf("Average height:%f\n", sumHeight/float64(count))
-	fmt.Printf("---\n\n")
 }
 
 func createTable(y int, moonAgeDaysJanuary1st float64) string {
