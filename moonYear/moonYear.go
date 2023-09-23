@@ -11,13 +11,14 @@ import (
 var SynodicMoon = 29.530589
 var satColor = "#eec0c0"
 var sunColor = "#ef6c6c"
+var events = make([]EventRecord, 0)
 
 type EventRecord struct {
-	url_prefix   string
-	date_time    string
-	duration_min string
-	name         string
-	location     string
+	URL_prefix   string
+	Date_time    string
+	Duration_min string
+	Name         string
+	Location     string
 }
 
 func monthColor(date time.Time) string {
@@ -80,32 +81,76 @@ func isSecondTuesdayMonth(date time.Time) bool {
 	return true
 }
 func isCSVfileEventDay(date time.Time) bool {
+	for _, e := range events {
+		eventTime, err := time.Parse("2006-01-02", e.Date_time)
+		if err != nil {
+			fmt.Println("csv event time error", e.Date_time, err.Error())
+		} else {
+			if eventTime.Equal(date) {
+				return true
+			}
+		}
+	}
 	return false
 }
-func showCsvFile(fname string) ([]EventRecord, error) {
+func CSVfileEventDay(date time.Time) string {
+	dd := date.Format("02")
+	for _, e := range events {
+		eventTime, err := time.Parse("2006-01-02", e.Date_time)
+		if err != nil {
+			fmt.Println("csv event time error", e.Date_time, err.Error())
+		} else {
+			if eventTime.Equal(date) {
+				ymd := date.Format("-2006-01-02")
+				return fmt.Sprintf("<a href=\"%s\" target=\"_blank\" title=\"%s\">%s</a>", e.URL_prefix+ymd, e.Duration_min+"min "+e.Location+", "+e.Name, dd)
+			}
+		}
+	}
+	return dd
+}
+func column(index int, cols []string, prev string) string {
+	if index < len(cols) {
+		if len(cols[index]) > 0 {
+			return cols[index]
+		} else {
+			return prev
+		}
+	} else {
+		return prev
+	}
+}
+func columsToEventRecord(cols []string, prevEvent EventRecord) EventRecord {
+	e := prevEvent
+	e.URL_prefix = column(0, cols, prevEvent.URL_prefix)
+	e.Date_time = column(1, cols, prevEvent.Date_time)
+	e.Duration_min = column(2, cols, prevEvent.Duration_min)
+	e.Name = column(3, cols, prevEvent.Name)
+	e.Location = column(4, cols, prevEvent.Location)
+	return e
+}
+func CsvFileToEvents(fname string) []EventRecord {
+	events := make([]EventRecord, 0)
 	bytes, err := os.ReadFile(fname) //Read entire file content. No need to close the file
 	if err != nil {
-		return nil, err
+		fmt.Println(err.Error())
+		return events
 	}
 	text := string(bytes)
 	lines := strings.Split(text, "\n")
 	var prevEvent EventRecord
-	events := make([]EventRecord, 0)
-	for i := 0; i < len(lines); i++ {
+	// skip the first line with columns names
+	for i := 1; i < len(lines); i++ {
 		cols := strings.Split(lines[i], ",")
 		if len(lines[i]) > 0 {
-			event := prevEvent
-			for j := 0; j < len(cols); j++ {
-				col := cols[j]
-
-			}
+			event := columsToEventRecord(cols, prevEvent)
 			events = append(events, event)
 			prevEvent = event
 		}
 	}
+	return events
 }
 
-func createTable(y int, moonAgeDaysJanuary1st float64) string {
+func createTable(y int, moonAgeDaysJanuary1st float64, events []EventRecord) string {
 	moonAngle := 360.0 * moonAgeDaysJanuary1st / SynodicMoon
 	date := time.Date(y, time.January, 1, 0, 0, 0, 0, time.UTC)
 	for date.Weekday() != time.Monday {
@@ -131,7 +176,8 @@ func createTable(y int, moonAgeDaysJanuary1st float64) string {
 				class = "highlight"
 				day = date.Format("<a href=\"https://www.cleardarksky.com/cgi-bin/sunmoondata.py?id=RchstrMN&year=2006&month=1&day=2&&tz=-6.0&lat=None&long=None\" target=\"_blank\">2</a>")
 			} else if isCSVfileEventDay(date) {
-				class = "highlight"
+				class = "darknight"
+				day = CSVfileEventDay(date)
 			} else if isSecondTuesdayMonth(date) {
 				class = "secondTue"
 			}
@@ -144,7 +190,7 @@ func createTable(y int, moonAgeDaysJanuary1st float64) string {
 	s += "</table>\n\n"
 	return s
 }
-func CreateWebpageWithTable(y int, moonAgeDaysJanuary1st float64) {
+func CreateWebpageWithTable(y int, moonAgeDaysJanuary1st float64, csvFileName string) {
 	pageFormat := `<html>
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -152,6 +198,7 @@ func CreateWebpageWithTable(y int, moonAgeDaysJanuary1st float64) {
  <style>
   td {border:2px none solid;}
   .highlight {border:2px blue solid;}
+  .darknight {border:2px black solid;}
   .secondTue {border:2px purple solid;}
   .example_background {background-image: url(PATH/TO/IMAGE.JPG); }
 </style>
@@ -161,8 +208,9 @@ func CreateWebpageWithTable(y int, moonAgeDaysJanuary1st float64) {
 <body>
 </html>
 `
+	events = CsvFileToEvents(csvFileName)
 	title := fmt.Sprintf("%d moon phases 4 weeks calendar", y)
-	table := createTable(y, moonAgeDaysJanuary1st)
+	table := createTable(y, moonAgeDaysJanuary1st, events)
 	s := fmt.Sprintf(pageFormat, title, table)
 	createFile(fmt.Sprintf("moonYear%d.htm", y), s)
 }
