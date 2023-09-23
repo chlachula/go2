@@ -48,7 +48,7 @@ func rowMonthNameCell(date time.Time) string {
 	return fmt.Sprintf(`<td bgcolor="%s">%s</td>`, bgcolor, monthName)
 }
 func nameRow() string {
-	s := "<tr><td>Month</td>"
+	s := "<tr><td>Month 1st</td>"
 	week := "<td>Mon</td><td>Tue</td><td>Wed</td><td>Thu</td><td>Fri</td><td>Sat</td><td>Sun</td>"
 	s += week + week + week + week
 	return s + "</tr>\n"
