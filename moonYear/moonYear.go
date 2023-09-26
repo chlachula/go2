@@ -198,7 +198,7 @@ func CreateWebpageWithTable(y int, moonAgeDaysJanuary1st float64, csvFileName st
  <style>
   td {border:2px none solid;}
   .highlight {border:2px blue solid;}
-  .darknight {border:2px black solid; background-image: url("bg_image1.svg");}
+  .darknight {border:2px black solid; background-image: url("bg_image_red.svg");}
   .secondTue {border:2px purple solid;}
   .bg_image {background-image: url("bg_image1.svg"); }
 </style>
