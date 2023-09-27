@@ -1,3 +1,4 @@
-url_prefix,date_time,duration_min,name,location
-/events/outdoor,2024-01-01,120,Downhill skiing, Snow Hill
-,2024-01-15,120,Downhill skiing, Snow Hill
+color,url_prefix,date_time,duration_min,name,location
+r,/events/outdoor,2024-01-01,120,Downhill skiing, Snow Hill
+m,2024-01-15,120,Downhill skiing, Great Peak
+b,2024-01-25,120,Cross country skiing, Green Forest

@@ -14,6 +14,7 @@ var sunColor = "#ef6c6c"
 var events = make([]EventRecord, 0)
 
 type EventRecord struct {
+	Color        string
 	URL_prefix   string
 	Date_time    string
 	Duration_min string
@@ -84,7 +85,7 @@ func isCSVfileEventDay(date time.Time) bool {
 	for _, e := range events {
 		eventTime, err := time.Parse("2006-01-02", e.Date_time)
 		if err != nil {
-			fmt.Println("csv event time error", e.Date_time, err.Error())
+			fmt.Printf("csv event time error %v - %s\n", e, err.Error())
 		} else {
 			if eventTime.Equal(date) {
 				return true
@@ -93,20 +94,21 @@ func isCSVfileEventDay(date time.Time) bool {
 	}
 	return false
 }
-func CSVfileEventDay(date time.Time) string {
+func CSVfileEventDay(date time.Time) (string, string) {
 	dd := date.Format("02")
 	for _, e := range events {
 		eventTime, err := time.Parse("2006-01-02", e.Date_time)
 		if err != nil {
-			fmt.Println("csv event time error", e.Date_time, err.Error())
+			fmt.Printf("csv event time error %v - %s\n", e, err.Error())
 		} else {
 			if eventTime.Equal(date) {
 				ymd := date.Format("-2006-01-02")
-				return fmt.Sprintf("<a href=\"%s\" target=\"_blank\" title=\"%s\">%s</a>", e.URL_prefix+ymd, e.Duration_min+"min "+e.Location+", "+e.Name, dd)
+				return fmt.Sprintf("<a href=\"%s\" target=\"_blank\" title=\"%s\">%s</a>", e.URL_prefix+ymd, e.Duration_min+"min "+e.Location+", "+e.Name, dd),
+					"high_" + e.Color
 			}
 		}
 	}
-	return dd
+	return dd, ""
 }
 func column(index int, cols []string, prev string) string {
 	if index < len(cols) {
@@ -121,11 +123,12 @@ func column(index int, cols []string, prev string) string {
 }
 func columsToEventRecord(cols []string, prevEvent EventRecord) EventRecord {
 	e := prevEvent
-	e.URL_prefix = column(0, cols, prevEvent.URL_prefix)
-	e.Date_time = column(1, cols, prevEvent.Date_time)
-	e.Duration_min = column(2, cols, prevEvent.Duration_min)
-	e.Name = column(3, cols, prevEvent.Name)
-	e.Location = column(4, cols, prevEvent.Location)
+	e.Color = column(0, cols, prevEvent.Color)
+	e.URL_prefix = column(1, cols, prevEvent.URL_prefix)
+	e.Date_time = column(2, cols, prevEvent.Date_time)
+	e.Duration_min = column(3, cols, prevEvent.Duration_min)
+	e.Name = column(4, cols, prevEvent.Name)
+	e.Location = column(5, cols, prevEvent.Location)
 	return e
 }
 func CsvFileToEvents(fname string) []EventRecord {
@@ -141,16 +144,17 @@ func CsvFileToEvents(fname string) []EventRecord {
 	// skip the first line with columns names
 	for i := 1; i < len(lines); i++ {
 		cols := strings.Split(lines[i], ",")
-		if len(lines[i]) > 0 {
+		if len(lines[i]) > 4 { // could be 0, it's unlikely to have 4 invisible chars on line
 			event := columsToEventRecord(cols, prevEvent)
 			events = append(events, event)
 			prevEvent = event
+			///fmt.Printf("--- %s\n%q\n\n", lines[i], event)
 		}
 	}
 	return events
 }
 
-func createTable(y int, moonAgeDaysJanuary1st float64, events []EventRecord) string {
+func createTable(y int, moonAgeDaysJanuary1st float64) string {
 	moonAngle := 360.0 * moonAgeDaysJanuary1st / SynodicMoon
 	date := time.Date(y, time.January, 1, 0, 0, 0, 0, time.UTC)
 	for date.Weekday() != time.Monday {
@@ -172,14 +176,18 @@ func createTable(y int, moonAgeDaysJanuary1st float64, events []EventRecord) str
 			}
 			day := date.Format("2")
 			class := ""
-			if isFirstQuaterFriday(date, moonAngle) {
-				class = "highlight"
-				day = date.Format("<a href=\"https://www.cleardarksky.com/cgi-bin/sunmoondata.py?id=RchstrMN&year=2006&month=1&day=2&&tz=-6.0&lat=None&long=None\" target=\"_blank\">2</a>")
-			} else if isCSVfileEventDay(date) {
-				class = "darknight"
-				day = CSVfileEventDay(date)
-			} else if isSecondTuesdayMonth(date) {
-				class = "secondTue"
+			if events == nil || len(events) == 0 {
+				if isFirstQuaterFriday(date, moonAngle) {
+					class = "highlight"
+					day = date.Format("<a href=\"https://www.cleardarksky.com/cgi-bin/sunmoondata.py?id=RchstrMN&year=2006&month=1&day=2&&tz=-6.0&lat=None&long=None\" target=\"_blank\">2</a>")
+				} else if isSecondTuesdayMonth(date) {
+					class = "secondTue"
+				}
+
+			} else {
+				if isCSVfileEventDay(date) {
+					day, class = CSVfileEventDay(date)
+				}
 			}
 			s += fmt.Sprintf("\n<td align=\"center\" bgcolor=\"%s\" class=\"%s\">%s<br/>%s</td>", bgcolor, class, getMoonIcon(moonAngle, date), day)
 			date = date.Add(24 * time.Hour)
@@ -198,7 +206,9 @@ func CreateWebpageWithTable(y int, moonAgeDaysJanuary1st float64, csvFileName st
  <style>
   td {border:2px none solid;}
   .highlight {border:2px blue solid;}
-  .darknight {border:2px black solid; background-image: url("bg_image_red.svg");}
+  .high_r {background-image: url("bg_image_r.svg");}
+  .high_m {background-image: url("bg_image_m.svg");}
+  .high_b {background-image: url("bg_image_b.svg");}
   .secondTue {border:2px purple solid;}
   .bg_image {background-image: url("bg_image1.svg"); }
 </style>
@@ -210,7 +220,7 @@ func CreateWebpageWithTable(y int, moonAgeDaysJanuary1st float64, csvFileName st
 `
 	events = CsvFileToEvents(csvFileName)
 	title := fmt.Sprintf("%d moon phases 4 weeks calendar", y)
-	table := createTable(y, moonAgeDaysJanuary1st, events)
+	table := createTable(y, moonAgeDaysJanuary1st)
 	s := fmt.Sprintf(pageFormat, title, table)
 	createFile(fmt.Sprintf("moonYear%d.htm", y), s)
 }
