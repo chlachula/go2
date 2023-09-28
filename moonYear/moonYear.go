@@ -112,8 +112,9 @@ func CSVfileEventDay(date time.Time) (string, string) {
 }
 func column(index int, cols []string, prev string) string {
 	if index < len(cols) {
-		if len(cols[index]) > 0 {
-			return cols[index]
+		col := strings.Trim(cols[index], " ")
+		if len(col) > 0 {
+			return col
 		} else {
 			return prev
 		}
@@ -153,6 +154,17 @@ func CsvFileToEvents(fname string) []EventRecord {
 	}
 	return events
 }
+func createEventsList() string {
+	s := ""
+	if len(events) > 0 {
+		for _, e := range events {
+			//			s += fmt.Sprintf("%v<br/>\n", e)
+			s += fmt.Sprintf("%s: %s, %s<br/>\n", e.Date_time, e.Name, e.Location)
+		}
+		return s + "\n<hr/>\n"
+	}
+	return s
+}
 
 func createTable(y int, moonAgeDaysJanuary1st float64) string {
 	moonAngle := 360.0 * moonAgeDaysJanuary1st / SynodicMoon
@@ -176,7 +188,7 @@ func createTable(y int, moonAgeDaysJanuary1st float64) string {
 			}
 			day := date.Format("2")
 			class := ""
-			if events == nil || len(events) == 0 {
+			if len(events) == 0 {
 				if isFirstQuaterFriday(date, moonAngle) {
 					class = "highlight"
 					day = date.Format("<a href=\"https://www.cleardarksky.com/cgi-bin/sunmoondata.py?id=RchstrMN&year=2006&month=1&day=2&&tz=-6.0&lat=None&long=None\" target=\"_blank\">2</a>")
@@ -220,8 +232,9 @@ func CreateWebpageWithTable(y int, moonAgeDaysJanuary1st float64, csvFileName st
 `
 	events = CsvFileToEvents(csvFileName)
 	title := fmt.Sprintf("%d moon phases 4 weeks calendar", y)
+	list := createEventsList()
 	table := createTable(y, moonAgeDaysJanuary1st)
-	s := fmt.Sprintf(pageFormat, title, table)
+	s := fmt.Sprintf(pageFormat, title, list+table)
 	createFile(fmt.Sprintf("moonYear%d.htm", y), s)
 }
 func createFile(fname, ftext string) error {
