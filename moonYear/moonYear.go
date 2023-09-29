@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -16,8 +17,8 @@ var events = make([]EventRecord, 0)
 type EventRecord struct {
 	Color        string
 	URL_prefix   string
-	Date_time    string
-	Duration_min string
+	Date_time    time.Time
+	Duration_min int
 	Name         string
 	Location     string
 }
@@ -83,13 +84,8 @@ func isSecondTuesdayMonth(date time.Time) bool {
 }
 func isCSVfileEventDay(date time.Time) bool {
 	for _, e := range events {
-		eventTime, err := time.Parse("2006-01-02", e.Date_time)
-		if err != nil {
-			fmt.Printf("csv event time error %v - %s\n", e, err.Error())
-		} else {
-			if eventTime.Equal(date) {
-				return true
-			}
+		if e.Date_time.Equal(date) {
+			return true
 		}
 	}
 	return false
@@ -97,15 +93,10 @@ func isCSVfileEventDay(date time.Time) bool {
 func CSVfileEventDay(date time.Time) (string, string) {
 	dd := date.Format("02")
 	for _, e := range events {
-		eventTime, err := time.Parse("2006-01-02", e.Date_time)
-		if err != nil {
-			fmt.Printf("csv event time error %v - %s\n", e, err.Error())
-		} else {
-			if eventTime.Equal(date) {
-				ymd := date.Format("-2006-01-02")
-				return fmt.Sprintf("<a href=\"%s\" target=\"_blank\" title=\"%s\">%s</a>", e.URL_prefix+ymd, e.Duration_min+"min "+e.Location+", "+e.Name, dd),
-					"high_" + e.Color
-			}
+		if e.Date_time.Equal(date) {
+			ymd := date.Format("-2006-01-02")
+			return fmt.Sprintf("<a href=\"%s\" target=\"_blank\" title=\"%dmin @%s:%s\">%s</a>", e.URL_prefix+ymd, e.Duration_min, e.Location, e.Name, dd),
+				"high_" + e.Color
 		}
 	}
 	return dd, ""
@@ -126,8 +117,21 @@ func columsToEventRecord(cols []string, prevEvent EventRecord) EventRecord {
 	e := prevEvent
 	e.Color = column(0, cols, prevEvent.Color)
 	e.URL_prefix = column(1, cols, prevEvent.URL_prefix)
-	e.Date_time = column(2, cols, prevEvent.Date_time)
-	e.Duration_min = column(3, cols, prevEvent.Duration_min)
+	s := cols[2]
+	t1, err := time.Parse("2006-01-02", s)
+	if err == nil {
+		e.Date_time = t1
+	} else {
+		e.Date_time = prevEvent.Date_time
+	}
+	s = cols[3]
+	var i1 int
+	i1, err = strconv.Atoi(s)
+	if err == nil {
+		e.Duration_min = i1
+	} else {
+		e.Duration_min = prevEvent.Duration_min
+	}
 	e.Name = column(4, cols, prevEvent.Name)
 	e.Location = column(5, cols, prevEvent.Location)
 	return e
@@ -158,8 +162,18 @@ func createEventsList() string {
 	s := ""
 	if len(events) > 0 {
 		for _, e := range events {
-			//			s += fmt.Sprintf("%v<br/>\n", e)
-			s += fmt.Sprintf("%s: %s, %s<br/>\n", e.Date_time, e.Name, e.Location)
+			dow := e.Date_time.Format("Mon")
+			ymd := e.Date_time.Format("2006-01-02")
+			color := "black"
+			switch e.Color {
+			case "r":
+				color = "red"
+			case "b":
+				color = "blue"
+			case "m":
+				color = "magenta"
+			}
+			s += fmt.Sprintf("<code>%s %s</code>: <a href=\"%s-%s\">%s</a>, <span style=\"color:%s;\">%s</span><br/>\n", dow, ymd, e.URL_prefix, ymd, e.Name, color, e.Location)
 		}
 		return s + "\n<hr/>\n"
 	}
