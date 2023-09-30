@@ -169,7 +169,7 @@ func createEventsList() string {
 			case "r":
 				color = "red"
 			case "b":
-				color = "blue"
+				color = "darkblue"
 			case "m":
 				color = "magenta"
 			}
@@ -224,6 +224,10 @@ func createTable(y int, moonAgeDaysJanuary1st float64) string {
 	s += "</table>\n\n"
 	return s
 }
+func createTime() string {
+	now := time.Now()
+	return now.Format("Mon 2006-01-02_15:04:05")
+}
 func CreateWebpageWithTable(y int, moonAgeDaysJanuary1st float64, csvFileName string) {
 	pageFormat := `<html>
 <head>
@@ -248,7 +252,8 @@ func CreateWebpageWithTable(y int, moonAgeDaysJanuary1st float64, csvFileName st
 	title := fmt.Sprintf("%d moon phases 4 weeks calendar", y)
 	list := createEventsList()
 	table := createTable(y, moonAgeDaysJanuary1st)
-	s := fmt.Sprintf(pageFormat, title, list+table)
+	created := "\n<br/><br/> Created on " + createTime()
+	s := fmt.Sprintf(pageFormat, title, list+table+created)
 	createFile(fmt.Sprintf("moonYear%d.htm", y), s)
 }
 func createFile(fname, ftext string) error {
