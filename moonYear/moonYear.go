@@ -68,7 +68,9 @@ func isFirstQuaterFriday(date time.Time, moonAngle float64) bool {
 	}
 	moonAngle = to0_360(moonAngle)
 	d := 360.0 / SynodicMoon
-	if moonAngle < 2.4*d || moonAngle > 9.5*d {
+	min := 2.4 * d //  29.26 degree
+	max := 9.5 * d // 115.81 degree
+	if moonAngle < min || moonAngle > max {
 		return false
 	}
 	return true
