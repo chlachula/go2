@@ -23,7 +23,6 @@ func TestMonthColor(t *testing.T) {
 	}
 }
 
-// isFirstQuaterFriday(date time.Time, moonAngle float64) bool {
 func TestIsFirstQuaterFriday(t *testing.T) {
 	date := time.Date(2023, time.October, 22, 12, 0, 0, 0, time.UTC)
 	want := false
@@ -37,5 +36,26 @@ func TestIsFirstQuaterFriday(t *testing.T) {
 	got = isFirstQuaterFriday(date, 90.0)
 	if got != want {
 		t.Errorf("#2 got %t, want %t", got, want)
+	}
+}
+func TestIsSecondTuesdayMonth(t *testing.T) {
+	date := time.Date(2023, time.October, 23, 12, 0, 0, 0, time.UTC)
+	want := false
+	got := isSecondTuesdayMonth(date)
+	if got != want {
+		t.Errorf("#1 got %t, want %t", got, want)
+	}
+
+	date = time.Date(2023, time.October, 24, 12, 0, 0, 0, time.UTC)
+	got = isSecondTuesdayMonth(date)
+	if got != want {
+		t.Errorf("#2 got %t, want %t", got, want)
+	}
+
+	date = time.Date(2023, time.October, 10, 12, 0, 0, 0, time.UTC)
+	want = true
+	got = isSecondTuesdayMonth(date)
+	if got != want {
+		t.Errorf("#3 got %t, want %t", got, want)
 	}
 }
