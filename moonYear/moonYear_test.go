@@ -59,3 +59,20 @@ func TestIsSecondTuesdayMonth(t *testing.T) {
 		t.Errorf("#3 got %t, want %t", got, want)
 	}
 }
+func TestTo0_360(t *testing.T) {
+	want := 180.0
+	got := to0_360(180.0)
+	if got != want {
+		t.Errorf("#1 got %.1f, want %.1f", got, want)
+	}
+	want = 270.0
+	got = to0_360(-90.0)
+	if got != want {
+		t.Errorf("#2 got %.1f, want %.1f", got, want)
+	}
+	want = 6.0
+	got = to0_360(366.0)
+	if got != want {
+		t.Errorf("#3 got %.1f, want %.1f", got, want)
+	}
+}
