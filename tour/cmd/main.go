@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
-        "time"
+	"time"
+
+	a "github.com/chlachula/go2/tour"
 )
 
 func help(msg string) {
@@ -18,5 +20,8 @@ func main() {
 		fmt.Printf("Elapsed time %s\n", time.Since(start))
 	}(time.Now())
 
-        help("")
+	help("")
+	a.SystemInt()
+	a.IntMinMax()
+
 }
