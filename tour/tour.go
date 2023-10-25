@@ -43,7 +43,11 @@ func IntMinMax() {
 	fmt.Printf("uint32: %21d .. %d %s\n", 0, math.MaxUint32, u32)
 	fmt.Printf("uint64: %21d .. %d %s\n", 0, uint64(math.MaxUint64), u64)
 }
-
+func FloatMinMax() {
+	fmt.Printf("Float types min and max:\n")
+	fmt.Printf("float32: %24.7e .. %12.7e\n", math.SmallestNonzeroFloat32, math.MaxFloat32)
+	fmt.Printf("float64: %24.15e .. %22.15e\n", math.SmallestNonzeroFloat64, math.MaxFloat64)
+}
 func SystemInt() {
 	systemInt := 32
 	if math.MaxInt == math.MaxInt64 {

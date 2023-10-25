@@ -23,5 +23,6 @@ func main() {
 	help("")
 	a.SystemInt()
 	a.IntMinMax()
+	a.FloatMinMax()
 
 }
