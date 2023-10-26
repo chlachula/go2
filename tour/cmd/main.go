@@ -24,5 +24,6 @@ func main() {
 	a.SystemInt()
 	a.IntMinMax()
 	a.FloatMinMax()
+	a.GlobalVariables()
 
 }

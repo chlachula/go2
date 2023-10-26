@@ -19,6 +19,20 @@ var (
 	type_complex128 complex128
 )
 
+func GlobalVariables() {
+	type_b = true //false
+	type_string = "ABC"
+	type_int = -1
+	type_uint = 1
+	fmt.Printf("%v %v %v %v %v \n", type_b, type_string, type_int, type_uint, type_uintptr)
+	type_byte = 255
+	type_rune = 255
+	type_float32 = 1e38
+	type_float64 = 1e308
+	type_complex64 = 1 + 1i
+	type_complex128 = 1 + 1i
+	fmt.Printf("%v %v %v %v %v %v \n", type_byte, type_rune, type_float32, type_float64, type_complex64, type_complex128)
+}
 func IntMinMax() {
 	i32 := "int"
 	u32 := "uint"
