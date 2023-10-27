@@ -25,5 +25,6 @@ func main() {
 	a.IntMinMax()
 	a.FloatMinMax()
 	a.GlobalVariables()
+	a.Loops()
 
 }

@@ -69,3 +69,19 @@ func SystemInt() {
 	}
 	fmt.Printf("This is %d bit system.\n", systemInt)
 }
+func Loops() {
+	n := 1
+	for n < 4 {
+		fmt.Printf("%d: square:%d\n", n, n*n)
+		n += 1
+	}
+	for i := 1; i < 4; i++ {
+		fmt.Printf("%d: square:%d\n", i, i*i)
+	}
+	fmt.Println()
+	for i, s := range []string{"a", "b"} {
+		fmt.Printf("%d:%s\n", i, s)
+	}
+	fmt.Println()
+
+}
