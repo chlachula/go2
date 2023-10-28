@@ -5,6 +5,11 @@ import (
 	"math"
 )
 
+type person struct {
+	name   string
+	height float32
+}
+
 var (
 	type_b          bool
 	type_string     string
@@ -17,6 +22,8 @@ var (
 	type_float64    float64
 	type_complex64  complex64
 	type_complex128 complex128
+
+	type_person person
 )
 
 func GlobalVariables() {
@@ -32,6 +39,10 @@ func GlobalVariables() {
 	type_complex64 = 1 + 1i
 	type_complex128 = 1 + 1i
 	fmt.Printf("%v %v %v %v %v %v \n", type_byte, type_rune, type_float32, type_float64, type_complex64, type_complex128)
+	type_person = person{name: "Joe", height: 184.5}
+	fmt.Printf("%v \n", type_person)
+	fmt.Printf("%+v \n", type_person)
+	fmt.Printf("%#v \n", type_person)
 }
 func IntMinMax() {
 	i32 := "int"
