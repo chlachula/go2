@@ -3,6 +3,7 @@ package tour
 import (
 	"fmt"
 	"math"
+	"runtime"
 )
 
 type person struct {
@@ -94,5 +95,18 @@ func Loops() {
 		fmt.Printf("%d:%s\n", i, s)
 	}
 	fmt.Println()
+}
+func Switches() {
+	switch os := runtime.GOOS; os {
+	case "windows":
+		fmt.Println("Expected OS Win: ", os)
+	case "darwin":
+		fmt.Println("Expected OS X: ", os)
+	case "linux":
+		fmt.Println("Expected OS Linux: ", os)
+	default:
+		// freebsd, openbsd,plan9, windows...
+		fmt.Printf("Unexpected OS %s.\n", os)
+	}
 
 }

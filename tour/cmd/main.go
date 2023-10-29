@@ -26,5 +26,6 @@ func main() {
 	a.FloatMinMax()
 	a.GlobalVariables()
 	a.Loops()
+	a.Switches()
 
 }
