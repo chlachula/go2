@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"runtime"
+	"time"
 )
 
 type person struct {
@@ -108,5 +109,15 @@ func Switches() {
 		// freebsd, openbsd,plan9, windows...
 		fmt.Printf("Unexpected OS %s.\n", os)
 	}
+
+	now := time.Now()
+	var d2s string
+	switch m2 := now.Minute() % 2; m2 {
+	case 0:
+		d2s = "even"
+	default:
+		d2s = "odd"
+	}
+	fmt.Printf("Time %s has %s minute\n", now.String(), d2s)
 
 }
