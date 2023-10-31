@@ -12,6 +12,13 @@ type person struct {
 	height float32
 }
 
+const (
+	B10   = true
+	Num10 = 10
+	F10   = 10.0
+	S10   = "#10"
+)
+
 var (
 	type_b          bool
 	type_string     string
