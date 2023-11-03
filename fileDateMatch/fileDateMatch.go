@@ -18,14 +18,10 @@ func fileToLines(fname string) ([]string, error) {
 	text := string(bytes)
 	return strings.Split(text, "\n"), nil
 }
-func dateInsideFile(lines []string) (time.Time, error) {
-	d := time.Now()
-	// loop
-	return d, nil
-}
 
 func getParams(compRegEx *regexp.Regexp, str string) (map[string]string, error) {
 	paramsMap := make(map[string]string)
+
 	if !compRegEx.MatchString(str) {
 		return paramsMap, fmt.Errorf("no match for string '%s'", str)
 	}
@@ -37,6 +33,19 @@ func getParams(compRegEx *regexp.Regexp, str string) (map[string]string, error) 
 	}
 	return paramsMap, nil
 }
+
+func dateInsideFile(lines []string) (time.Time, error) {
+	var re = regexp.MustCompile(`(?m)<date +yyyy="(?P<yyyy>\d{4})" +mm="(?P<mm>\d+)" +dd="(?P<dd>\d+)"`)
+	d := time.Now()
+	for _, line := range lines {
+		m, err := getParams(re, line)
+		if err == nil {
+			return time.Parse("2006-1-2", m["yyyy"]+"-"+m["mm"]+"-"+m["dd"])
+		}
+	}
+	return d, fmt.Errorf("tag '<date yyyy...' not found")
+}
+
 func dateFromFilename(filename string) (time.Time, error) {
 	var re = regexp.MustCompile(`(?m)(?P<yy>\d\d)(?P<mm>\d\d)(?P<dd>\d\d)`)
 	d := time.Now()
@@ -62,8 +71,8 @@ func FilenameDateMatch(filename string) error {
 			if dateFilename, err3 := dateFromFilename(filename); err3 != nil {
 				return err3
 			} else {
-				if !dateInside.Equal(dateFilename) {
-					return fmt.Errorf("filename %s does not match date inside", filename)
+				if dateInside.Format(time.DateOnly) != dateFilename.Format(time.DateOnly) {
+					return fmt.Errorf("filename %s does not match date inside %s", filename, dateInside.Format(time.DateOnly))
 				} else {
 					return nil
 				}
