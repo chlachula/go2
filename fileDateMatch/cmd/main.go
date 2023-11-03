@@ -9,7 +9,7 @@ import (
 
 func help(msg string) {
 	if msg != "" {
-		fmt.Println(msg)
+		fmt.Printf("%s\n\n", msg)
 	}
 	helptext := `Program fileDateMatch has one text file argument. In filename is encoded date in form YYMMDD.
 Program is searching for line with structure like following example: 
