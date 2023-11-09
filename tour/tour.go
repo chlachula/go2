@@ -127,7 +127,7 @@ func Switches() {
 	}
 	fmt.Printf("Time %s has %s minute\n", now.String(), d2s)
 
-	//switch true
+	//Switch without a condition is the same as switch true
 	t := time.Now()
 	switch {
 	case t.Hour() < 12:
