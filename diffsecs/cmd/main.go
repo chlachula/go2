@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	a "github.com/chlachula/go2/diffsecs"
@@ -18,9 +19,10 @@ func help(msg string) {
 	}
 	helptext := `Date difference including leap seconds 
 Usage:
-go2 yyyy.mm.dd1 yyyy.mm.dd2
+go2 -h
+go2 -d yyyy.mm.dd1 yyyy.mm.dd2
 Examples:
-go2 2016.12.31 2017.1.1
+go2 -d 2016.12.31 2017.1.1
 	`
 	fmt.Println(helptext)
 }
@@ -29,20 +31,30 @@ func main() {
 		fmt.Printf("Elapsed time %s\n", time.Since(start))
 	}(time.Now())
 
-	if len(os.Args) < 3 {
-		help("Less than 2 expected date arguments")
+	if len(os.Args) < 2 {
+		help("Not enough arguments")
 		os.Exit(1)
 	}
-	var d1, d2 time.Time
-	var err error
-	if d1, err = str2date(os.Args[1]); err != nil {
-		help("1st argument error: " + err.Error())
-		os.Exit(1)
+	if strings.HasPrefix(os.Args[1], "-h") {
+		help("")
+		a.ShowLeapSeconds()
+		os.Exit(0)
 	}
-	if d2, err = str2date(os.Args[2]); err != nil {
-		help("1st argument error: " + err.Error())
-		os.Exit(1)
+	if strings.HasPrefix(os.Args[1], "-d") {
+		if len(os.Args) < 4 {
+			help("Less than 2 expected date arguments")
+			os.Exit(1)
+		}
+		var d1, d2 time.Time
+		var err error
+		if d1, err = str2date(os.Args[2]); err != nil {
+			help("1st argument error: " + err.Error())
+			os.Exit(1)
+		}
+		if d2, err = str2date(os.Args[3]); err != nil {
+			help("1st argument error: " + err.Error())
+			os.Exit(1)
+		}
+		a.SecondsDiff(d1, d2)
 	}
-	a.ShowLeapSeconds()
-	a.SecondsDiff(d1, d2)
 }

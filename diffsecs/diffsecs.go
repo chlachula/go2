@@ -134,6 +134,10 @@ func ShowLeapSeconds() {
 }
 
 func SecondsDiff(d1, d2 time.Time) {
+	if d1.After(d2) {
+		fmt.Println("error: the first date is after second date")
+		return
+	}
 	diff := d2.Sub(d1)
-	fmt.Println("diff", diff)
+	fmt.Println("diff", diff.Seconds(), "seconds")
 }
