@@ -134,12 +134,14 @@ func ShowLeapSeconds() {
 }
 func inc1sec(d1, d2, leap time.Time) (d1a, d2a time.Time) {
 	d1a = d1
-	if leap.After(d1) {
+	if d1.After(leap) {
 		d1a = d1.Add(time.Second)
+		fmt.Println("DEBUG +1s ", d1.String(), leap.String())
 	}
 	d2a = d2
-	if leap.After(d2) {
+	if d2.After(leap) {
 		d2a = d2.Add(time.Second)
+		fmt.Println("DEBUG +1s ", d2.String(), leap.String())
 	}
 	return d1a, d2a
 }
@@ -147,6 +149,7 @@ func DatesDiffInSeconds(d1, d2 time.Time) (float64, error) {
 	if d1.After(d2) {
 		return 0.0, fmt.Errorf("the first date is after second date")
 	}
+	fmt.Println("DEBUG DatesDiffInSeconds ")
 
 	t1972_01_01 := time.Date(1972, 1, 1, 0, 0, 0, 0, time.UTC)
 	if d2.After(t1972_01_01) {
