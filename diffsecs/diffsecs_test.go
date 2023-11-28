@@ -7,16 +7,13 @@ import (
 )
 
 func TestInc1sec(t *testing.T) {
-	//	want := "lightgray"
-	//	got := monthColor(date)
-	leap := time.Date(2015, time.June, 30, 23, 59, 59, 999999999, time.UTC)
+	expectedSec := 86401.0
 
 	d1 := time.Date(1972, time.January, 1, 0, 0, 0, 0, time.UTC)
 	d2 := time.Date(1972, time.January, 2, 0, 0, 0, 0, time.UTC)
-	d1a, d2a := inc1sec(d1, d2, leap)
-	sec, err := DatesDiffInSeconds(d1a, d2a)
+	sec, err := DatesDiffInSeconds(d1, d2)
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Errorf("error:unexpected seconds %f instead of %f between %s..%s", sec, 86400.0, d1.Format("2006.01.02 15h"), d2.Format("2006.01.02 15h"))
 	}
 	if sec != 86400.0 {
 		fmt.Println("seconds", sec)
@@ -24,35 +21,67 @@ func TestInc1sec(t *testing.T) {
 
 	d1 = time.Date(1973, time.December, 31, 12, 0, 0, 0, time.UTC)
 	d2 = time.Date(1974, time.January, 1, 12, 0, 0, 0, time.UTC)
-	d1a, d2a = inc1sec(d1, d2, leap)
-	sec, err = DatesDiffInSeconds(d1a, d2a)
+	sec, err = DatesDiffInSeconds(d1, d2)
 	if err != nil {
 		t.Errorf(err.Error())
 	}
-	if sec != 86401.0 {
-		fmt.Println("seconds", sec)
+	if sec != expectedSec {
+		t.Errorf("error:unexpected seconds %f instead of %f between %s..%s", sec, expectedSec, d1.Format("2006.01.02 15h"), d2.Format("2006.01.02 15h"))
 	}
 
 	d1 = time.Date(1981, time.June, 30, 12, 0, 0, 0, time.UTC)
 	d2 = time.Date(1981, time.July, 1, 12, 0, 0, 0, time.UTC)
-	d1a, d2a = inc1sec(d1, d2, leap)
-	sec, err = DatesDiffInSeconds(d1a, d2a)
+	sec, err = DatesDiffInSeconds(d1, d2)
 	if err != nil {
 		t.Errorf(err.Error())
 	}
-	if sec != 86401.0 {
-		fmt.Println("seconds", sec)
+	if sec != expectedSec {
+		t.Errorf("error:unexpected seconds %f instead of %f between %s..%s", sec, expectedSec, d1.Format("2006.01.02 15h"), d2.Format("2006.01.02 15h"))
 	}
 
 	d1 = time.Date(2016, time.December, 31, 12, 0, 0, 0, time.UTC)
 	d2 = time.Date(2017, time.January, 1, 12, 0, 0, 0, time.UTC)
-	d1a, d2a = inc1sec(d1, d2, leap)
-	sec, err = DatesDiffInSeconds(d1a, d2a)
+	sec, err = DatesDiffInSeconds(d1, d2)
 	if err != nil {
 		t.Errorf(err.Error())
 	}
-	if sec != 86401.0 {
-		t.Errorf("error:unexpected seconds %f between %s..%s", sec, d1.Format("2006.01.02 15h"), d2.Format("2006.01.02 15h"))
+	if sec != expectedSec {
+		t.Errorf("error:unexpected seconds %f instead of %f between %s..%s", sec, expectedSec, d1.Format("2006.01.02 15h"), d2.Format("2006.01.02 15h"))
+	}
+
+	d1 = time.Date(2016, time.December, 24, 23, 59, 55, 0, time.UTC)
+	d2 = time.Date(2016, time.December, 25, 0, 0, 5, 0, time.UTC)
+	sec, err = DatesDiffInSeconds(d1, d2)
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+	expectedSec = float64(10)
+	if sec != expectedSec {
+		t.Errorf("error:unexpected seconds %f instead of %f between %s..%s", sec, expectedSec, d1.Format("2006.01.02 15h"), d2.Format("2006.01.02 15h"))
+	}
+
+	verbose = true
+	d1 = time.Date(2016, time.December, 31, 23, 59, 55, 0, time.UTC)
+	d2 = time.Date(2017, time.January, 1, 0, 0, 5, 0, time.UTC)
+	sec, err = DatesDiffInSeconds(d1, d2)
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+	expectedSec = float64(11)
+	if sec != expectedSec {
+		t.Errorf("error:unexpected seconds %f instead of %f between %s..%s", sec, expectedSec, d1.Format("2006.01.02 15h"), d2.Format("2006.01.02 15h"))
+	}
+	verbose = false
+
+	d1 = time.Date(1971, time.January, 1, 12, 0, 0, 0, time.UTC)
+	d2 = time.Date(2021, time.January, 1, 12, 0, 0, 0, time.UTC)
+	sec, err = DatesDiffInSeconds(d1, d2)
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+	expectedSec = float64(((2021-1971)*365+13)*86400 + 27)
+	if sec != expectedSec {
+		t.Errorf("error:unexpected seconds %f instead of %f between %s..%s", sec, expectedSec, d1.Format("2006.01.02 15h"), d2.Format("2006.01.02 15h"))
 	}
 
 }

@@ -71,6 +71,10 @@ type YYYYLeapSeconds struct {
 	Dec31 int
 }
 
+var verbose = false
+var iDEB1 int
+var iDEB2 int
+
 var secs = []YYYYLeapSeconds{
 	{YYYY: 1972, Jun30: 1, Dec31: 1},
 	{YYYY: 1973, Jun30: 0, Dec31: 1},
@@ -127,21 +131,29 @@ var secs = []YYYYLeapSeconds{
 }
 
 func ShowLeapSeconds() {
+	total := 0
 	for _, r := range secs {
 		fmt.Printf("%d: %3d, %3d\n", r.YYYY, r.Jun30, r.Dec31)
-
+		total += r.Jun30 + r.Dec31
 	}
+	fmt.Printf("Total leap seconds: %d\n", total)
 }
 func inc1sec(d1, d2, leap time.Time) (d1a, d2a time.Time) {
 	d1a = d1
 	if d1.After(leap) {
 		d1a = d1.Add(time.Second)
-		fmt.Println("DEBUG +1s ", d1.String(), leap.String())
+		if verbose {
+			iDEB1 += 1
+			fmt.Printf("%2d.DEBUG1 +1s %s %s\n", iDEB1, d1.String(), leap.String())
+		}
 	}
 	d2a = d2
 	if d2.After(leap) {
 		d2a = d2.Add(time.Second)
-		fmt.Println("DEBUG +1s ", d2.String(), leap.String())
+		if verbose {
+			iDEB2 += 1
+			fmt.Printf("%2d.DEBUG2 +1s %s %s\n", iDEB2, d2.String(), leap.String())
+		}
 	}
 	return d1a, d2a
 }
@@ -149,8 +161,11 @@ func DatesDiffInSeconds(d1, d2 time.Time) (float64, error) {
 	if d1.After(d2) {
 		return 0.0, fmt.Errorf("the first date is after second date")
 	}
-	fmt.Println("DEBUG DatesDiffInSeconds ")
-
+	if verbose {
+		iDEB1 = 0
+		iDEB2 = 0
+		fmt.Println("DEBUG DatesDiffInSeconds ", d1.Format("2006.01.02 15h"), "..", d2.Format("2006.01.02 15h"))
+	}
 	t1972_01_01 := time.Date(1972, 1, 1, 0, 0, 0, 0, time.UTC)
 	if d2.After(t1972_01_01) {
 		for _, r := range secs {
@@ -164,6 +179,7 @@ func DatesDiffInSeconds(d1, d2 time.Time) (float64, error) {
 			}
 		}
 	}
+
 	diff := d2.Sub(d1)
 	return diff.Seconds(), nil
 }
