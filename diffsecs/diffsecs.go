@@ -81,34 +81,7 @@ type LeapSecondsDate struct {
 	day   int
 }
 
-func LeapDate(year int, month time.Month, day, hour, min, sec, nsec int, loc *time.Location) LeapSecondsTime {
-	var t LeapSecondsTime
-	t.time = time.Date(year, month, day, hour, min, sec, nsec, loc)
-	t.leapSeconds = 10
-	i1 := 0
-	time1 := time.Date(leapDates[i1].year, leapDates[i1].month, leapDates[i1].day, 23, 59, 59, 999999999, time.UTC)
-	if t.time.Before(time1) {
-		return t
-	}
-	i2 := len(leapDates) - 1
-	time2 := time.Date(leapDates[i2].year, leapDates[i2].month, leapDates[i2].day, 23, 59, 59, 999999999, time.UTC)
-	if t.time.After(time2) {
-		t.leapSeconds += len(leapDates)
-		return t
-	}
-	timeI := time1
-	i := i1
-	for t.time.Before(timeI) {
-		i += 1
-		timeI = time.Date(leapDates[i].year, leapDates[i].month, leapDates[i].day, 23, 59, 59, 999999999, time.UTC)
-	}
-	t.leapSeconds += i
-	return t
-}
-
-var verbose = false
-var iDEB1 int
-var iDEB2 int
+var Verbose bool = false
 
 var secs = []YYYYLeapSeconds{
 	{YYYY: 1972, Jun30: 1, Dec31: 1},
@@ -194,6 +167,42 @@ var leapDates = []LeapSecondsDate{
 	/* 27 */ {year: 2016, month: time.December, day: 31},
 }
 
+func verboseLeapDateDebug(label string, t LeapSecondsTime) {
+	if Verbose {
+		fmt.Printf("DEBUG %s  %s leapSecs:%d \n", label, t.time.Format("2006.01.02 15"), t.leapSeconds)
+	}
+}
+func LeapTime(t time.Time) LeapSecondsTime {
+	return LeapDate(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
+}
+func LeapDate(year int, month time.Month, day, hour, min, sec, nsec int, loc *time.Location) LeapSecondsTime {
+	var t LeapSecondsTime
+	t.time = time.Date(year, month, day, hour, min, sec, nsec, loc)
+	t.leapSeconds = 10
+	i1 := 0
+	time1 := time.Date(leapDates[i1].year, leapDates[i1].month, leapDates[i1].day, 23, 59, 59, 999999999, time.UTC)
+	if t.time.Before(time1) {
+		verboseLeapDateDebug("LeapDate1", t)
+		return t
+	}
+	i2 := len(leapDates) - 1
+	time2 := time.Date(leapDates[i2].year, leapDates[i2].month, leapDates[i2].day, 23, 59, 59, 999999999, time.UTC)
+	if t.time.After(time2) {
+		t.leapSeconds += len(leapDates)
+		verboseLeapDateDebug("LeapDate2", t)
+		return t
+	}
+	timeI := time1
+	i := i1
+	for t.time.After(timeI) {
+		i += 1
+		timeI = time.Date(leapDates[i].year, leapDates[i].month, leapDates[i].day, 23, 59, 59, 999999999, time.UTC)
+	}
+	t.leapSeconds += i
+	verboseLeapDateDebug("LeapDate3", t)
+	return t
+}
+
 func ShowLeapSeconds() {
 	total := 0
 	for _, r := range secs {
@@ -202,56 +211,21 @@ func ShowLeapSeconds() {
 	}
 	fmt.Printf("Total leap seconds: %d\n", total)
 }
-func inc1sec(d1, d2, leap time.Time) (d1a, d2a time.Time) {
-	d1a = d1
-	if d1.After(leap) {
-		d1a = d1.Add(time.Second)
-		if verbose {
-			iDEB1 += 1
-			fmt.Printf("%2d.DEBUG1 +1s %s %s\n", iDEB1, d1.String(), leap.String())
-		}
-	}
-	d2a = d2
-	if d2.After(leap) {
-		d2a = d2.Add(time.Second)
-		if verbose {
-			iDEB2 += 1
-			fmt.Printf("%2d.DEBUG2 +1s %s %s\n", iDEB2, d2.String(), leap.String())
-		}
-	}
-	return d1a, d2a
-}
-func DatesDiffInSeconds(d1, d2 time.Time) (float64, error) {
-	if d1.After(d2) {
+
+func DatesDiffInSeconds(d1, d2 LeapSecondsTime) (float64, error) {
+	if d1.time.After(d2.time) {
 		return 0.0, fmt.Errorf("the first date is after second date")
 	}
-	if verbose {
-		iDEB1 = 0
-		iDEB2 = 0
-		fmt.Println("DEBUG DatesDiffInSeconds ", d1.Format("2006.01.02 15h"), "..", d2.Format("2006.01.02 15h"))
-	}
-	t1972_01_01 := time.Date(1972, 1, 1, 0, 0, 0, 0, time.UTC)
-	if d2.After(t1972_01_01) {
-		for _, r := range secs {
-			if r.Jun30 != 0 {
-				tJun30 := time.Date(r.YYYY, time.June, 30, 23, 59, 59, 999999999, time.UTC)
-				d1, d2 = inc1sec(d1, d2, tJun30)
-			}
-			if r.Dec31 != 0 {
-				tDec31 := time.Date(r.YYYY, time.December, 31, 23, 59, 59, 999999999, time.UTC)
-				d1, d2 = inc1sec(d1, d2, tDec31)
-			}
-		}
+
+	diff := d2.time.Sub(d1.time)
+	diffLeapSecs := d2.leapSeconds - d1.leapSeconds
+	return diff.Seconds() + float64(diffLeapSecs), nil
+}
+func ShowDatesDiffInSeconds(d1, d2 time.Time) {
+	if s, err := DatesDiffInSeconds(LeapTime(d1), LeapTime(d2)); err != nil {
+		fmt.Println("err", err.Error())
+	} else {
+		fmt.Println(s, "seconds between", d1.String(), "and", d2.String())
 	}
 
-	diff := d2.Sub(d1)
-	return diff.Seconds(), nil
-}
-func SecondsDiff(d1, d2 time.Time) {
-	diffSec, err := DatesDiffInSeconds(d1, d2)
-	if err != nil {
-		fmt.Println("diff", diffSec, "seconds")
-	} else {
-		fmt.Println("Error: ", err.Error())
-	}
 }
