@@ -96,19 +96,13 @@ func LeapDate(year int, month time.Month, day, hour, min, sec, nsec int, loc *ti
 		t.leapSeconds += len(leapDates)
 		return t
 	}
-	i := i2 / 2
-	for i1 < i2 {
-		time := time.Date(leapDates[i].year, leapDates[i].month, leapDates[i].day, 23, 59, 59, 999999999, time.UTC)
-		if t.time.After(time) {
-			i1 = i
-			time1 = time
-		} else {
-			i2 = i
-			time2 = time
-		}
-		i = i1 + (i2-i1)/2
+	timeI := time1
+	i := i1
+	for t.time.Before(timeI) {
+		i += 1
+		timeI = time.Date(leapDates[i].year, leapDates[i].month, leapDates[i].day, 23, 59, 59, 999999999, time.UTC)
 	}
-	t.leapSeconds += i + 1
+	t.leapSeconds += i
 	return t
 }
 
@@ -200,20 +194,6 @@ var leapDates = []LeapSecondsDate{
 	/* 27 */ {year: 2016, month: time.December, day: 31},
 }
 
-func Tmp() {
-	i := 0
-	lineFormat := "/* %02d */ {year:%d, month:time.%s, day:%02d}, \n"
-	for _, x := range secs {
-		if x.Jun30 != 0 {
-			i += 1
-			fmt.Printf(lineFormat, i, x.YYYY, "June", 30)
-		}
-		if x.Dec31 != 0 {
-			i += 1
-			fmt.Printf(lineFormat, i, x.YYYY, "December", 31)
-		}
-	}
-}
 func ShowLeapSeconds() {
 	total := 0
 	for _, r := range secs {
