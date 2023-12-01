@@ -35,26 +35,32 @@ func main() {
 		help("Not enough arguments")
 		os.Exit(1)
 	}
-	if strings.HasPrefix(os.Args[1], "-h") {
+	i := 1
+	if strings.HasPrefix(os.Args[i], "-h") {
 		help("")
 		a.ShowLeapSeconds()
 		os.Exit(0)
-	}
-	if strings.HasPrefix(os.Args[1], "-d") {
+	} else if strings.HasPrefix(os.Args[i], "-v") {
+		a.Verbose = true
+	} else if strings.HasPrefix(os.Args[i], "-d") {
 		if len(os.Args) < 4 {
 			help("Less than 2 expected date arguments")
 			os.Exit(1)
 		}
 		var d1, d2 time.Time
 		var err error
-		if d1, err = str2date(os.Args[2]); err != nil {
-			help("1st argument error: " + err.Error())
+		if d1, err = str2date(os.Args[i+1]); err != nil {
+			help("1st date argument error: " + err.Error())
 			os.Exit(1)
 		}
-		if d2, err = str2date(os.Args[3]); err != nil {
-			help("1st argument error: " + err.Error())
+		if d2, err = str2date(os.Args[i+2]); err != nil {
+			help("2nd date argument error: " + err.Error())
 			os.Exit(1)
 		}
-		a.SecondsDiff(d1, d2)
+		a.ShowDatesDiffInSeconds(d1, d2)
+	} else {
+		help("Unknown argument " + os.Args[1])
+		os.Exit(1)
 	}
+
 }
