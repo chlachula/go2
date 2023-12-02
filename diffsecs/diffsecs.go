@@ -205,6 +205,7 @@ func LeapDate(year int, month time.Month, day, hour, min, sec, nsec int, loc *ti
 
 func ShowLeapSeconds() {
 	total := 0
+	fmt.Printf("Year Jun30 Dec31\n")
 	for _, r := range secs {
 		fmt.Printf("%d: %3d, %3d\n", r.YYYY, r.Jun30, r.Dec31)
 		total += r.Jun30 + r.Dec31
