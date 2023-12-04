@@ -213,7 +213,7 @@ func ShowLeapSeconds() {
 	fmt.Printf("Total leap seconds: %d\n", total)
 }
 
-func DatesDiffInSeconds(d1, d2 LeapSecondsTime) (float64, error) {
+func datesDiffInSeconds(d1, d2 LeapSecondsTime) (float64, error) {
 	if d1.time.After(d2.time) {
 		return 0.0, fmt.Errorf("the first date is after second date")
 	}
@@ -223,10 +223,11 @@ func DatesDiffInSeconds(d1, d2 LeapSecondsTime) (float64, error) {
 	return diff.Seconds() + float64(diffLeapSecs), nil
 }
 func ShowDatesDiffInSeconds(d1, d2 time.Time) {
-	if s, err := DatesDiffInSeconds(LeapTime(d1), LeapTime(d2)); err != nil {
+	if s, err := datesDiffInSeconds(LeapTime(d1), LeapTime(d2)); err != nil {
 		fmt.Println("err", err.Error())
 	} else {
-		fmt.Println(s, "seconds between", d1.String(), "and", d2.String())
+		f := "2006.01.02_15:04:05.999999999"
+		fmt.Println(s, "seconds between", d1.Format(f), "and", d2.Format(f))
 	}
 
 }
