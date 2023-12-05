@@ -172,10 +172,10 @@ func verboseLeapDateDebug(label string, t LeapSecondsTime) {
 		fmt.Printf("DEBUG %s  %s leapSecs:%d \n", label, t.time.Format("2006.01.02 15"), t.leapSeconds)
 	}
 }
-func LeapTime(t time.Time) LeapSecondsTime {
-	return LeapDate(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
+func leapTime(t time.Time) LeapSecondsTime {
+	return leapDate(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
 }
-func LeapDate(year int, month time.Month, day, hour, min, sec, nsec int, loc *time.Location) LeapSecondsTime {
+func leapDate(year int, month time.Month, day, hour, min, sec, nsec int, loc *time.Location) LeapSecondsTime {
 	var t LeapSecondsTime
 	t.time = time.Date(year, month, day, hour, min, sec, nsec, loc)
 	t.leapSeconds = 10
@@ -223,7 +223,7 @@ func datesDiffInSeconds(d1, d2 LeapSecondsTime) (float64, error) {
 	return diff.Seconds() + float64(diffLeapSecs), nil
 }
 func ShowDatesDiffInSeconds(d1, d2 time.Time) {
-	if s, err := datesDiffInSeconds(LeapTime(d1), LeapTime(d2)); err != nil {
+	if s, err := datesDiffInSeconds(leapTime(d1), leapTime(d2)); err != nil {
 		fmt.Println("err", err.Error())
 	} else {
 		f := "2006.01.02_15:04:05.999999999"
