@@ -24,6 +24,7 @@ func help(msg string) {
 	helptext := `Date difference including leap seconds 
 Usage:
 go2 -h
+go2 -l #list of the leap seconds
 go2 -d yyyy.mm.dd1 yyyy.mm.dd2
 go2 -d yyyy.mm.dd1-HH"MM"SS.sssssssss yyyy.mm.dd2-HH"MM"SS.sssssssss
 Examples:
