@@ -92,11 +92,11 @@ var secs = []YYYYLeapSeconds{
 	{YYYY: 1977, Jun30: 0, Dec31: 1},
 	{YYYY: 1978, Jun30: 0, Dec31: 1},
 	{YYYY: 1979, Jun30: 0, Dec31: 1},
-	{YYYY: 1980, Jun30: 0, Dec31: 0},
+	//{YYYY: 1980, Jun30: 0, Dec31: 0},
 	{YYYY: 1981, Jun30: 1, Dec31: 0},
 	{YYYY: 1982, Jun30: 1, Dec31: 0},
 	{YYYY: 1983, Jun30: 1, Dec31: 0},
-	{YYYY: 1984, Jun30: 0, Dec31: 0},
+	//{YYYY: 1984, Jun30: 0, Dec31: 0},
 	{YYYY: 1985, Jun30: 1, Dec31: 0},
 	//	{YYYY: 1986, Jun30: 0, Dec31: 0},
 	{YYYY: 1987, Jun30: 0, Dec31: 1},
@@ -205,7 +205,7 @@ func leapDate(year int, month time.Month, day, hour, min, sec, nsec int, loc *ti
 
 func ShowLeapSeconds() {
 	total := 0
-	fmt.Printf("Year Jun30 Dec31\n")
+	fmt.Printf("About: https://en.wikipedia.org/wiki/Leap_second\n\nYear Jun30 Dec31\n")
 	for _, r := range secs {
 		fmt.Printf("%d: %3d, %3d\n", r.YYYY, r.Jun30, r.Dec31)
 		total += r.Jun30 + r.Dec31
