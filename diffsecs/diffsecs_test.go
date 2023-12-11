@@ -31,6 +31,9 @@ func TestInc1sec(t *testing.T) {
 	expectedDiffDatesSecs(t, expectedSec, 1, 1981, time.June, 30, 12, 0, 0, 1981, time.July, 1, 12, 0, 0)
 	expectedDiffDatesSecs(t, expectedSec, 1, 2016, time.December, 31, 12, 0, 0, 2017, time.January, 1, 12, 0, 0)
 
+	expectedSec = 86400.0*((1980-1972)*365+2) + 9
+	expectedDiffDatesSecs(t, expectedSec, 9, 1972, time.January, 1, 0, 0, 0, 1980, time.January, 1, 0, 0, 0)
+
 	expectedSec = 86400.0*(1983-1981)*365 + 1 + 3
 	expectedDiffDatesSecs(t, expectedSec, 3, 1981, time.June, 30, 23, 59, 59, 1983, time.July, 1, 0, 0, 0)
 
