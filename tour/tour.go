@@ -33,6 +33,9 @@ var (
 	type_complex128 complex128
 
 	type_person person
+
+	rgbNames  = []string{"red", "green", "blue"}
+	personJoe = person{name: "Joe Doe", height: 180}
 )
 
 func GlobalVariables() {
@@ -104,7 +107,7 @@ func Loops() {
 	}
 	fmt.Println()
 }
-func Pointers(){
+func Pointers() {
 	i, j := 42, 2701
 
 	p := &i         // point to i
@@ -148,5 +151,12 @@ func Switches() {
 		fmt.Println("Good afternoon.")
 	default:
 		fmt.Println("Good evening.")
+	}
+}
+
+func PrintLiterals() {
+	fmt.Println("Person:", personJoe)
+	for _, colorName := range rgbNames {
+		fmt.Println("Color", colorName)
 	}
 }
