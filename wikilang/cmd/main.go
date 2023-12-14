@@ -33,11 +33,11 @@ func main() {
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
-	langLink, err1 := a.FindLink(page, lang)
+	langLink, name, err1 := a.FindLink(page, lang)
 	if err != nil {
 		fmt.Println(err1.Error())
 		os.Exit(1)
 	}
-	fmt.Println("For language", lang, "found:", langLink)
+	fmt.Println("For language", lang, "found for ", urlString, "\nlink: ", langLink, "\nname: ", name)
 
 }

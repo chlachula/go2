@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -24,19 +25,27 @@ func DownloadPage(urlString string) (string, error) {
 	return string(bytes), nil
 }
 
-func FindLink(page string, lang string) (string, error) {
+func FindLink(page string, lang string) (string, string, error) {
 	langWiki := lang + ".wikipedia.org"
 	needle := "https://" + langWiki
 	i1 := strings.Index(page, needle)
 	if i1 < 0 {
-		return "", fmt.Errorf(langWiki + "not found")
+		return "", "", fmt.Errorf(langWiki + "not found")
 	}
 	i2 := i1 + len(needle)
 	for page[i2] != '"' && i2 < len(page) {
 		i2 += 1
 	}
 	if i2 >= len(page) {
-		return "", fmt.Errorf("no '\"' after " + langWiki)
+		return "", "", fmt.Errorf("no '\"' after " + langWiki)
 	}
-	return page[i1:i2], nil
+	urlStr := page[i1:i2]
+	decodedStr, err := url.QueryUnescape(urlStr)
+	if err != nil {
+		return "", "", err
+	}
+	i3 := len(needle) + len("/wiki/")
+	nameString := decodedStr[i3:]
+	nameString = strings.ReplaceAll(nameString, "_", " ")
+	return urlStr, nameString, nil
 }
