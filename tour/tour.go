@@ -1,6 +1,7 @@
 package tour
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
 	"runtime"
@@ -10,6 +11,11 @@ import (
 type person struct {
 	name   string
 	height float32
+}
+type typeStudent struct {
+	Name             string `json:"first name"`
+	Age              int    `json:"AGE"`
+	ElectiveLanguage string `json:"elective language,omitempty"`
 }
 
 const (
@@ -159,4 +165,11 @@ func PrintLiterals() {
 	for _, colorName := range rgbNames {
 		fmt.Println("Color", colorName)
 	}
+}
+
+func PrintJsonStudents() {
+	studentsJson := `[{"name":"Chuck","age": 17,"elective language": "French"},{"name":"Dan","age":19}]`
+	var students []typeStudent
+	json.Unmarshal([]byte(studentsJson), &students)
+	fmt.Printf("Students : %+v\n\n", students)
 }

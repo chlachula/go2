@@ -28,4 +28,5 @@ func main() {
 	a.Loops()
 	a.Switches()
 	a.PrintLiterals()
+	a.PrintJsonStudents()
 }
