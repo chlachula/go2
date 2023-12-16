@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -230,7 +231,7 @@ func createTime() string {
 	now := time.Now()
 	return now.Format("Mon 2006-01-02_15:04:05")
 }
-func CreateWebpageWithTable(y int, moonAgeDaysJanuary1st float64, csvFileName string) {
+func CreateWebpageWithTable(y int, moonAgeDaysJanuary1st float64, csvFileName string, webPageDir string) {
 	pageFormat := `<html>
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -256,7 +257,8 @@ func CreateWebpageWithTable(y int, moonAgeDaysJanuary1st float64, csvFileName st
 	table := createTable(y, moonAgeDaysJanuary1st)
 	created := "\n<br/><br/> Created on " + createTime()
 	s := fmt.Sprintf(pageFormat, title, list+table+created)
-	createFile(fmt.Sprintf("moonYear%d.htm", y), s)
+	filename := filepath.Join(webPageDir, "moonYear%d.htm")
+	createFile(fmt.Sprintf(filename, y), s)
 }
 func createFile(fname, ftext string) error {
 	f, err := os.Create(fname)
