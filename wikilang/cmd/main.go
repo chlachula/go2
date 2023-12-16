@@ -47,10 +47,10 @@ func help(msg string) {
 	}
 	helptext := `Displays link to the alternative language version
 	Usage:
-	go2 url lang
+	go2 lang url
 	Example:
-	go2 "https://en.wikipedia.org/wiki/Cassiopeia_(constellation)" cs
-	go2 https://en.wikipedia.org/wiki/Tau_function cs
+	go2 cs "https://en.wikipedia.org/wiki/Cassiopeia_(constellation)" 
+	go2 cs https://en.wikipedia.org/wiki/Tau_function 
 	`
 	fmt.Println(helptext)
 }
@@ -72,6 +72,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	wikiLanguageVersion(os.Args[1], os.Args[2])
+	wikiLanguageVersion(os.Args[2], os.Args[1])
 
 }
