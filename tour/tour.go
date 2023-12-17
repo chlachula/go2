@@ -39,9 +39,10 @@ var (
 	type_complex128 complex128
 
 	type_person person
+	personJoe   = person{name: "Joe Doe", height: 180}
 
-	rgbNames  = []string{"red", "green", "blue"}
-	personJoe = person{name: "Joe Doe", height: 180}
+	primes10 = []int{2, 3, 5, 7, 11, 13, 17, 19, 23, 29}
+	rgbNames = []string{"red", "green", "blue"}
 )
 
 func GlobalVariables() {
@@ -160,11 +161,18 @@ func Switches() {
 	}
 }
 
-func PrintLiterals() {
+func PrintStringLiterals() {
+	fmt.Printf("rgbNames %%v: %v \n", rgbNames) // [red green blue]
+	fmt.Printf("rgbNames %%q: %q \n", rgbNames) // ["red" "green" "blue"]
+
 	fmt.Println("Person:", personJoe)
-	for _, colorName := range rgbNames {
-		fmt.Println("Color", colorName)
+}
+func PrintIntLiterals() {
+	fmt.Print("The first 10 prime numbers: ")
+	for i, n := range primes10 {
+		fmt.Printf("%d:%d ", i+1, n)
 	}
+	fmt.Println()
 }
 
 func PrintJsonStudents() {

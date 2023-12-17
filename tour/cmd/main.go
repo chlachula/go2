@@ -27,6 +27,7 @@ func main() {
 	a.GlobalVariables()
 	a.Loops()
 	a.Switches()
-	a.PrintLiterals()
+	a.PrintStringLiterals()
+	a.PrintIntLiterals()
 	a.PrintJsonStudents()
 }
