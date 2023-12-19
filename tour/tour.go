@@ -47,8 +47,8 @@ var (
 
 	primes10   = []int{2, 3, 5, 7, 11, 13, 17, 19, 23, 29}
 	rgbNames   = []string{"red", "green", "blue"}    // slice
-	rgbNames3  = [3]string{"red", "green", "blue"}   // array len 3
-	rgbNames3c = [...]string{"red", "green", "blue"} // array len 3
+	rgbNames3  = [3]string{"red", "green", "blue"}   // array len 3 cap 3
+	rgbNames3c = [...]string{"red", "green", "blue"} // array len 3 cap 3
 )
 
 func GlobalVariables() {
@@ -69,6 +69,7 @@ func GlobalVariables() {
 	fmt.Printf("%+v \n", type_person)
 	fmt.Printf("%#v \n", type_person)
 }
+
 func IntMinMax() {
 	i32 := "int"
 	u32 := "uint"
@@ -93,11 +94,13 @@ func IntMinMax() {
 	fmt.Printf("uint32: %21d .. %d %s\n", 0, math.MaxUint32, u32)
 	fmt.Printf("uint64: %21d .. %d %s\n", 0, uint64(math.MaxUint64), u64)
 }
+
 func FloatMinMax() {
 	fmt.Printf("Float types min and max:\n")
 	fmt.Printf("float32: %24.7e .. %12.7e\n", math.SmallestNonzeroFloat32, math.MaxFloat32)
 	fmt.Printf("float64: %24.15e .. %22.15e\n", math.SmallestNonzeroFloat64, math.MaxFloat64)
 }
+
 func SystemInt() {
 	systemInt := 32
 	if math.MaxInt == math.MaxInt64 {
@@ -105,6 +108,7 @@ func SystemInt() {
 	}
 	fmt.Printf("This is %d bit system.\n", systemInt)
 }
+
 func Loops() {
 	n := 1
 	for n < 4 {
@@ -120,6 +124,7 @@ func Loops() {
 	}
 	fmt.Println()
 }
+
 func Pointers() {
 	i, j := 42, 2701
 
@@ -132,6 +137,7 @@ func Pointers() {
 	*p = *p / 37   // divide j through the pointer
 	fmt.Println(j) // see the new value of j
 }
+
 func Switches() {
 	switch os := runtime.GOOS; os {
 	case "windows":
@@ -177,6 +183,7 @@ func PrintStringLiterals() {
 
 	fmt.Println("Person:", personJoe)
 }
+
 func PrintIntLiterals() {
 	fmt.Print("The first 10 prime numbers: ")
 	for i, n := range primes10 {
