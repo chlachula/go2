@@ -25,6 +25,10 @@ const (
 	S10   = "#10"
 )
 
+func unmutableSlice_rgbNames() []string {
+	return []string{"red", "green", "blue"}
+}
+
 var (
 	type_b          bool
 	type_string     string
@@ -169,6 +173,8 @@ func PrintStringLiterals() {
 	if len(rgbNames3) == len(rgbNames3c) {
 		fmt.Println("[...]T is syntax sugar for [3]T")
 	}
+	fmt.Printf("unmutableSlice len=%d cap=%d\n", len(unmutableSlice_rgbNames()), cap(unmutableSlice_rgbNames()))
+
 	fmt.Println("Person:", personJoe)
 }
 func PrintIntLiterals() {
