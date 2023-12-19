@@ -41,8 +41,10 @@ var (
 	type_person person
 	personJoe   = person{name: "Joe Doe", height: 180}
 
-	primes10 = []int{2, 3, 5, 7, 11, 13, 17, 19, 23, 29}
-	rgbNames = []string{"red", "green", "blue"}
+	primes10   = []int{2, 3, 5, 7, 11, 13, 17, 19, 23, 29}
+	rgbNames   = []string{"red", "green", "blue"}    // slice
+	rgbNames3  = [3]string{"red", "green", "blue"}   // array len 3
+	rgbNames3c = [...]string{"red", "green", "blue"} // array len 3
 )
 
 func GlobalVariables() {
@@ -164,7 +166,9 @@ func Switches() {
 func PrintStringLiterals() {
 	fmt.Printf("rgbNames %%v: %v \n", rgbNames) // [red green blue]
 	fmt.Printf("rgbNames %%q: %q \n", rgbNames) // ["red" "green" "blue"]
-
+	if len(rgbNames3) == len(rgbNames3c) {
+		fmt.Println("[...]T is syntax sugar for [3]T")
+	}
 	fmt.Println("Person:", personJoe)
 }
 func PrintIntLiterals() {
