@@ -53,6 +53,8 @@ func svsMagicNumbers(y int) (int, int) {
 func EventHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, part1)
 	fmt.Fprint(w, part2)
-	fmt.Fprint(w, part3)
+	imgURL := "https://svs.gsfc.nasa.gov/vis/a000000/a005000/a005048/frames/730x730_1x1_30p/moon.8456.jpg"
+	println(imgURL)
+	fmt.Fprintf(w, part3, imgURL)
 	fmt.Fprint(w, part4)
 }
