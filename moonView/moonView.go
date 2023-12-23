@@ -3,6 +3,7 @@ package moonView
 import (
 	"fmt"
 	"net/http"
+	"time"
 )
 
 func svsMagicNumbers(y int) (int, int) {
@@ -50,10 +51,24 @@ func svsMagicNumbers(y int) (int, int) {
 	nn00 := nn * 100
 	return nn00, nnnn
 }
+func wholeHoursSinceJanuary1(t time.Time) int {
+	jan1 := time.Date(t.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
+	tdiff := t.Sub(jan1)
+	return int(tdiff.Hours())
+}
+func getImgUrl(t time.Time) string {
+	nn00, nnnn := svsMagicNumbers(t.Year())
+	//example := "https://svs.gsfc.nasa.gov/vis/a000000/a005000/a005048/frames/730x730_1x1_30p/moon.8456.jpg"
+	frames := fmt.Sprintf("https://svs.gsfc.nasa.gov/vis/a000000/a00%d/a00%d/frames/", nn00, nnnn)
+	h := wholeHoursSinceJanuary1(t)
+	hhhh := fmt.Sprintf("%04d", h)
+	return fmt.Sprintf("%s730x730_1x1_30p/moon.%s.jpg", frames, hhhh)
+}
 func EventHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, part1)
 	fmt.Fprint(w, part2)
-	imgURL := "https://svs.gsfc.nasa.gov/vis/a000000/a005000/a005048/frames/730x730_1x1_30p/moon.8456.jpg"
+	t := time.Date(2023, time.December, 22, 20, 0, 0, 0, time.UTC)
+	imgURL := getImgUrl(t)
 	println(imgURL)
 	fmt.Fprintf(w, part3, imgURL)
 	fmt.Fprint(w, part4)
