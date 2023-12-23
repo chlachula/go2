@@ -70,6 +70,6 @@ func EventHandler(w http.ResponseWriter, r *http.Request) {
 	t := time.Date(2023, time.December, 22, 20, 0, 0, 0, time.UTC)
 	imgURL := getImgUrl(t)
 	println(imgURL)
-	fmt.Fprintf(w, part3, imgURL)
+	fmt.Fprintf(w, part3, imgURL, imgURL)
 	fmt.Fprint(w, part4)
 }
