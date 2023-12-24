@@ -64,12 +64,29 @@ func getImgUrl(t time.Time) string {
 	hhhh := fmt.Sprintf("%04d", h)
 	return fmt.Sprintf("%s730x730_1x1_30p/moon.%s.jpg", frames, hhhh)
 }
+func getTime(r *http.Request) time.Time {
+	timeForm := "2006-01-02T15 MST"
+	dateStr := r.URL.Query().Get("date")
+	hourStr := r.URL.Query().Get("utc_hour")
+	if len(hourStr) < 2 {
+		hourStr = "0" + hourStr
+	}
+	timeStr := dateStr + "T" + hourStr + " UTC"
+	t, err := time.Parse(timeForm, timeStr)
+	if err != nil {
+		t = time.Now()
+	}
+	return t
+}
 func EventHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, part1)
 	fmt.Fprint(w, part2)
-	t := time.Date(2023, time.December, 22, 20, 0, 0, 0, time.UTC)
+	// ?date=2023-12-25&utc_hour=4&grid=on&showinfo=on
+	getParams := fmt.Sprintf("GET params were: %s", r.URL.Query())
+	//t := time.Date(2023, time.December, 22, 20, 0, 0, 0, time.UTC)
+	t := getTime(r)
 	imgURL := getImgUrl(t)
 	println(imgURL)
-	fmt.Fprintf(w, part3, imgURL, imgURL)
+	fmt.Fprintf(w, part3, getParams, imgURL, imgURL)
 	fmt.Fprint(w, part4)
 }
