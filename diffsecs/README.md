@@ -1,6 +1,6 @@
 Program **diffsecs** computes date difference including leap seconds.
 
-	Usage:
+	**Usage:**
 
 	go2 -h
 
@@ -10,7 +10,7 @@ Program **diffsecs** computes date difference including leap seconds.
 
 	go2 -d yyyy.mm.dd1-HH"MM"SS.sssssssss yyyy.mm.dd2-HH"MM"SS.sssssssss
 
-	Examples:
+	**Examples:**
 
 	go2 -d 2016.12.31 2017.1.1
 
