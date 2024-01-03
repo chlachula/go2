@@ -78,6 +78,20 @@ func getTime(r *http.Request) time.Time {
 	}
 	return t
 }
+
+/*
+Julian 5 October 1582 = Gregorian 15 October 1582 = JDN 2299161
+JDN at 12:00 UT YYYY-MM-DD
+*/
+func gregorianNoonToJulianDayNumber(Y int, M int, D int) int {
+	JDN := (1461*(Y+4800+(M-14)/12))/4 + (367*(M-2-12*((M-14)/12)))/12 - (3*((Y+4900+(M-14)/12)/100))/4 + D - 32075
+	return JDN
+}
+func julianNoonToJulianDayNumber(Y int, M int, D int) int {
+	//DN = 367 × Y − (7 × (Y + 5001 + (M − 9)/7))/4 + (275 × M)/9 + D + 1729777
+	JDN := 367*Y - (7*(Y+5001+(M-9)/7))/4 + (275*M)/9 + D + 1729777
+	return JDN
+}
 func EventHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, part1)
 	fmt.Fprint(w, part2)
@@ -87,6 +101,7 @@ func EventHandler(w http.ResponseWriter, r *http.Request) {
 	t := getTime(r)
 	imgURL := getImgUrl(t)
 	println(imgURL)
+	// 2023-12-18 03:00 UTC, JD:2460296.625, 8428 hours since 2023-1-1
 	fmt.Fprintf(w, part3, getParams, imgURL, imgURL)
 	fmt.Fprint(w, part4)
 }
