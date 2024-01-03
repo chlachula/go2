@@ -1,24 +1,28 @@
 package moonView
 
-import "testing"
+import (
+	"math"
+	"testing"
+	"time"
+)
 
 /*
-   "2011" => "a003800/a003810",
-   "2012" => "a003800/a003894",
-   "2013" => "a004000/a004000",
-   "2014" => "a004100/a004118",
-   "2015" => "a004200/a004236",
-   "2016" => "a004400/a004404",
-   "2017" => "a004500/a004537",
-   "2018" => "a004600/a004604",
-   "2019" => "a004400/a004442",
-   "2020" => "a004700/a004768",
-   "2021" => "a004800/a004874",
-   "2022" => "a004900/a004955",
-   "2023" => "a005000/a005048"
-   "2024" => "a005100/a005187"
+"2011" => "a003800/a003810",
+"2012" => "a003800/a003894",
+"2013" => "a004000/a004000",
+"2014" => "a004100/a004118",
+"2015" => "a004200/a004236",
+"2016" => "a004400/a004404",
+"2017" => "a004500/a004537",
+"2018" => "a004600/a004604",
+"2019" => "a004400/a004442",
+"2020" => "a004700/a004768",
+"2021" => "a004800/a004874",
+"2022" => "a004900/a004955",
+"2023" => "a005000/a005048"
+"2024" => "a005100/a005187"
 
-   https://svs.gsfc.nasa.gov/vis/a000000/a005100/a005187/frames/730x730_1x1_30p/moon.0001.jpg
+https://svs.gsfc.nasa.gov/vis/a000000/a005100/a005187/frames/730x730_1x1_30p/moon.0001.jpg
 */
 func TestSvsMagicNumbers(t *testing.T) {
 	year := 2011
@@ -134,4 +138,22 @@ func TestFirstGregorianDayWithJulian(t *testing.T) {
 	if julJdn != gotJdn {
 		t.Errorf("JDN for greg %d-%02d-%02d is not equal for jul  %d-%02d-%02d", y, m, d, y, m, d5)
 	}
+}
+func jTest(t *testing.T, d time.Time, wantJ float64) {
+	j := timeToJulianDay(d)
+	diffJ := j - wantJ
+	if math.Abs(diffJ) > 0.0001 {
+		t.Errorf("unexpected diff=%.7f j=%.4f want: j=%.4f %s = %s\n", diffJ, j, wantJ, d, d.UTC())
+	}
+}
+func TestTimeToJulianDay(t *testing.T) {
+	loc, _ := time.LoadLocation("America/Chicago")
+	d := time.Date(2023, 12, 31, 20, 0, 0, 0, loc)
+	jTest(t, d, 2460310.583333)
+	d = time.Date(2024, 1, 1, 6, 0, 0, 0, loc)
+	jTest(t, d, 2460311.0)
+	d = time.Date(2024, 1, 1, 17, 59, 59, 999999999, loc)
+	jTest(t, d, 2460311.5)
+	d = time.Date(2024, 1, 2, 5, 59, 59, 999999999, loc)
+	jTest(t, d, 2460312.0)
 }

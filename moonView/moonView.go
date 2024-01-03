@@ -92,6 +92,17 @@ func julianNoonToJulianDayNumber(Y int, M int, D int) int {
 	JDN := 367*Y - (7*(Y+5001+(M-9)/7))/4 + (275*M)/9 + D + 1729777
 	return JDN
 }
+func timeToJulianDay(t time.Time) float64 {
+	t1 := t.UTC()
+	t2 := t1.Add(-12 * time.Hour)
+	y := t2.Year()
+	m := int(t2.Month())
+	d := t2.Day()
+	jdn := gregorianNoonToJulianDayNumber(y, m, d)
+	sec := t2.Hour()*3600 + t2.Minute()*60 + t2.Second()
+	frac := (float64(sec) + float64(t2.Nanosecond())/1000000000.0) / 86400.0
+	return float64(jdn) + frac
+}
 func EventHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, part1)
 	fmt.Fprint(w, part2)
