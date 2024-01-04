@@ -14,7 +14,8 @@ func help(msg string) {
 	}
 	helptext := `APOD titles
 	-h this help
-	-l load APOD archive with titles to local json file
+	-c create APOD archive with titles to local json file
+	-l load local json APOD archive 
 	-t yymmdd seach title for give date
 	`
 	fmt.Println(helptext)
@@ -32,6 +33,8 @@ func main() {
 	switch a1 := os.Args[1][:2]; a1 {
 	case "-h":
 		help("")
+	case "-c":
+		a.Create()
 	case "-l":
 		a.LoadAPODarchive()
 	case "-t":
