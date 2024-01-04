@@ -14,6 +14,7 @@ func help(msg string) {
 	}
 	helptext := `APOD titles
 	-h this help
+	-d URL #check downloaded page size
 	-c create APOD archive with titles to local json file
 	-l load local json APOD archive 
 	-t yymmdd seach title for give date
@@ -31,10 +32,18 @@ func main() {
 	}
 
 	switch a1 := os.Args[1][:2]; a1 {
+	case "-d":
+		if len(os.Args) < 3 {
+			help("Missing -d URL argument")
+			os.Exit(1)
+		}
+		if _, err := a.Download(os.Args[2]); err != nil {
+			fmt.Println("Error:", err.Error())
+		}
 	case "-h":
 		help("")
 	case "-c":
-		a.Create()
+		a.Create(true)
 	case "-l":
 		a.LoadAPODarchive()
 	case "-t":
