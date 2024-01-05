@@ -7,6 +7,28 @@ import (
 	"time"
 )
 
+type (
+	EquatorialCoordinates struct {
+		RA  float32 `json:"ra"`
+		Dec float32 `json:"dec"`
+	}
+	GeographicCoordinates struct {
+		Lon float32 `json:"lon"`
+		Lat float32 `json:"lat"`
+	}
+	TypeMoonInfo struct {
+		Time     string                `json:"time"`
+		Phase    float32               `json:"phase"`
+		Age      float32               `json:"age"`
+		Diameter float32               `json:"diameter"`
+		Distance float32               `json:"distance"`
+		J2000    EquatorialCoordinates `json:"j2000"`
+		SubSolar GeographicCoordinates `json:"subsolar"`
+		SubEarth GeographicCoordinates `json:"subearth"`
+		Posangle float32               `json:"posangle"`
+	}
+)
+
 /*
 	{
 	 "time":"01 Jan 2024 00:00 UT", "phase":78.03, "age":19.019, "diameter":1771.3, "distance":404634,
