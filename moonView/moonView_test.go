@@ -1,6 +1,7 @@
 package moonView
 
 import (
+	"encoding/json"
 	"math"
 	"testing"
 	"time"
@@ -156,4 +157,47 @@ func TestTimeToJulianDay(t *testing.T) {
 	jTest(t, d, 2460311.5)
 	d = time.Date(2024, 1, 2, 5, 59, 59, 999999999, loc)
 	jTest(t, d, 2460312.0)
+}
+func TestWholeHoursSinceJanuary1(t *testing.T) {
+	timeLayout := "2006-01-02 15:04 MST"
+	want := 1
+	jan1, _ := time.Parse(timeLayout, "2024-01-01 00:00 UTC")
+	got := wholeHoursSinceJanuary1(jan1)
+	if want != got {
+		t.Errorf("unexpected hour after New Year 00:00..00:59 want:%d, got:%d\n", want, got)
+	}
+	jan1, _ = time.Parse(timeLayout, "2024-01-01 00:59 UTC")
+	got = wholeHoursSinceJanuary1(jan1)
+	if want != got {
+		t.Errorf("unexpected hour after New Year 00:00..00:59 want:%d, got:%d\n", want, got)
+	}
+	want = 2
+	jan1, _ = time.Parse(timeLayout, "2024-01-01 01:00 UTC")
+	got = wholeHoursSinceJanuary1(jan1)
+	if want != got {
+		t.Errorf("unexpected hour after New Year 00:00..00:59 want:%d, got:%d\n", want, got)
+	}
+}
+func TestMoonInfos(t *testing.T) {
+	jsonData := ` [
+        {
+		"time":"01 Jan 2024 00:00 UT", "phase":78.03, "age":19.019, "diameter":1771.3, "distance":404634,
+		"j2000":{"ra":10.5867, "dec":12.7508},
+		"subsolar":{"lon":-55.867, "lat":-1.554},
+		"subearth":{"lon":0.041, "lat":-4.685},
+		"posangle":20.699}
+	   ]
+	   `
+	var arr TypeMoonInfos
+	err := json.Unmarshal([]byte(jsonData), &arr)
+	want := 1
+	got := len(arr)
+	if want != got {
+		t.Errorf("unexpected length TestMoonInfos - want:%d, got:%d\n%s\n", want, got, err.Error())
+	}
+	wantF := float32(20.699)
+	gotF := arr[0].Posangle
+	if wantF != gotF {
+		t.Errorf("unexpected TestMoonInfo.Posangle - want:%.4f, got:%.4f\n", wantF, gotF)
+	}
 }
