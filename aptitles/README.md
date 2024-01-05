@@ -16,6 +16,7 @@ Program **aptitles** displays APOD title for choosen date in format YYMMDD.
 
 Irregularities found by -g option on 2024-01-03:
 No closing </a> at https://apod.nasa.gov/apod/archivepixFull.html :
+
 September 20 1996:  <a href="ap960920.html">Hurricane Fran's Approach
 
 2007 July 16:  <a href="ap070716.html">The Lagoon Nebula in Gas, Dust,
