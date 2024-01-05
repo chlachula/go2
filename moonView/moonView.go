@@ -7,6 +7,15 @@ import (
 	"time"
 )
 
+/*
+	{
+	 "time":"01 Jan 2024 00:00 UT", "phase":78.03, "age":19.019, "diameter":1771.3, "distance":404634,
+	 "j2000":{"ra":10.5867, "dec":12.7508},
+	 "subsolar":{"lon":-55.867, "lat":-1.554},
+	 "subearth":{"lon":0.041, "lat":-4.685},
+	 "posangle":20.699
+	},
+*/
 func svsMagicNumbers(y int) (int, int) {
 	/*
 	   "2011" => "a003800/a003810",
@@ -57,10 +66,12 @@ func wholeHoursSinceJanuary1(t time.Time) int {
 	tdiff := t.Sub(jan1)
 	return int(tdiff.Hours())
 }
-func getImgUrl(t time.Time) string {
+func svsFrames(t time.Time) string {
 	nn00, nnnn := svsMagicNumbers(t.Year())
-	//example := "https://svs.gsfc.nasa.gov/vis/a000000/a005000/a005048/frames/730x730_1x1_30p/moon.8456.jpg"
-	frames := fmt.Sprintf("https://svs.gsfc.nasa.gov/vis/a000000/a00%d/a00%d/frames/", nn00, nnnn)
+	return fmt.Sprintf("https://svs.gsfc.nasa.gov/vis/a000000/a00%d/a00%d/frames/", nn00, nnnn)
+}
+func getImgUrl(t time.Time) string {
+	frames := svsFrames(t)
 	h := wholeHoursSinceJanuary1(t)
 	hhhh := fmt.Sprintf("%04d", h)
 	return fmt.Sprintf("%s730x730_1x1_30p/moon.%s.jpg", frames, hhhh)
@@ -116,16 +127,12 @@ func timeInfo(t time.Time) string {
 func EventHandler(w http.ResponseWriter, r *http.Request) {
 	// ?date=2023-12-25&utc_hour=4&grid=on&showinfo=on
 	getParams := fmt.Sprintf("GET params were: %s", r.URL.Query())
-	//t := time.Date(2023, time.December, 22, 20, 0, 0, 0, time.UTC)
 	t := getTime(r)
-	imgURL := getImgUrl(t)
-	timeInf := timeInfo(t)
-	template1 := part1 + part2 + fmt.Sprintf(part3, getParams, timeInf, imgURL, 300, imgURL)
-	template1 += part_moon_hour_resources + part4
+	dHHHHd := fmt.Sprintf(".%04d.", wholeHoursSinceJanuary1(t))
+	template1 := part1 + part2 + part3 + part_moon_hour_resources + part4
 
-	type TypeData = struct{ YYYY, SVSframes, Hours string }
-	data := TypeData{"2024", "https://svs.gsfc.nasa.gov/vis/a000000/a005100/a005187/frames/", ".0001."}
-	//tpl := strings.ReplaceAll(tpl1, "\n", " ") + makeEventTable(iEv, EventsData) + tpl3
+	type TypeData = struct{ YYYY, SVSframes, Hours, TimeInfo, Radius, GetParams string }
+	data := TypeData{t.Format("2006"), svsFrames(t), dHHHHd, timeInfo(t), "330", getParams}
 
 	webpage := "webpage1"
 	if html1, err := template.New(webpage).Parse(template1); err != nil {

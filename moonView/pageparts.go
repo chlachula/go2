@@ -107,26 +107,26 @@ var part2 = `
 <div class="center">
 `
 var part3 = `
-%s <br/>
-v0.1 Moon at %s
+{{.GetParams}} <br/>
+v0.1 Moon at {{.TimeInfo}}
     <br/>
     <svg width="730" height="730" class="image" >
         <defs>
             <pattern id="img1" patternUnits="userSpaceOnUse" width="730" height="730">
-			    <image xlink:href="%s"
+			    <image xlink:href="{{.SVSframes}}730x730_1x1_30p/moon{{.Hours}}jpg"
                        x="0" y="0" width="730" height="730"/>
             </pattern>
             <!--?php moon_draw(); ?-->
         </defs>
         <rect x="0" y="0" width="730" height="730" fill="url(#img1)"/>
-        <circle cx="365" cy="365" r="%d" stroke="yellow" stroke-width="1" stroke-dasharray="2 10"
+        <circle cx="365" cy="365" r="{{.Radius}}" stroke="yellow" stroke-width="1" stroke-dasharray="2 10"
                 fill="none"/>
         <!--use xlink:href="#moon_drawing" x="365" y="365"/-->
             <?php moon_draw(); ?>
     </svg>
     <div class="tooltip"></div>
     <br/>
-    Source: <a href="%s">moon image</a>
+    Source: <a href="{{.SVSframes}}730x730_1x1_30p/moon{{.Hours}}jpg"  target="_blank" >moon image</a>
     Credit: NASA Scientific Visualization Studio - <a href="https://svs.gsfc.nasa.gov/Gallery/moonphase.html">Moon Phase and Libration</a> Gallery
     <br/>
 
