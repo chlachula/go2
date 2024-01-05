@@ -7,7 +7,9 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"sort"
 	"strings"
+	"time"
 )
 
 type ApodArchiveTitle struct {
@@ -129,6 +131,50 @@ func LoadAPODarchive() error {
 	}
 	fmt.Printf("Total %d APOD titles loaded\n", len(mapYMDtitles))
 	return nil
+}
+
+func Gaps() {
+	if err := LoadAPODarchive(); err != nil {
+		fmt.Printf("archive not ready. %s", err.Error())
+		return
+	}
+	//keys := reflect.ValueOf(mapYMDtitles).MapKeys() #good alternative method
+	keys := make([]string, len(mapYMDtitles))
+	/*	i := 0
+		for k := range mapYMDtitles {
+			keys[i] = k
+			i++
+		}
+	*/
+	i := 0
+	for yymmdd := range mapYMDtitles {
+		yyyymmdd := "20" + yymmdd
+		if strings.HasPrefix(yymmdd, "9") {
+			yyyymmdd = "19" + yymmdd
+		}
+		keys[i] = yyyymmdd
+		i++
+	}
+	sort.Strings(keys)
+	tPrev := time.Now()
+	s := ""
+	for _, yyyymmdd := range keys {
+		/*
+			yyyymmdd := "20" + yymmdd
+			if strings.HasPrefix(yymmdd, "9") {
+				yyyymmdd = "19" + yymmdd
+			}
+		*/
+		if t, err := time.Parse("20060102", yyyymmdd); err != nil {
+			fmt.Printf("%s %s ", yyyymmdd, err.Error())
+		} else {
+			if t.Sub(tPrev) != time.Duration(time.Hour*24) {
+				s += yyyymmdd + " "
+			}
+			tPrev = t
+		}
+	}
+	fmt.Println("gap dates:", s)
 }
 
 func SearchTitle(yymmdd string) (string, error) {

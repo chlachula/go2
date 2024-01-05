@@ -15,6 +15,7 @@ func help(msg string) {
 	helptext := `APOD titles
 	-h this help
 	-d URL #check downloaded page size
+	-g gaps between dates in APOD archive
 	-c create APOD archive with titles to local json file
 	-l load local json APOD archive 
 	-t yymmdd seach title for give date
@@ -44,6 +45,8 @@ func main() {
 		help("")
 	case "-c":
 		a.Create(true)
+	case "-g":
+		a.Gaps()
 	case "-l":
 		a.LoadAPODarchive()
 	case "-t":
