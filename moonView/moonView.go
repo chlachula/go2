@@ -187,6 +187,11 @@ func EventHandler(w http.ResponseWriter, r *http.Request) {
 	mi := getMoonInfo(t)
 	radius := 352.0 / 2009.0 * mi.Diameter
 	dHHHHd := fmt.Sprintf(".%04d.", wholeHoursSinceJanuary1(t))
+	_, svsMagic1 := svsMagicNumbers(t.Year())
+	p36 := 3 // 60p or 30p
+	if t.Year() <= 2012 {
+		p36 = 6
+	}
 	template1 := part1 + part2 + part3 + part_moon_hour_resources + part4
 	/* 		 "time":"01 Jan 2024 00:00 UT", "phase":78.03, "age":19.019, "diameter":1771.3, "distance":404634,
 	   		 "j2000":{"ra":10.5867, "dec":12.7508},
@@ -198,7 +203,7 @@ func EventHandler(w http.ResponseWriter, r *http.Request) {
 	type TypeData = struct {
 		YYYY, SVSframes, Hours, TimeInfo, GetParams, Time, CurrentDate                    string
 		Radius, Phase, Age, Diameter, Distance, RA, Dec, Slon, Slat, Elon, Elat, Posangle float32
-		MaxYear, UTChour                                                                  int
+		SVSmagic1, MaxYear, UTChour, P36                                                  int
 	}
 	data := TypeData{t.Format("2006"), svsFrames(t), dHHHHd, timeInfo(t), getParams, mi.Time,
 		t.Format("2006-01-02"),
@@ -207,7 +212,7 @@ func EventHandler(w http.ResponseWriter, r *http.Request) {
 		mi.J2000.RA, mi.J2000.Dec,
 		mi.SubSolar.Lon, mi.SubSolar.Lat, mi.SubEarth.Lon, mi.SubEarth.Lat,
 		mi.Posangle,
-		2010 + len(svsMagic), t.UTC().Hour()}
+		svsMagic1, 2010 + len(svsMagic), t.UTC().Hour(), p36}
 
 	webpage := "webpage1"
 	if html1, err := template.New(webpage).Parse(template1); err != nil {

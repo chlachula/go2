@@ -113,7 +113,7 @@ v0.1 Moon at {{.TimeInfo}}
     <svg width="730" height="730" class="image" >
         <defs>
             <pattern id="img1" patternUnits="userSpaceOnUse" width="730" height="730">
-			    <image xlink:href="{{.SVSframes}}730x730_1x1_30p/moon{{.Hours}}jpg"
+			    <image xlink:href="{{.SVSframes}}730x730_1x1_{{.P36}}0p/moon{{.Hours}}jpg"
                        x="0" y="0" width="730" height="730"/>
             </pattern>
             <!--?php moon_draw(); ?-->
@@ -126,18 +126,20 @@ v0.1 Moon at {{.TimeInfo}}
     </svg>
     <div class="tooltip"></div>
     <br/>
-    Source: <a href="{{.SVSframes}}730x730_1x1_30p/moon{{.Hours}}jpg"  target="_blank" >moon image</a>
-    Credit: NASA Scientific Visualization Studio - <a href="https://svs.gsfc.nasa.gov/Gallery/moonphase.html">Moon Phase and Libration</a> Gallery
+    Source: <a href="{{.SVSframes}}730x730_1x1_{{.P36}}0p/moon{{.Hours}}jpg"  target="_blank" >moon image</a>
+    Credit: NASA 
+    <a href="https://svs.gsfc.nasa.gov/{{.SVSmagic1}}" target="_blank">Scientific Visualization Studio</a>
+     - <a href="https://svs.gsfc.nasa.gov/Gallery/moonphase.html" target="_blank">Moon Phase and Libration</a> Gallery
     <br/>
 
     <!--form action="/moon"-->
     <form action="./">
-        <label for="birthday">UTC date:</label>
+        <label>UTC date:</label>
         <input type="button" onclick="yesterday()" value="&lt;">
         <input type="date" id="date" name="date" min="2011-01-01" max="{{.MaxYear}}-12-31"
                value="{{.CurrentDate}}">
         <input type="button" onclick="tomorrow()" value="&gt;">
-        <label for="birthday">UTC hour:</label>
+        <label>UTC hour:</label>
         <input type="number" id="utc_hour" name="utc_hour" min="0" max="23" size="2" value="{{.UTChour}}">
         grid: <input type="checkbox" name="grid" id="grid" >
         <input type="submit" value="Submit">
@@ -148,41 +150,41 @@ var part_moon_hour_resources = `
 <div id="moon_hour_resources">
 	Year {{.YYYY}} images folder:
 	<a href="{{.SVSframes}}"  target="_blank" >{{.SVSframes}}</a> <br/>
-	<a href="{{.SVSframes}}1080x1080_1x1_30p/orbit{{.Hours}}tif"  target="_blank" >1080</a>,
+	<a href="{{.SVSframes}}1080x1080_1x1_{{.P36}}0p/orbit{{.Hours}}tif"  target="_blank" >1080</a>,
 	1920x1080:
-	<a href="{{.SVSframes}}1920x1080_16x9_30p/distance/dist{{.Hours}}tif"  target="_blank" >d</a>
+	<a href="{{.SVSframes}}1920x1080_16x9_{{.P36}}0p/distance/dist{{.Hours}}tif"  target="_blank" >d</a>
 	-
-	<a href="{{.SVSframes}}1920x1080_16x9_30p/fancy/comp{{.Hours}}tif"  target="_blank" >comp</a>
+	<a href="{{.SVSframes}}1920x1080_16x9_{{.P36}}0p/fancy/comp{{.Hours}}tif"  target="_blank" >comp</a>
 	-
-	<a href="{{.SVSframes}}1920x1080_16x9_30p/labels/label{{.Hours}}png"  target="_blank" >l</a>
+	<a href="{{.SVSframes}}1920x1080_16x9_{{.P36}}0p/labels/label{{.Hours}}png"  target="_blank" >l</a>
 	-
-	<a href="{{.SVSframes}}1920x1080_16x9_30p/plain/moon{{.Hours}}tif"  target="_blank" >m</a>,
+	<a href="{{.SVSframes}}1920x1080_16x9_{{.P36}}0p/plain/moon{{.Hours}}tif"  target="_blank" >m</a>,
 	hw abc,
-	<a href="{{.SVSframes}}216x216_1x1_30p/moon{{.Hours}}jpg"  target="_blank" >216</a>,
-	<a href="{{.SVSframes}}320x320_1x1_30p/globe{{.Hours}}tif"  target="_blank" >320</a>,
+	<a href="{{.SVSframes}}216x216_1x1_{{.P36}}0p/moon{{.Hours}}jpg"  target="_blank" >216</a>,
+	<a href="{{.SVSframes}}320x320_1x1_{{.P36}}0p/globe{{.Hours}}tif"  target="_blank" >320</a>,
 	3840x2160:
-	<a href="{{.SVSframes}}3840x2160_16x9_30p/distance/dist{{.Hours}}tif"  target="_blank" >d</a>
+	<a href="{{.SVSframes}}3840x2160_16x9_{{.P36}}0p/distance/dist{{.Hours}}tif"  target="_blank" >d</a>
 	-
-	<a href="{{.SVSframes}}3840x2160_16x9_30p/fancy/comp{{.Hours}}tif"  target="_blank" >comp</a>
+	<a href="{{.SVSframes}}3840x2160_16x9_{{.P36}}0p/fancy/comp{{.Hours}}tif"  target="_blank" >comp</a>
 	-
-	<a href="{{.SVSframes}}3840x2160_16x9_30p/labels/label{{.Hours}}tif"  target="_blank" >l</a>
+	<a href="{{.SVSframes}}3840x2160_16x9_{{.P36}}0p/labels/label{{.Hours}}tif"  target="_blank" >l</a>
 	-
-	<a href="{{.SVSframes}}3840x2160_16x9_30p/plain/moon{{.Hours}}tif"  target="_blank" >m</a>,
-	<a href="{{.SVSframes}}420x420_1x1_30p/orbit{{.Hours}}tif"  target="_blank" >420</a>,
+	<a href="{{.SVSframes}}3840x2160_16x9_{{.P36}}0p/plain/moon{{.Hours}}tif"  target="_blank" >m</a>,
+	<a href="{{.SVSframes}}420x420_1x1_{{.P36}}0p/orbit{{.Hours}}tif"  target="_blank" >420</a>,
 	5760x3240:
-	<a href="{{.SVSframes}}5760x3240_16x9_30p/distance/dist{{.Hours}}tif"  target="_blank" >d</a>
+	<a href="{{.SVSframes}}5760x3240_16x9_{{.P36}}0p/distance/dist{{.Hours}}tif"  target="_blank" >d</a>
 	-
-	<a href="{{.SVSframes}}5760x3240_16x9_30p/exr/moon{{.Hours}}exr"  target="_blank" >e</a>
+	<a href="{{.SVSframes}}5760x3240_16x9_{{.P36}}0p/exr/moon{{.Hours}}exr"  target="_blank" >e</a>
 	-
-	<a href="{{.SVSframes}}5760x3240_16x9_30p/fancy/comp{{.Hours}}tif"  target="_blank" ><b>comp</b></a>
+	<a href="{{.SVSframes}}5760x3240_16x9_{{.P36}}0p/fancy/comp{{.Hours}}tif"  target="_blank" ><b>comp</b></a>
 	-
-	<a href="{{.SVSframes}}5760x3240_16x9_30p/labels/label{{.Hours}}png"  target="_blank" >l</a>
+	<a href="{{.SVSframes}}5760x3240_16x9_{{.P36}}0p/labels/label{{.Hours}}png"  target="_blank" >l</a>
 	-
-	<a href="{{.SVSframes}}5760x3240_16x9_30p/plain/moon{{.Hours}}tif"  target="_blank" >m</a>,
-	<a href="{{.SVSframes}}640x640_1x1_30p/globe{{.Hours}}tif"  target="_blank" >640</a>,
-	<a href="{{.SVSframes}}730x730_1x1_30p/moon{{.Hours}}jpg"  target="_blank" >730</a>,
-	<a href="{{.SVSframes}}850x850_1x1_30p/orbit{{.Hours}}tif"  target="_blank" >850</a>,
-	<a href="{{.SVSframes}}960x960_1x1_30p/globe{{.Hours}}tif"  target="_blank" >960</a>,
+	<a href="{{.SVSframes}}5760x3240_16x9_{{.P36}}0p/plain/moon{{.Hours}}tif"  target="_blank" >m</a>,
+	<a href="{{.SVSframes}}640x640_1x1_{{.P36}}0p/globe{{.Hours}}tif"  target="_blank" >640</a>,
+	<a href="{{.SVSframes}}730x730_1x1_{{.P36}}0p/moon{{.Hours}}jpg"  target="_blank" >730</a>,
+	<a href="{{.SVSframes}}850x850_1x1_{{.P36}}0p/orbit{{.Hours}}tif"  target="_blank" >850</a>,
+	<a href="{{.SVSframes}}960x960_1x1_{{.P36}}0p/globe{{.Hours}}tif"  target="_blank" >960</a>,
 	mooninfo:
 	<a href="{{.SVSframes}}../mooninfo_2024.txt"   target="_blank" >txt</a>,
 	<a href="{{.SVSframes}}../mooninfo_2024.json"  target="_blank" >json</a><br/>
