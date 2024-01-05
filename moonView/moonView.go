@@ -1,7 +1,9 @@
 package moonView
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"text/template"
 	"time"
@@ -140,16 +142,56 @@ func timeInfo(t time.Time) string {
 	h1 := wholeHoursSinceJanuary1(t)
 	return fmt.Sprintf("%s, %s, JD:%.4f, %d hours since %d-1-1", t1, t1UTC, j1, h1, t.Year())
 }
+func Download(urlString string) ([]byte, error) {
+	bytes := make([]byte, 0)
 
+	client := http.Client{
+		CheckRedirect: func(r *http.Request, via []*http.Request) error {
+			r.URL.Opaque = r.URL.Path
+			return nil
+		},
+	}
+	if resp, err := client.Get(urlString); err != nil {
+		return bytes, err
+	} else {
+		defer resp.Body.Close()
+		if bytes, err = io.ReadAll(resp.Body); err != nil {
+			return bytes, err
+		}
+	}
+	fmt.Printf("Downloaded %d bytes from %s\n", len(bytes), urlString)
+	return bytes, nil
+}
+func updateGlobalMoonInfo(t time.Time) {
+	url := svsFrames(t) + t.Format("../mooninfo_2006.json")
+	if jsonBytes, err := Download(url); err != nil {
+		moonInfos = TypeMoonInfos{}
+	} else {
+		json.Unmarshal(jsonBytes, &moonInfos)
+	}
+}
+func getMoonInfo(t time.Time) TypeMoonInfo {
+	updateGlobalMoonInfo(t)
+	h := wholeHoursSinceJanuary1(t) - 1
+	if h >= 0 && h < len(moonInfos) {
+		return moonInfos[h]
+	}
+	return TypeMoonInfo{}
+}
 func EventHandler(w http.ResponseWriter, r *http.Request) {
 	// ?date=2023-12-25&utc_hour=4&grid=on&showinfo=on
 	getParams := fmt.Sprintf("GET params were: %s", r.URL.Query())
 	t := getTime(r)
+	mi := getMoonInfo(t)
+	radius := 352.0 / 2009.0 * mi.Diameter
 	dHHHHd := fmt.Sprintf(".%04d.", wholeHoursSinceJanuary1(t))
 	template1 := part1 + part2 + part3 + part_moon_hour_resources + part4
 
-	type TypeData = struct{ YYYY, SVSframes, Hours, TimeInfo, Radius, GetParams string }
-	data := TypeData{t.Format("2006"), svsFrames(t), dHHHHd, timeInfo(t), "330", getParams}
+	type TypeData = struct {
+		YYYY, SVSframes, Hours, TimeInfo, GetParams string
+		Radius                                      float32
+	}
+	data := TypeData{t.Format("2006"), svsFrames(t), dHHHHd, timeInfo(t), getParams, radius}
 
 	webpage := "webpage1"
 	if html1, err := template.New(webpage).Parse(template1); err != nil {
