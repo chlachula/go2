@@ -51,23 +51,25 @@ var moonInfos TypeMoonInfos
 
 ]
 */
+
+var svsMagic = []int{
+	3810, //2011 => "a003800/a003810",
+	3894, //2012 => "a003800/a003894",
+	4000, //2013 => "a004000/a004000",
+	4118, //2014 => "a004100/a004118",
+	4236, //2015 => "a004200/a004236",
+	4404, //2016 => "a004400/a004404",
+	4537, //2017 => "a004500/a004537",
+	4604, //2018 => "a004600/a004604",
+	4442, //2019 => "a004400/a004442",
+	4768, //2020 => "a004700/a004768",
+	4874, //2021 => "a004800/a004874",
+	4955, //2022 => "a004900/a004955",
+	5048, //2023 => "a005000/a005048",
+	5187, //2024 => "a005100/a005187",
+}
+
 func svsMagicNumbers(y int) (int, int) {
-	svsMagic := []int{
-		3810, //2011 => "a003800/a003810",
-		3894, //2012 => "a003800/a003894",
-		4000, //2013 => "a004000/a004000",
-		4118, //2014 => "a004100/a004118",
-		4236, //2015 => "a004200/a004236",
-		4404, //2016 => "a004400/a004404",
-		4537, //2017 => "a004500/a004537",
-		4604, //2018 => "a004600/a004604",
-		4442, //2019 => "a004400/a004442",
-		4768, //2020 => "a004700/a004768",
-		4874, //2021 => "a004800/a004874",
-		4955, //2022 => "a004900/a004955",
-		5048, //2023 => "a005000/a005048",
-		5187, //2024 => "a005100/a005187",
-	}
 	y1 := 2011
 	i := len(svsMagic) - 1
 	y2 := y1 + i
@@ -186,12 +188,26 @@ func EventHandler(w http.ResponseWriter, r *http.Request) {
 	radius := 352.0 / 2009.0 * mi.Diameter
 	dHHHHd := fmt.Sprintf(".%04d.", wholeHoursSinceJanuary1(t))
 	template1 := part1 + part2 + part3 + part_moon_hour_resources + part4
+	/* 		 "time":"01 Jan 2024 00:00 UT", "phase":78.03, "age":19.019, "diameter":1771.3, "distance":404634,
+	   		 "j2000":{"ra":10.5867, "dec":12.7508},
+	   		 "subsolar":{"lon":-55.867, "lat":-1.554},
+	   		 "subearth":{"lon":0.041, "lat":-4.685},
+	   		 "posangle":20.699
 
+	*/
 	type TypeData = struct {
-		YYYY, SVSframes, Hours, TimeInfo, GetParams string
-		Radius                                      float32
+		YYYY, SVSframes, Hours, TimeInfo, GetParams, Time, CurrentDate                    string
+		Radius, Phase, Age, Diameter, Distance, RA, Dec, Slon, Slat, Elon, Elat, Posangle float32
+		MaxYear, UTChour                                                                  int
 	}
-	data := TypeData{t.Format("2006"), svsFrames(t), dHHHHd, timeInfo(t), getParams, radius}
+	data := TypeData{t.Format("2006"), svsFrames(t), dHHHHd, timeInfo(t), getParams, mi.Time,
+		t.Format("2006-01-02"),
+		radius,
+		mi.Phase, mi.Age, mi.Diameter, mi.Distance,
+		mi.J2000.RA, mi.J2000.Dec,
+		mi.SubSolar.Lon, mi.SubSolar.Lat, mi.SubEarth.Lon, mi.SubEarth.Lat,
+		mi.Posangle,
+		2010 + len(svsMagic), t.UTC().Hour()}
 
 	webpage := "webpage1"
 	if html1, err := template.New(webpage).Parse(template1); err != nil {

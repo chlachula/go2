@@ -134,11 +134,11 @@ v0.1 Moon at {{.TimeInfo}}
     <form action="./">
         <label for="birthday">UTC date:</label>
         <input type="button" onclick="yesterday()" value="&lt;">
-        <input type="date" id="date" name="date" min="2011-01-01" max="<?php echo $ynext ?>-12-31"
-               value="<?php echo $val_date ?>">
+        <input type="date" id="date" name="date" min="2011-01-01" max="{{.MaxYear}}-12-31"
+               value="{{.CurrentDate}}">
         <input type="button" onclick="tomorrow()" value="&gt;">
         <label for="birthday">UTC hour:</label>
-        <input type="number" id="utc_hour" name="utc_hour" min="0" max="23" size="2" value="<?php echo $val_hour ?>">
+        <input type="number" id="utc_hour" name="utc_hour" min="0" max="23" size="2" value="{{.UTChour}}">
         grid: <input type="checkbox" name="grid" id="grid" >
         <input type="submit" value="Submit">
         show info: <input type="checkbox" name="showinfo" id="showinfo"  onchange="toggleMoonHourResources()">
@@ -186,11 +186,11 @@ var part_moon_hour_resources = `
 	mooninfo:
 	<a href="{{.SVSframes}}../mooninfo_2024.txt"   target="_blank" >txt</a>,
 	<a href="{{.SVSframes}}../mooninfo_2024.json"  target="_blank" >json</a><br/>
-	{"time":"05 Jan 2024 01:00 UT","phase":41.54,"age":23.061,"diameter":1802.1,"distance":397712,<br/>
-	"j2000":{"ra":13.4569,"dec":-9.4602},<br/>
-	"subsolar":{"lon":-104.983,"lat":-1.542},<br/>
-	"subearth":{"lon":-5.246,"lat":0.339},<br/>
-	"posangle":20.109}<br/>
+	{"time":"{{.Time}}","phase":{{.Phase}},"age":{{.Age}},"diameter":{{.Diameter}},"distance":{{.Distance}},<br/>
+	"j2000":{"ra":{{.RA}},"dec":{{.Dec}}},<br/>
+	"subsolar":{"lon":{{.Slon}},"lat":{{.Slat}}},<br/>
+	"subearth":{"lon":{{.Elon}},"lat":{{.Elat}}},<br/>
+	"posangle":{{.Posangle}} }<br/>
 </div>
 
 `
