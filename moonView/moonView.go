@@ -3,6 +3,7 @@ package moonView
 import (
 	"fmt"
 	"net/http"
+	"text/template"
 	"time"
 )
 
@@ -103,16 +104,36 @@ func timeToJulianDay(t time.Time) float64 {
 	frac := (float64(sec) + float64(t2.Nanosecond())/1000000000.0) / 86400.0
 	return float64(jdn) + frac
 }
+func timeInfo(t time.Time) string {
+	// 2023-12-18 03:00 UTC, JD:2460296.625, 8428 hours since 2023-1-1
+	t1 := t.Format("2006-01-02 15:04 MST")
+	t1UTC := t.UTC().Format("15:04 MST")
+	j1 := timeToJulianDay(t)
+	h1 := wholeHoursSinceJanuary1(t)
+	return fmt.Sprintf("%s, %s, JD:%.4f, %d hours since %d-1-1", t1, t1UTC, j1, h1, t.Year())
+}
+
 func EventHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, part1)
-	fmt.Fprint(w, part2)
 	// ?date=2023-12-25&utc_hour=4&grid=on&showinfo=on
 	getParams := fmt.Sprintf("GET params were: %s", r.URL.Query())
 	//t := time.Date(2023, time.December, 22, 20, 0, 0, 0, time.UTC)
 	t := getTime(r)
 	imgURL := getImgUrl(t)
-	println(imgURL)
-	// 2023-12-18 03:00 UTC, JD:2460296.625, 8428 hours since 2023-1-1
-	fmt.Fprintf(w, part3, getParams, imgURL, imgURL)
-	fmt.Fprint(w, part4)
+	timeInf := timeInfo(t)
+	template1 := part1 + part2 + fmt.Sprintf(part3, getParams, timeInf, imgURL, 300, imgURL)
+	template1 += part_moon_hour_resources + part4
+
+	type TypeData = struct{ YYYY, SVSframes, Hours string }
+	data := TypeData{"2024", "https://svs.gsfc.nasa.gov/vis/a000000/a005100/a005187/frames/", ".0001."}
+	//tpl := strings.ReplaceAll(tpl1, "\n", " ") + makeEventTable(iEv, EventsData) + tpl3
+
+	webpage := "webpage1"
+	if html1, err := template.New(webpage).Parse(template1); err != nil {
+		fmt.Fprint(w, "Error parsing template "+webpage+": "+err.Error())
+	} else {
+		if err = html1.Execute(w, data); err != nil {
+			fmt.Fprint(w, "Error executing html "+webpage+": "+err.Error())
+		}
+	}
+
 }
