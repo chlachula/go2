@@ -15,7 +15,7 @@ Program **aptitles** displays APOD title for choosen date in format YYMMDD.
 	-t yymmdd seach title for give date
 
 Irregularities found by -g option on 2024-01-03:
-No closing </a> at https://apod.nasa.gov/apod/archivepixFull.html :
+No closing &lt;/a&gt; at https://apod.nasa.gov/apod/archivepixFull.html :
 
 September 20 1996:  <a href="ap960920.html">Hurricane Fran's Approach
 
