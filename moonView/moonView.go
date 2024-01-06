@@ -192,7 +192,7 @@ func EventHandler(w http.ResponseWriter, r *http.Request) {
 	if t.Year() <= 2012 {
 		p36 = 6
 	}
-	template1 := part1 + part2 + part3 + part_moon_hour_resources + part4
+
 	/* 		 "time":"01 Jan 2024 00:00 UT", "phase":78.03, "age":19.019, "diameter":1771.3, "distance":404634,
 	   		 "j2000":{"ra":10.5867, "dec":12.7508},
 	   		 "subsolar":{"lon":-55.867, "lat":-1.554},

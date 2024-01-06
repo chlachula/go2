@@ -1,9 +1,5 @@
 package moonView
 
-var part1 = `<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
-`
-
 /*
 [
 {"name":"Center", "lat":0.0,"lon":0.0},
@@ -34,7 +30,8 @@ var part1 = `<!DOCTYPE html>
 END;
 */
 
-var part2 = `
+var template1 = `<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <link rel="icon" type="image/x-icon" href="./favicon.ico">
@@ -105,8 +102,6 @@ var part2 = `
 </head>
 <body>
 <div class="center">
-`
-var part3 = `
 {{.GetParams}} <br/>
 v0.1 Moon at {{.TimeInfo}}
     <br/>
@@ -145,8 +140,7 @@ v0.1 Moon at {{.TimeInfo}}
         <input type="submit" value="Submit">
         show info: <input type="checkbox" name="showinfo" id="showinfo"  onchange="toggleMoonHourResources()">
     </form>
-`
-var part_moon_hour_resources = `
+
 <div id="moon_hour_resources">
 	Year {{.YYYY}} images folder:
 	<a href="{{.SVSframes}}"  target="_blank" >{{.SVSframes}}</a> <br/>
@@ -195,9 +189,6 @@ var part_moon_hour_resources = `
 	"posangle":{{.Posangle}} }<br/>
 </div>
 
-`
-
-var part4 = `
 </div>
 <script>
 		const image = document.querySelector('.image');
