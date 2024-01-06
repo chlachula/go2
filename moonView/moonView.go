@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"text/template"
 	"time"
@@ -180,12 +181,81 @@ func getMoonInfo(t time.Time) TypeMoonInfo {
 	}
 	return TypeMoonInfo{}
 }
+
+/*
+	    function crater20($c, $r, $elat, $elon, $drawCircle)
+	    {
+	        global $posa_rad;
+	        $s = "";
+	        $lon = deg2rad($c[2]);
+	        $lat = deg2rad($c[3]);
+	        $n = $c[0] . " " . $c[2] . "," . $c[3] . " " .$c[1] . " km";
+	        $elo = deg2rad($elon);
+	        $ela = deg2rad($elat);
+
+	        $xR = $r * cos($lat) * cos(pi() / 2 - $lon);
+	        $yR = $r * sin($lat);
+	        $zR = $r * cos($lat) * sin(pi() / 2 - $lon);
+
+	        $xB = $xR * cos($elo) - $zR * sin($elo);
+	        $yB = $yR * cos($ela) - $zR * sin($ela);
+
+	        $xG = $xB * cos($posa_rad) - $yB * sin($posa_rad);
+	        $yG = $yB * cos($posa_rad) + $xB * sin($posa_rad);
+	        $xG1 = $xG;
+	        $yG1 = -$yG;
+		    $rc = $r * $c[1] / 1737.4 /2.0; // mean radius
+		    if ($drawCircle == 1) {
+			   $s .= "\n<circle cx=\"$xG1\" cy=\"$yG1\" r=\"$rc\" stroke=\"lightgreen\" fill=\"none\" stroke-width=\"0.25\" ><title>$n</title></circle>\n";
+		    } else {
+			   $s .= "{\"x\":$xG1,\"y\":$yG1,\"r\":$rc,\"n\":\"$n\"},\n";
+		    }
+	        return $s;
+	    }
+	    function moon_draw()
+	    {
+	        global $xr1a, $yr1a, $xr1b, $yr1b, $xr2a, $yr2a, $xr2b, $yr2b;
+	        global $craters_json, $rad, $elat, $elon;
+	        global $craters20;
+
+	        echo "<g id=\"moon_drawing\" transform=\"translate(365,365)\">\n";
+	        echo "<line x1=\"$xr1a\" y1=\"$yr1a\" x2=\"$xr1b\" y2=\"$yr1b\"  stroke=\"yellow\" stroke-width=\"1\" />\n";
+	        echo "<line x1=\"$xr2a\" y1=\"$yr2a\" x2=\"$xr2b\" y2=\"$yr2b\"  stroke=\"pink\" stroke-width=\"1\" />";
+	        foreach ($craters_json as &$c) {
+	            echo crater($c, $rad, $elat, $elon);
+	        }
+
+	        foreach ($craters20 as &$c) {
+	            echo crater20($c, $rad, $elat, $elon, 1);
+	        }
+
+	        echo "  </g>\n";
+	    }
+*/
+func moonDraw(rad float64, posa_rad float64) string {
+	xr1a := rad * math.Sin(posa_rad)
+	yr1a := rad * math.Cos(posa_rad)
+	xr1b := 1.5 * rad * math.Sin(posa_rad)
+	yr1b := 1.5 * rad * math.Cos(posa_rad)
+	xr2a := -rad * math.Sin(posa_rad)
+	yr2a := -rad * math.Cos(posa_rad)
+	xr2b := -1.5 * rad * math.Sin(posa_rad)
+	yr2b := -1.5 * rad * math.Cos(posa_rad)
+	s := " <g id=\"moon_drawing\" transform=\"translate(365,365)\">\n"
+	f := "<line x1=\"%.1f\" y1=\"%.1f\" x2=\"%.1f\" y2=\"%.1f\"  stroke=\"%s\" stroke-width=\"1\" />\n"
+	s += fmt.Sprintf(f, xr1a, yr1a, xr1b, yr1b, "yellow")
+	s += fmt.Sprintf(f, xr2a, yr2a, xr2b, yr2b, "pink")
+	s += " </g>\n"
+	return s
+}
+
 func EventHandler(w http.ResponseWriter, r *http.Request) {
 	// ?date=2023-12-25&utc_hour=4&grid=on&showinfo=on
 	getParams := fmt.Sprintf("GET params were: %s", r.URL.Query())
 	t := getTime(r)
 	mi := getMoonInfo(t)
 	radius := 352.0 / 2009.0 * mi.Diameter
+
 	dHHHHd := fmt.Sprintf(".%04d.", wholeHoursSinceJanuary1(t))
 	_, svsMagic1 := svsMagicNumbers(t.Year())
 	p36 := 3 // 60p or 30p
@@ -200,13 +270,14 @@ func EventHandler(w http.ResponseWriter, r *http.Request) {
 	   		 "posangle":20.699
 
 	*/
+	moon_draw := moonDraw(float64(radius), float64(mi.Posangle*math.Pi/180.0))
 	type TypeData = struct {
-		YYYY, SVSframes, Hours, TimeInfo, GetParams, Time, CurrentDate                    string
+		YYYY, SVSframes, Hours, TimeInfo, GetParams, Time, CurrentDate, Moon_draw         string
 		Radius, Phase, Age, Diameter, Distance, RA, Dec, Slon, Slat, Elon, Elat, Posangle float32
 		SVSmagic1, MaxYear, UTChour, P36                                                  int
 	}
 	data := TypeData{t.Format("2006"), svsFrames(t), dHHHHd, timeInfo(t), getParams, mi.Time,
-		t.Format("2006-01-02"),
+		t.Format("2006-01-02"), moon_draw,
 		radius,
 		mi.Phase, mi.Age, mi.Diameter, mi.Distance,
 		mi.J2000.RA, mi.J2000.Dec,

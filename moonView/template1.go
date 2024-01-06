@@ -111,13 +111,12 @@ v0.1 Moon at {{.TimeInfo}}
 			    <image xlink:href="{{.SVSframes}}730x730_1x1_{{.P36}}0p/moon{{.Hours}}jpg"
                        x="0" y="0" width="730" height="730"/>
             </pattern>
-            <!--?php moon_draw(); ?-->
+            {{.Moon_draw}}
         </defs>
         <rect x="0" y="0" width="730" height="730" fill="url(#img1)"/>
         <circle cx="365" cy="365" r="{{.Radius}}" stroke="yellow" stroke-width="1" stroke-dasharray="2 10"
                 fill="none"/>
-        <!--use xlink:href="#moon_drawing" x="365" y="365"/-->
-            <?php moon_draw(); ?>
+        <use xlink:href="#moon_drawing"/>
     </svg>
     <div class="tooltip"></div>
     <br/>
