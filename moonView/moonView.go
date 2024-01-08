@@ -232,6 +232,32 @@ func getMoonInfo(t time.Time) TypeMoonInfo {
 	        echo "  </g>\n";
 	    }
 */
+func deg2rad(deg float64) float64 {
+	return deg * math.Pi / 180.0
+}
+func crater20(c TypeCrater, r, elat, elon, posa_rad float64) string {
+	lon := deg2rad(c.Lo)
+	lat := deg2rad(c.La)
+	elo := deg2rad(elon)
+	ela := deg2rad(elat)
+
+	xR := r * math.Cos(lat) * math.Cos(math.Pi/2-lon)
+	yR := r * math.Sin(lat)
+	zR := r * math.Cos(lat) * math.Sin(math.Pi/2-lon)
+
+	xB := xR*math.Cos(elo) - zR*math.Sin(elo)
+	yB := yR*math.Cos(ela) - zR*math.Sin(ela)
+
+	xG := xB*math.Cos(posa_rad) - yB*math.Sin(posa_rad)
+	yG := yB*math.Cos(posa_rad) + xB*math.Sin(posa_rad)
+	xG1 := xG
+	yG1 := -yG
+	rc := r * c.R / 1737.4 / 2.0 // mean radius
+	f1 := "%s [%.2f,%.2f] %.1f km"
+	n := fmt.Sprintf(f1, c.N, c.Lo, c.La, c.R)
+	f2 := "\n<circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"lightgreen\" fill=\"none\" stroke-width=\"0.25\" ><title>%s</title></circle>\n"
+	return fmt.Sprintf(f2, xG1, yG1, rc, n)
+}
 func moonDraw(rad float64, posa_rad float64) string {
 	xr1a := rad * math.Sin(posa_rad)
 	yr1a := rad * math.Cos(posa_rad)
@@ -245,6 +271,9 @@ func moonDraw(rad float64, posa_rad float64) string {
 	f := "<line x1=\"%.1f\" y1=\"%.1f\" x2=\"%.1f\" y2=\"%.1f\"  stroke=\"%s\" stroke-width=\"1\" />\n"
 	s += fmt.Sprintf(f, xr1a, yr1a, xr1b, yr1b, "yellow")
 	s += fmt.Sprintf(f, xr2a, yr2a, xr2b, yr2b, "pink")
+	for _, c := range Craters1 {
+		s += crater20(c, 500.0, 0.0, 0.0, posa_rad)
+	}
 	s += " </g>\n"
 	return s
 }

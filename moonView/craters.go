@@ -7,6 +7,34 @@ type TypeCrater = struct {
 	La float64
 }
 
+var Craters1 = []TypeCrater{
+
+	{N: "Center", R: 11.1, La: 0.0, Lo: 0.0},
+	{N: "North Pole", R: 11.1, La: 90.0, Lo: 0.0},
+	{N: "South Pole", R: 11.1, La: -90.0, Lo: 0.0},
+	{N: "Left edge", R: 11.1, La: 0.0, Lo: -90.0},
+	{N: "Right edge", R: 11.1, La: 0.0, Lo: 90.0},
+
+	{N: "Anděl", R: 11.1, La: -10.4, Lo: 12.4},
+	{N: "Aristarchus", R: 11.1, La: 23.7, Lo: -47.4},
+	{N: "Atlas", R: 11.1, La: 46.7, Lo: 44.4},
+	{N: "Clavius", R: 11.1, La: -58.4, Lo: -14.4},
+	{N: "Cleomedes", R: 11.1, La: 27.7, Lo: 55.5},
+	{N: "Copernicus", R: 11.1, La: 9.62, Lo: -20.08},
+	{N: "Cyrillus", R: 11.1, La: -13.2, Lo: 24.0},
+	{N: "Kepler", R: 11.1, La: 8.1, Lo: -38.00},
+	{N: "Marius", R: 11.1, La: 11.9, Lo: -50.80},
+	{N: "Plato", R: 11.1, La: 51.6, Lo: -9.30},
+	{N: "Posidonius", R: 11.1, La: 31.7, Lo: 30.1},
+	{N: "Russel", R: 11.1, La: 26.5, Lo: -75.4},
+	{N: "Schickard", R: 11.1, La: -44.4, Lo: -55.1},
+	{N: "Schomberger", R: 11.1, La: -76.7, Lo: 24.9},
+	{N: "Seleucus", R: 11.1, La: 21.0, Lo: -66.6},
+	{N: "Tycho", R: 11.1, La: -43.31, Lo: -11.36},
+
+	{N: "Langrenus", R: 11.1, La: -8.9, Lo: 60.9},
+}
+
 // craters on near side 20km and bigger
 var Craters20 = []TypeCrater{
 	{N: "Abel", R: 137.349, La: 85.7762, Lo: -34.6257},
