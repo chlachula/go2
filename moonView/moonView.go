@@ -272,7 +272,7 @@ func moonDraw(rad float64, posa_rad float64) string {
 	s += fmt.Sprintf(f, xr1a, yr1a, xr1b, yr1b, "yellow")
 	s += fmt.Sprintf(f, xr2a, yr2a, xr2b, yr2b, "pink")
 	for _, c := range Craters1 {
-		s += crater20(c, 500.0, 0.0, 0.0, posa_rad)
+		s += crater20(c, rad, 0.0, 0.0, posa_rad)
 	}
 	s += " </g>\n"
 	return s

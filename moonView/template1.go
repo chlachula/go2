@@ -190,6 +190,7 @@ v0.1 Moon at {{.TimeInfo}}
 
 </div>
 <script>
+/* comented temporarily 
 		const image = document.querySelector('.image');
 		const tooltip = document.querySelector('.tooltip');
          
@@ -218,7 +219,8 @@ v0.1 Moon at {{.TimeInfo}}
   		    }
             tooltip.textContent = "X: ${e.offsetX}, Y: ${e.offsetY} len=${clen}"
         }
-		image.addEventListener('mousemove', positionMessage)
+		
+        image.addEventListener('mousemove', positionMessage)
         
 		image.addEventListener('xmousemove11', (e) => {
 		  tooltip.style.left = e.clientX + 'px';
@@ -254,6 +256,7 @@ v0.1 Moon at {{.TimeInfo}}
 }
 			//alert("Hello Click! x="+x+",y="+y+" craters len="+craters.length);
 		});
+      */
 	</script>
 </body>
 </html>
