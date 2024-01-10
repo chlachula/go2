@@ -259,10 +259,19 @@ func computePoint(c TypeCrater, r, elat, elon, posa_rad float64) TypePoint {
 	p.Y = -yG
 	return p
 }
+
+/*
+<circle cx="-318.92652943772" cy="-55.879578092369" r="2" stroke="yellow" fill="yellow" stroke-width="1" />
+<text    x="-313.92652943772"  y="-55.879578092369" fill="yellow" alignment-baseline="middle">Left edge 0,-90</text>
+*/
+func paintNamedPoint(c TypeCrater, r float64, p TypePoint) string {
+	s := fmt.Sprintf("%s %.1f,%.1f", c.N, c.La, c.Lo)
+	f := "\n<text    x=\"%.1f\"   y=\"%.1f\"  fill=\"yellow\" alignment-baseline=\"middle\">%s</text>\n"
+	return paintPoint(c, r, p) + fmt.Sprintf(f, p.X+5.0, p.Y, s)
+}
 func paintPoint(c TypeCrater, r float64, p TypePoint) string {
-	rc := r * c.R / 1737.4 / 2.0 // mean radius
-	f2 := "\n<circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"lightgreen\" fill=\"yellow\" stroke-width=\"0.5\" ><title>%s</title></circle>\n"
-	return fmt.Sprintf(f2, p.X, p.Y, rc, c.N)
+	f := "\n<circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"lightgreen\" fill=\"yellow\" stroke-width=\"0.5\" ><title>%s</title></circle>\n"
+	return fmt.Sprintf(f, p.X, p.Y, r, c.N)
 }
 func paintCrater(c TypeCrater, r, elat, elon, posa_rad float64) string {
 	p := computePoint(c, r, elat, elon, posa_rad)
@@ -270,7 +279,7 @@ func paintCrater(c TypeCrater, r, elat, elon, posa_rad float64) string {
 	f1 := "%s [%.2f,%.2f] %.1f km"
 	n := fmt.Sprintf(f1, c.N, c.Lo, c.La, c.R)
 	f2 := "\n<circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"lightgreen\" fill=\"none\" stroke-width=\"0.25\" ><title>%s</title></circle>\n"
-	return fmt.Sprintf(f2, p.X, p.Y, rc, n)
+	return fmt.Sprintf(f2, p.X, p.Y, rc, n) + paintNamedPoint(c, 2.0, p)
 }
 func centralCross() string {
 	f := "<line x1=\"%.1f\" y1=\"%.1f\" x2=\"%.1f\" y2=\"%.1f\"  stroke=\"%s\" stroke-width=\"1\" />\n"
@@ -305,7 +314,7 @@ func moonDraw(mi TypeMoonInfo) string {
 	for _, c := range EdgePoints {
 		p := computePoint(c, rad, lat, lon, posA)
 		a = append(a, p)
-		s += paintPoint(c, rad, p)
+		s += paintPoint(c, 5.0, p)
 	}
 	s += fmt.Sprintf(f, a[1].X, a[1].Y, a[2].X, a[2].Y, "red")
 	s += fmt.Sprintf(f, a[3].X, a[3].Y, a[4].X, a[4].Y, "blue")
