@@ -31,6 +31,10 @@ type (
 		Posangle float32               `json:"posangle"`
 	}
 	TypeMoonInfos []TypeMoonInfo
+
+	TypePoint struct {
+		X, Y float64
+	}
 )
 
 var moonInfos TypeMoonInfos
@@ -235,7 +239,7 @@ func getMoonInfo(t time.Time) TypeMoonInfo {
 func deg2rad(deg float64) float64 {
 	return deg * math.Pi / 180.0
 }
-func point(c TypeCrater, r, elat, elon, posa_rad float64) (float64, float64) {
+func computePoint(c TypeCrater, r, elat, elon, posa_rad float64) TypePoint {
 	lon := deg2rad(c.Lo)
 	lat := deg2rad(c.La)
 	elo := deg2rad(elon)
@@ -250,23 +254,36 @@ func point(c TypeCrater, r, elat, elon, posa_rad float64) (float64, float64) {
 
 	xG := xB*math.Cos(posa_rad) - yB*math.Sin(posa_rad)
 	yG := yB*math.Cos(posa_rad) + xB*math.Sin(posa_rad)
-	xG1 := xG
-	yG1 := -yG
-	return xG1, yG1
+	var p TypePoint
+	p.X = xG
+	p.Y = -yG
+	return p
 }
-func paintPoint(c TypeCrater, r, elat, elon, posa_rad float64) string {
-	xG1, yG1 := point(c, r, elat, elon, posa_rad)
+func paintPoint0(c TypeCrater, r, elat, elon, posa_rad float64) string {
+	p := computePoint(c, r, elat, elon, posa_rad)
 	rc := r * c.R / 1737.4 / 2.0 // mean radius
 	f2 := "\n<circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"lightgreen\" fill=\"yellow\" stroke-width=\"0.5\" ><title>%s</title></circle>\n"
-	return fmt.Sprintf(f2, xG1, yG1, rc, c.N)
+	return fmt.Sprintf(f2, p.X, p.Y, rc, c.N)
+}
+func paintPoint(c TypeCrater, r float64, p TypePoint) string {
+	rc := r * c.R / 1737.4 / 2.0 // mean radius
+	f2 := "\n<circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"lightgreen\" fill=\"yellow\" stroke-width=\"0.5\" ><title>%s</title></circle>\n"
+	return fmt.Sprintf(f2, p.X, p.Y, rc, c.N)
 }
 func paintCrater(c TypeCrater, r, elat, elon, posa_rad float64) string {
-	xG1, yG1 := point(c, r, elat, elon, posa_rad)
+	p := computePoint(c, r, elat, elon, posa_rad)
 	rc := r * c.R / 1737.4 / 2.0 // mean radius
 	f1 := "%s [%.2f,%.2f] %.1f km"
 	n := fmt.Sprintf(f1, c.N, c.Lo, c.La, c.R)
 	f2 := "\n<circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"lightgreen\" fill=\"none\" stroke-width=\"0.25\" ><title>%s</title></circle>\n"
-	return fmt.Sprintf(f2, xG1, yG1, rc, n)
+	return fmt.Sprintf(f2, p.X, p.Y, rc, n)
+}
+func centralCross() string {
+	f := "<line x1=\"%.1f\" y1=\"%.1f\" x2=\"%.1f\" y2=\"%.1f\"  stroke=\"%s\" stroke-width=\"1\" />\n"
+	half := 40.0
+	s := fmt.Sprintf(f, -half, 0.0, half, 0.0, "lightblue")
+	s += fmt.Sprintf(f, 0.0, -half, 0.0, half, "lightblue")
+	return s
 }
 func moonDraw(rad float64, posa_rad float64) string {
 	xr1a := rad * math.Sin(posa_rad)
@@ -284,9 +301,15 @@ func moonDraw(rad float64, posa_rad float64) string {
 	for _, c := range Craters1 {
 		s += paintCrater(c, rad, 0.0, 0.0, posa_rad)
 	}
+	a := make([]TypePoint, 0)
 	for _, c := range EdgePoints {
-		s += paintPoint(c, rad, 0.0, 0.0, posa_rad)
+		p := computePoint(c, rad, 0.0, 0.0, posa_rad)
+		a = append(a, p)
+		s += paintPoint(c, rad, p)
 	}
+	s += fmt.Sprintf(f, a[1].X, a[1].Y, a[2].X, a[2].Y, "red")
+	s += fmt.Sprintf(f, a[3].X, a[3].Y, a[4].X, a[4].Y, "blue")
+	s += centralCross()
 	s += " </g>\n"
 	return s
 }
