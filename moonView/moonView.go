@@ -235,7 +235,7 @@ func getMoonInfo(t time.Time) TypeMoonInfo {
 func deg2rad(deg float64) float64 {
 	return deg * math.Pi / 180.0
 }
-func crater20(c TypeCrater, r, elat, elon, posa_rad float64) string {
+func point(c TypeCrater, r, elat, elon, posa_rad float64) (float64, float64) {
 	lon := deg2rad(c.Lo)
 	lat := deg2rad(c.La)
 	elo := deg2rad(elon)
@@ -252,6 +252,16 @@ func crater20(c TypeCrater, r, elat, elon, posa_rad float64) string {
 	yG := yB*math.Cos(posa_rad) + xB*math.Sin(posa_rad)
 	xG1 := xG
 	yG1 := -yG
+	return xG1, yG1
+}
+func paintPoint(c TypeCrater, r, elat, elon, posa_rad float64) string {
+	xG1, yG1 := point(c, r, elat, elon, posa_rad)
+	rc := r * c.R / 1737.4 / 2.0 // mean radius
+	f2 := "\n<circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"lightgreen\" fill=\"yellow\" stroke-width=\"0.5\" ><title>%s</title></circle>\n"
+	return fmt.Sprintf(f2, xG1, yG1, rc, c.N)
+}
+func paintCrater(c TypeCrater, r, elat, elon, posa_rad float64) string {
+	xG1, yG1 := point(c, r, elat, elon, posa_rad)
 	rc := r * c.R / 1737.4 / 2.0 // mean radius
 	f1 := "%s [%.2f,%.2f] %.1f km"
 	n := fmt.Sprintf(f1, c.N, c.Lo, c.La, c.R)
@@ -272,7 +282,10 @@ func moonDraw(rad float64, posa_rad float64) string {
 	s += fmt.Sprintf(f, xr1a, yr1a, xr1b, yr1b, "yellow")
 	s += fmt.Sprintf(f, xr2a, yr2a, xr2b, yr2b, "pink")
 	for _, c := range Craters1 {
-		s += crater20(c, rad, 0.0, 0.0, posa_rad)
+		s += paintCrater(c, rad, 0.0, 0.0, posa_rad)
+	}
+	for _, c := range EdgePoints {
+		s += paintPoint(c, rad, 0.0, 0.0, posa_rad)
 	}
 	s += " </g>\n"
 	return s

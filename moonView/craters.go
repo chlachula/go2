@@ -7,15 +7,16 @@ type TypeCrater = struct {
 	La float64
 }
 
-var Craters1 = []TypeCrater{
+var EdgePoints = []TypeCrater{
 
 	{N: "Center", R: 111.1, La: 0.0, Lo: 0.0},
 	{N: "North Pole", R: 111.1, La: 90.0, Lo: 0.0},
 	{N: "South Pole", R: 111.1, La: -90.0, Lo: 0.0},
 	{N: "Left edge", R: 111.1, La: 0.0, Lo: -90.0},
 	{N: "Right edge", R: 111.1, La: 0.0, Lo: 90.0},
-
-	{N: "Anděl", R: 111.1, La: -10.4, Lo: 12.4},
+}
+var Craters1 = []TypeCrater{
+	{N: "Anděl", R: 32.9312, La: -10.4, Lo: 12.4},
 	{N: "Aristarchus", R: 111.1, La: 23.7, Lo: -47.4},
 	{N: "Atlas", R: 111.1, La: 46.7, Lo: 44.4},
 	{N: "Clavius", R: 111.1, La: -58.4, Lo: -14.4},
