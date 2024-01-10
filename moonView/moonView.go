@@ -259,12 +259,6 @@ func computePoint(c TypeCrater, r, elat, elon, posa_rad float64) TypePoint {
 	p.Y = -yG
 	return p
 }
-func paintPoint0(c TypeCrater, r, elat, elon, posa_rad float64) string {
-	p := computePoint(c, r, elat, elon, posa_rad)
-	rc := r * c.R / 1737.4 / 2.0 // mean radius
-	f2 := "\n<circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"lightgreen\" fill=\"yellow\" stroke-width=\"0.5\" ><title>%s</title></circle>\n"
-	return fmt.Sprintf(f2, p.X, p.Y, rc, c.N)
-}
 func paintPoint(c TypeCrater, r float64, p TypePoint) string {
 	rc := r * c.R / 1737.4 / 2.0 // mean radius
 	f2 := "\n<circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"lightgreen\" fill=\"yellow\" stroke-width=\"0.5\" ><title>%s</title></circle>\n"
@@ -285,25 +279,31 @@ func centralCross() string {
 	s += fmt.Sprintf(f, 0.0, -half, 0.0, half, "lightblue")
 	return s
 }
-func moonDraw(rad float64, posa_rad float64) string {
-	xr1a := rad * math.Sin(posa_rad)
-	yr1a := rad * math.Cos(posa_rad)
-	xr1b := 1.5 * rad * math.Sin(posa_rad)
-	yr1b := 1.5 * rad * math.Cos(posa_rad)
-	xr2a := -rad * math.Sin(posa_rad)
-	yr2a := -rad * math.Cos(posa_rad)
-	xr2b := -1.5 * rad * math.Sin(posa_rad)
-	yr2b := -1.5 * rad * math.Cos(posa_rad)
+func moonDraw(mi TypeMoonInfo) string {
+	rad := float64(352.0 / 2009.0 * mi.Diameter)
+	//delteme 	posa_rad := float64(mi.Posangle * math.Pi / 180.0)
+	posA := deg2rad(float64(mi.Posangle))
+	lat := deg2rad(float64(mi.SubEarth.Lat))
+	lon := deg2rad(float64(mi.SubEarth.Lon))
+
+	xr1a := rad * math.Sin(posA)
+	yr1a := rad * math.Cos(posA)
+	xr1b := 1.5 * rad * math.Sin(posA)
+	yr1b := 1.5 * rad * math.Cos(posA)
+	xr2a := -rad * math.Sin(posA)
+	yr2a := -rad * math.Cos(posA)
+	xr2b := -1.5 * rad * math.Sin(posA)
+	yr2b := -1.5 * rad * math.Cos(posA)
 	s := " <g id=\"moon_drawing\" transform=\"translate(365,365)\">\n"
 	f := "<line x1=\"%.1f\" y1=\"%.1f\" x2=\"%.1f\" y2=\"%.1f\"  stroke=\"%s\" stroke-width=\"1\" />\n"
 	s += fmt.Sprintf(f, xr1a, yr1a, xr1b, yr1b, "yellow")
 	s += fmt.Sprintf(f, xr2a, yr2a, xr2b, yr2b, "pink")
 	for _, c := range Craters1 {
-		s += paintCrater(c, rad, 0.0, 0.0, posa_rad)
+		s += paintCrater(c, rad, lat, lon, posA)
 	}
 	a := make([]TypePoint, 0)
 	for _, c := range EdgePoints {
-		p := computePoint(c, rad, 0.0, 0.0, posa_rad)
+		p := computePoint(c, rad, lat, lon, posA)
 		a = append(a, p)
 		s += paintPoint(c, rad, p)
 	}
@@ -335,7 +335,8 @@ func EventHandler(w http.ResponseWriter, r *http.Request) {
 	   		 "posangle":20.699
 
 	*/
-	moon_draw := moonDraw(float64(radius), float64(mi.Posangle*math.Pi/180.0))
+	//deleteme	moon_draw := moonDraw(float64(radius), float64(mi.Posangle*math.Pi/180.0))
+	moon_draw := moonDraw(mi)
 	type TypeData = struct {
 		YYYY, SVSframes, Hours, TimeInfo, GetParams, Time, CurrentDate, Moon_draw         string
 		Radius, Phase, Age, Diameter, Distance, RA, Dec, Slon, Slat, Elon, Elat, Posangle float32
