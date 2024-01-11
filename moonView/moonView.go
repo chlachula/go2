@@ -239,21 +239,20 @@ func getMoonInfo(t time.Time) TypeMoonInfo {
 func deg2rad(deg float64) float64 {
 	return deg * math.Pi / 180.0
 }
-func computePoint(c TypeCrater, r, elat, elon, posa_rad float64) TypePoint {
+func computePoint(c TypeCrater, r, ela, elo, posa_rad float64) TypePoint {
 	lon := deg2rad(c.Lo)
 	lat := deg2rad(c.La)
-	elo := deg2rad(elon)
-	ela := deg2rad(elat)
 
-	xR := r * math.Cos(lat) * math.Cos(math.Pi/2-lon)
+	xR := r * math.Cos(lat) * math.Cos(math.Pi/2.0-lon)
 	yR := r * math.Sin(lat)
-	zR := r * math.Cos(lat) * math.Sin(math.Pi/2-lon)
+	zR := r * math.Cos(lat) * math.Sin(math.Pi/2.0-lon)
 
 	xB := xR*math.Cos(elo) - zR*math.Sin(elo)
 	yB := yR*math.Cos(ela) - zR*math.Sin(ela)
 
 	xG := xB*math.Cos(posa_rad) - yB*math.Sin(posa_rad)
 	yG := yB*math.Cos(posa_rad) + xB*math.Sin(posa_rad)
+
 	var p TypePoint
 	p.X = xG
 	p.Y = -yG
@@ -292,8 +291,8 @@ func moonDraw(mi TypeMoonInfo) string {
 	rad := float64(352.0 / 2009.0 * mi.Diameter)
 	//delteme 	posa_rad := float64(mi.Posangle * math.Pi / 180.0)
 	posA := deg2rad(float64(mi.Posangle))
-	lat := deg2rad(float64(mi.SubEarth.Lat))
-	lon := deg2rad(float64(mi.SubEarth.Lon))
+	elat := deg2rad(float64(mi.SubEarth.Lat))
+	elon := deg2rad(float64(mi.SubEarth.Lon))
 
 	xr1a := rad * math.Sin(posA)
 	yr1a := rad * math.Cos(posA)
@@ -308,11 +307,11 @@ func moonDraw(mi TypeMoonInfo) string {
 	s += fmt.Sprintf(f, xr1a, yr1a, xr1b, yr1b, "yellow")
 	s += fmt.Sprintf(f, xr2a, yr2a, xr2b, yr2b, "pink")
 	for _, c := range Craters1 {
-		s += paintCrater(c, rad, lat, lon, posA)
+		s += paintCrater(c, rad, elat, elon, posA)
 	}
 	a := make([]TypePoint, 0)
 	for _, c := range EdgePoints {
-		p := computePoint(c, rad, lat, lon, posA)
+		p := computePoint(c, rad, elat, elon, posA)
 		a = append(a, p)
 		s += paintPoint(c, 5.0, p)
 	}
