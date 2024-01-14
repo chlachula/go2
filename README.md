@@ -16,3 +16,6 @@ Go language simple scripts, proof of concepts, ideas, solutions, etc.
 * [tour/](tour/) A tour over Go language.
 * [wikilang/](wikilang/) Displays link to the alternative language version Wikipedia page.
 * [windrives/](windrives/) Displays available drive letters, only on Windows OS.
+
+---
+[Written with Markdown](https://www.markdownguide.org/basic-syntax/)
