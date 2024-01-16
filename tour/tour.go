@@ -200,12 +200,17 @@ func PrintJsonStudents() {
 }
 
 func PrintCurrentTime() {
-	layout := "01/02 03:04:05PM '06 -0700 ... Layout - The reference time, in numerical order"
 	t := time.Now()
-	fmt.Println(layout)
+
+	fmt.Println(time.Layout + " ... time.Layout - The reference time, in numerical order")
 	fmt.Println(t.Format(time.Layout))
 	fmt.Println()
-	userFormat := "2006-01-02 15:04 MST ~ 1/2/06 3/4PM ~ Mon Jan 2 UTC-0700"
+
+	fmt.Println(time.UnixDate + " ... time.UnixDate")
+	fmt.Println(t.Format(time.UnixDate))
+	fmt.Println()
+
+	userFormat := "2006-01-02 15:04 MST ~ 1/2/06 3/4 PM ~ Mon Jan 2 UTC-0700"
 	fmt.Println(userFormat + " ... user format example")
 	fmt.Println(t.Format(userFormat))
 }
