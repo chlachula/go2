@@ -30,4 +30,5 @@ func main() {
 	a.PrintStringLiterals()
 	a.PrintIntLiterals()
 	a.PrintJsonStudents()
+	a.PrintCurrentTime()
 }
