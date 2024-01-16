@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"os"
 	"runtime"
 	"time"
 )
@@ -213,4 +214,13 @@ func PrintCurrentTime() {
 	userFormat := "2006-01-02 15:04 MST ~ 1/2/06 3/4 PM ~ Mon Jan 2 UTC-0700"
 	fmt.Println(userFormat + " ... user format example")
 	fmt.Println(t.Format(userFormat))
+}
+
+func LoadTextFile(filename string) string {
+	bytes, err := os.ReadFile(filename) //Read entire file content. No need to close
+	if err != nil {
+		fmt.Println(err.Error())
+		return ""
+	}
+	return string(bytes)
 }
