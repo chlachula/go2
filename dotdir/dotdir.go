@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func DotWebHandler(w http.ResponseWriter, r *http.Request) {
@@ -73,6 +74,15 @@ func Web(colonPort string) {
 		fmt.Println(err.Error())
 	}
 
+	relFiles = "public"
+	sPEOPLEs := "/people/"
+	if stat, err := os.Stat(relFiles); err == nil && stat.IsDir() {
+		http.Handle(sPEOPLEs, http.StripPrefix(sPEOPLEs, http.FileServer(http.Dir(relFiles))))
+		fmt.Print("OK: handle to 5s \n", sPEOPLEs)
+	} else {
+		fmt.Printf("error:  %s\n\n", err.Error())
+	}
+
 	http.HandleFunc("/", RootHandler)
 	http.HandleFunc("/dot", DotHandler)
 
@@ -81,7 +91,14 @@ func Web(colonPort string) {
 		fmt.Println("error ", err.Error())
 	}
 }
-
+func ServeFiles(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(r.URL.Path)
+	p := r.URL.Path
+	if strings.HasSuffix(p, "/") {
+		p += "index.html"
+	}
+	http.ServeFile(w, r, p)
+}
 func home(homelink bool) string {
 	link := "home"
 	part := `<html><head><title>dot dir</title></head><body style="text-align:center">
@@ -100,6 +117,7 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 	<a href="/files1/">/files1/</a><br/>
 	<a href="/files2/">/files2/</a><br/>
 	<a href="/files3/">/files3/</a><br/>
+	<a href="/people/">/people/</a><br/>
 	</body></html>`
 	fmt.Fprint(w, part)
 }
