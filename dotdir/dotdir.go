@@ -78,7 +78,7 @@ func Web(colonPort string) {
 	sPEOPLEs := "/people/"
 	if stat, err := os.Stat(relFiles); err == nil && stat.IsDir() {
 		http.Handle(sPEOPLEs, http.StripPrefix(sPEOPLEs, http.FileServer(http.Dir(relFiles))))
-		fmt.Print("OK: handle to 5s \n", sPEOPLEs)
+		fmt.Printf("OK: handle to %s \n", sPEOPLEs)
 	} else {
 		fmt.Printf("error:  %s\n\n", err.Error())
 	}
