@@ -15,18 +15,18 @@ func help(msg string) {
 		fmt.Println(msg)
 	}
 	helptext := `Events calendar with moon phases background
-	Loads data from default files locations.json and events.json
-	Usage:
+Loads data from default files locations.json and events.json
+  Usage:
 	-h this help
 	-p [port] preview to port 8080 
 	-l locations-file.json
 	-e events-file.json
 	-c generate google calendar  
-	Examples:
+  Examples:
 	go2 -p 
 	go2 -l locs.json -e ev2024.json -p 8081
 	go2 -l locs.json -e ev2024.json -c	
-	`
+`
 	fmt.Println(helptext)
 }
 func main() {
