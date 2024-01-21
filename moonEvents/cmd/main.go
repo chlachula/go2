@@ -15,6 +15,7 @@ func help(msg string) {
 		fmt.Println(msg)
 	}
 	helptext := `Events calendar with moon phases background
+	Loads data from default files locations.json and events.json
 	Usage:
 	-h this help
 	-p [port] preview to port 8080 
