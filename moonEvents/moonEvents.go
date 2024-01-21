@@ -192,13 +192,13 @@ const (
 
 var EventsData EventsYearType
 
-func LoadData() {
+func LoadData(locationsJson string, eventsJson string) {
 	var err error
-	myLocations, err = LoadLocations("locations.json")
+	myLocations, err = LoadLocations(locationsJson)
 	if err != nil {
 		panic(err)
 	}
-	EventsData, err = LoadEventsYear("events.json")
+	EventsData, err = LoadEventsYear(eventsJson)
 	if err != nil {
 		panic(err)
 	}
