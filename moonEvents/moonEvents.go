@@ -186,7 +186,7 @@ const (
 	pre_members               = "members-night"         // @
 	pre_starbq                = "members-night-star-bq" // !
 	ft                        = "1/2 15:04 MST"
-	DriveDirections2OxbowPark = "Map of the newly realigned County Road 105 (yellow) to the Oxbow Park & Zollman Zoo<br/>[caption id=\"attachment_13571\" align=\"alignnone\" width=\"662\"]<img src=\"https://rochesterskies.org/wp-content/uploads/2021/03/OxbowZooNewCR105.jpg\" alt=\"\" width=\"662\" height=\"622\" class=\"size-full wp-image-13571\" /> To Oxbow ZOO take CR5 from Byron, turn right to CR4 Valleyhigh Rd and then turn on second to left to newly realigned CR105 to ZOO.[/caption]"
+	DriveDirections2OxbowPark = ""
 	saturdayColor1            = "#ff8"
 )
 
