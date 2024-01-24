@@ -435,6 +435,9 @@ func GenerateGoogleCalendarListCSV(events EventsYearType, filename string) {
 		//Mon Jan 2 15:04:05 -0700 MST 2006
 		t1 := time.Date(events.YYYY, time.Month(ev.MM), ev.DD, ev.T1h, ev.T1m, 0, 0, timeLocation)
 		subject := "jch:Public Sky Observing"
+		if strings.HasPrefix(ev.Title, "@") || strings.HasPrefix(ev.Title, "!") {
+			subject = "jch:Members night"
+		}
 		startDate := t1.Format("01/02/2006")
 		startTime := t1.Format("3:04 PM")
 		endDate := startDate
@@ -448,6 +451,7 @@ func GenerateGoogleCalendarListCSV(events EventsYearType, filename string) {
 	}
 	w.Flush()
 	f.Close()
+	fmt.Printf("File %s has been created with %d events.\n", filename, len(events.Event))
 }
 func makeDarkMoon(MDage float32) string {
 	s := ""
