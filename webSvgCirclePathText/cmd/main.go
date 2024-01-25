@@ -29,6 +29,9 @@ func help(msg string) {
  -t top_text    #underscores are transformed to space
  -b bottom_text
  -p [port] preview to port 8080 
+ Example:
+ -b StartUp1 -t Serving_to_our_customers_all_day -p
+ -t Serving_to_our_customers -b Company -p 8081
 `
 	fmt.Println(helptext)
 }
