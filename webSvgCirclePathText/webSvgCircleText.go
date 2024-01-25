@@ -97,6 +97,7 @@ var (
 func SetVariables(top, bottom string) {
 	TopText = top
 	BottomText = bottom
+	fmt.Printf("TOP:    %s\nBOTTOM: %s\n", TopText, BottomText)
 }
 
 func SvgHandler(w http.ResponseWriter, r *http.Request) {

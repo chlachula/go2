@@ -4,19 +4,31 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	a "github.com/chlachula/go2/webSvgCirclePathText"
 )
 
+func underscoredText(i int) string {
+	if i < len(os.Args) {
+		return strings.ReplaceAll(os.Args[i], "_", " ")
+	} else {
+		help("missing bottom text argument")
+		os.Exit(1)
+		return ""
+	}
+}
 func help(msg string) {
 	if msg != "" {
 		fmt.Printf("%s \n\n", msg)
 	}
 	helptext := `Web serving embeded directory tree in root /
  Usage:
-  -h this help
-  -p [port] preview to port 8080 
+ -h this help
+ -t top_text    #underscores are transformed to space
+ -b bottom_text
+ -p [port] preview to port 8080 
 `
 	fmt.Println(helptext)
 }
@@ -25,7 +37,8 @@ func main() {
 		fmt.Printf("Elapsed time %s\n", time.Since(start))
 	}(time.Now())
 
-	a.SetVariables("Upper longer descriptive text", "Bottom text")
+	topText := "Top longer descriptive text"
+	bottomText := "Bottom text"
 
 	colonPort := ":8080"
 	if len(os.Args) < 2 {
@@ -36,7 +49,14 @@ func main() {
 			case "-h":
 				help("")
 				os.Exit(0)
+			case "-b":
+				i += 1
+				bottomText = underscoredText(i)
+			case "-t":
+				i += 1
+				topText = underscoredText(i)
 			case "-p":
+				a.SetVariables(topText, bottomText)
 				if len(os.Args) > i+1 {
 					colonPort = ":" + os.Args[i+1]
 				}
