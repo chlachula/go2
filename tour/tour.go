@@ -198,6 +198,10 @@ func PrintJsonStudents() {
 	var students []typeStudent
 	json.Unmarshal([]byte(studentsJson), &students)
 	fmt.Printf("Students : %+v\n\n", students)
+
+	var newStudents = []typeStudent{{Name: "Ann", Age: 16, ElectiveLanguage: "French"}, {Name: "Betty", Age: 16, ElectiveLanguage: "German"}}
+	bytes, _ := json.Marshal(newStudents)
+	fmt.Printf("New students in json format: %s\n\n", string(bytes))
 }
 
 func PrintCurrentTime() {
