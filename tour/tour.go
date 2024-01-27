@@ -228,11 +228,11 @@ func LoadTextFile(filename string) string {
 	}
 	return string(bytes)
 }
-func VariadicSum(nums ...int) {
-	s := fmt.Sprintf("%d numbers sum: ", len(nums))
+func VariadicSum(numbers ...int) {
+	s := fmt.Sprintf("%d numbers sum: ", len(numbers))
 	total := 0
 	plus := ""
-	for _, num := range nums {
+	for _, num := range numbers {
 		total += num
 		s += plus + strconv.Itoa(num)
 		plus = " + "
