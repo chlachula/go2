@@ -6,6 +6,7 @@ import (
 	"math"
 	"os"
 	"runtime"
+	"strconv"
 	"time"
 )
 
@@ -226,4 +227,15 @@ func LoadTextFile(filename string) string {
 		return ""
 	}
 	return string(bytes)
+}
+func VariadicSum(nums ...int) {
+	s := fmt.Sprintf("%d numbers sum: ", len(nums))
+	total := 0
+	plus := ""
+	for _, num := range nums {
+		total += num
+		s += plus + strconv.Itoa(num)
+		plus = " + "
+	}
+	fmt.Printf("%s = %d\n", s, total)
 }
