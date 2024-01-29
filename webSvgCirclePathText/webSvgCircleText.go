@@ -7,7 +7,15 @@ import (
 	"text/template"
 )
 
-const svgTemplate1 = `
+const (
+	htmlHead = `<html><head><title>SVG round logo: %s</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="icon" type="image/ico" href="favicon.ico">
+</head>
+<body>	
+`
+	htmlEnd      = "\n<br/></body></html>"
+	svgTemplate1 = `
 <svg xmlns="http://www.w3.org/2000/svg" 
     xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-250 -250 500 500">
     <title>Red Hot Chilli Peppers Logo http://thenewcode.com/482/Placing-Text-on-a-Circle-with-SVG </title>
@@ -20,10 +28,10 @@ const svgTemplate1 = `
 		letter-spacing: 2px;
 	}
 	.upFont { 
-		fill: green;
+		fill: {{.TopColor}};
 	}
 	.downFont { 
-		fill: red;
+		fill: {{.BottomColor}};
 	}
 </style>
 </defs> 
@@ -60,11 +68,14 @@ const svgTemplate1 = `
 	-->
 </svg>
 `
+)
 
 type SvgDataType = struct {
-	RingColor  string
-	UpperText  string
-	BottomText string
+	RingColor   string
+	TopColor    string
+	BottomColor string
+	UpperText   string
+	BottomText  string
 
 	RingRadius float64
 	RingWidth  float64
@@ -101,12 +112,7 @@ func SetVariables(top, bottom string) {
 }
 
 func SvgHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, `<html><head><title>%s</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link rel="icon" type="image/ico" href="favicon.ico">
-	</head>
-	<body>	
-`, "SVG round logo")
+	fmt.Fprintf(w, htmlHead, "Color version")
 	topAngle := 260.0
 	botAngle := 76.0
 	tA := topAngle * math.Pi / 360.0
@@ -115,38 +121,49 @@ func SvgHandler(w http.ResponseWriter, r *http.Request) {
 	r1 := 200.0
 	ringRadius := r1 * 170.0 / 200.0
 	data := SvgDataType{
-		RingColor:  "lightblue",
-		UpperText:  TopText,
-		BottomText: BottomText,
-		RingRadius: ringRadius,
-		RingWidth:  70,
-		R0:         100.0,
-		RupperDown: 141.0,
-		RbottomTop: 161.0,
-		R1:         r1,
-		Dy1:        0,
-		Dx1:        0,
-		Dy2:        0,
-		Dx2:        0,
-		Tlen:       r1 * 2.0 * tA,
-		Tx:         r1 * math.Sin(tA),
-		Tx2:        2.0 * r1 * math.Sin(tA),
-		Ty:         -r1 * math.Cos(tA),
-		Blen:       r1 * 2.0 * bA,
-		Bx:         r1 * math.Sin(bA),
-		Bx2:        2.0 * r1 * math.Sin(bA),
-		By:         r1 * math.Cos(bA),
-		Qx:         ringRadius * math.Sin(qA),
-		Qy:         ringRadius * math.Cos(qA),
-		Qr:         r1 * 0.03,
+		RingColor:   "lightblue",
+		TopColor:    "green",
+		BottomColor: "red",
+		UpperText:   TopText,
+		BottomText:  BottomText,
+		RingRadius:  ringRadius,
+		RingWidth:   70,
+		R0:          100.0,
+		RupperDown:  141.0,
+		RbottomTop:  161.0,
+		R1:          r1,
+		Dy1:         0,
+		Dx1:         0,
+		Dy2:         0,
+		Dx2:         0,
+		Tlen:        r1 * 2.0 * tA,
+		Tx:          r1 * math.Sin(tA),
+		Tx2:         2.0 * r1 * math.Sin(tA),
+		Ty:          -r1 * math.Cos(tA),
+		Blen:        r1 * 2.0 * bA,
+		Bx:          r1 * math.Sin(bA),
+		Bx2:         2.0 * r1 * math.Sin(bA),
+		By:          r1 * math.Cos(bA),
+		Qx:          ringRadius * math.Sin(qA),
+		Qy:          ringRadius * math.Cos(qA),
+		Qr:          r1 * 0.03,
 	}
-	if t, err := template.New("webpage1").Parse(svgTemplate1); err != nil {
-
-	} else {
+	if t, err := template.New("webpage1").Parse(svgTemplate1); err == nil {
 		if err = t.Execute(w, data); err != nil {
 			fmt.Fprintf(w, "<h1>error %s</h1>", err.Error())
 		}
-
 	}
-	fmt.Fprint(w, "\n<br/></body></html>")
+
+	fmt.Fprint(w, "\n<br/><h2>Black &amp; White version</h2>\n")
+
+	data.RingColor = "lightgray"
+	data.TopColor = "black"
+	data.BottomColor = "darkgray"
+	if t, err := template.New("webpage2").Parse(svgTemplate1); err == nil {
+		if err = t.Execute(w, data); err != nil {
+			fmt.Fprintf(w, "<h1>error %s</h1>", err.Error())
+		}
+	}
+
+	fmt.Fprint(w, htmlEnd)
 }
