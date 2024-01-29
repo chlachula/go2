@@ -23,7 +23,7 @@ const (
 <defs>
     <style>
 	.font1 { 
-		font-size: 59px;
+		font-size: {{.FontSize}}px;
 		font-family: Franklin Gothic, sans-serif;
 		font-weight: 90; 		
 		letter-spacing: 2px;
@@ -42,8 +42,8 @@ const (
 <path id="linT"    d="M0,0 m-{{.Tx}},{{.Ty}} l{{.Tx}},-{{.Ty}} {{.Tx}},{{.Ty}}" style="fill:none;fill-opacity: 1;stroke:black;stroke-width: 0.5"/>
 <path id="linB" d="M0,0 m-{{.Bx}},{{.By}} l{{.Bx}},-{{.By}} {{.Bx}},{{.By}}" style="fill:none;fill-opacity: 1;stroke:black;stroke-width: 0.5"/>
 -->
- <path id="relT" d="M0,0 m-{{.Tx}},{{.Ty}} a{{.R1}},{{.R1}} 0 1,1  {{.Tx2}},0 " style="fill:none;fill-opacity: 1;stroke:pink;stroke-width: 0.5"/>
- <path id="relB" d="M0,0 m-{{.Bx}},{{.By}} a{{.R1}},{{.R1}} 0 0,0  {{.Bx2}},0 " style="fill:none;fill-opacity: 1;stroke:yellow;stroke-width: 0.5"/>
+ <path id="relT" d="M0,0 m-{{.Tx}},{{.Ty}} a{{.R1}},{{.R1}} 0 1,1  {{.Tx2}},0 " style="fill:none;fill-opacity: 1;stroke:pink;stroke-width: 10.5"/>
+ <path id="relB" d="M0,0 m-{{.Bx}},{{.By}} a{{.R1}},{{.R1}} 0 0,0  {{.Bx2}},0 " style="fill:none;fill-opacity: 1;stroke:yellow;stroke-width: 10.5"/>
  <!--text 
   text-anchor="start|middle|end" 
   lengthAdjust="spacing|spacingAndGlyphs"
@@ -61,12 +61,12 @@ const (
   </text>
   <circle cx="{{.Qx}}" cy="{{.Qy}}" r="{{.Qr}}" stroke="none" stroke-width="0" fill="black" />
   <circle cx="-{{.Qx}}" cy="{{.Qy}}" r="{{.Qr}}" stroke="none" stroke-width="0" fill="black" />
-  <!--
+  
     <circle cx="0" cy="0" r="{{.R0}}" stroke="black" stroke-width="0.5" fill="none" />
 	<circle cx="0" cy="0" r="{{.RupperDown}}" stroke="black" stroke-width="0.5" fill="none" />
 	<circle cx="0" cy="0" r="{{.RbottomTop}}" stroke="black" stroke-width="0.5" fill="none" />
 	<circle cx="0" cy="0" r="{{.R1}}" stroke="black" stroke-width="0.5" fill="none" />
-	-->
+
 </svg>
 `
 )
@@ -99,6 +99,7 @@ type SvgDataType = struct {
 	Qx         float64
 	Qy         float64
 	Qr         float64
+	FontSize   float64
 }
 
 var (
@@ -118,7 +119,7 @@ func getSvgData(color bool) SvgDataType {
 	tA := topAngle * math.Pi / 360.0
 	bA := botAngle * math.Pi / 360.0
 	qA := ((360-topAngle-botAngle)*0.5 + botAngle) * math.Pi / 360.0
-	r1 := 200.0
+	r1 := 120.0
 	ringRadius := r1 * 170.0 / 200.0
 	data := SvgDataType{
 		RingColor:   "lightblue",
@@ -127,7 +128,7 @@ func getSvgData(color bool) SvgDataType {
 		UpperText:   TopText,
 		BottomText:  BottomText,
 		RingRadius:  ringRadius,
-		RingWidth:   70,
+		RingWidth:   70.0 / 200.0 * r1,
 		R0:          100.0,
 		RupperDown:  141.0,
 		RbottomTop:  161.0,
@@ -147,6 +148,7 @@ func getSvgData(color bool) SvgDataType {
 		Qx:          ringRadius * math.Sin(qA),
 		Qy:          ringRadius * math.Cos(qA),
 		Qr:          r1 * 0.03,
+		FontSize:    59.0 / 200.0 * r1,
 	}
 	if !color {
 		data.RingColor = "lightgray"
