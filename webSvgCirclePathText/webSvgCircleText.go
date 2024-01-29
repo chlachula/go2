@@ -12,7 +12,8 @@ const (
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="icon" type="image/ico" href="favicon.ico">
 </head>
-<body>	
+<body style="text-align: center;">
+<a href="%s">%s</a>
 `
 	htmlEnd      = "\n<br/></body></html>"
 	svgTemplate1 = `
@@ -111,8 +112,8 @@ func SetVariables(top, bottom string) {
 	fmt.Printf("TOP:    %s\nBOTTOM: %s\n", TopText, BottomText)
 }
 
-func SvgHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, htmlHead, "Color version")
+func SvgHandlerColor(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, htmlHead, "Color version", "/bw", "Black &amp; version")
 	topAngle := 260.0
 	botAngle := 76.0
 	tA := topAngle * math.Pi / 360.0
@@ -154,12 +155,46 @@ func SvgHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	fmt.Fprint(w, "\n<br/><h2>Black &amp; White version</h2>\n")
-
-	data.RingColor = "lightgray"
-	data.TopColor = "black"
-	data.BottomColor = "darkgray"
-	if t, err := template.New("webpage2").Parse(svgTemplate1); err == nil {
+	fmt.Fprint(w, htmlEnd)
+}
+func SvgHandlerBlackWhite(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, htmlHead, "Black & White version", "/", "Color version")
+	topAngle := 260.0
+	botAngle := 76.0
+	tA := topAngle * math.Pi / 360.0
+	bA := botAngle * math.Pi / 360.0
+	qA := ((360-topAngle-botAngle)*0.5 + botAngle) * math.Pi / 360.0
+	r1 := 200.0
+	ringRadius := r1 * 170.0 / 200.0
+	data := SvgDataType{
+		RingColor:   "lightgray",
+		TopColor:    "black",
+		BottomColor: "darkgray",
+		UpperText:   TopText,
+		BottomText:  BottomText,
+		RingRadius:  ringRadius,
+		RingWidth:   70,
+		R0:          100.0,
+		RupperDown:  141.0,
+		RbottomTop:  161.0,
+		R1:          r1,
+		Dy1:         0,
+		Dx1:         0,
+		Dy2:         0,
+		Dx2:         0,
+		Tlen:        r1 * 2.0 * tA,
+		Tx:          r1 * math.Sin(tA),
+		Tx2:         2.0 * r1 * math.Sin(tA),
+		Ty:          -r1 * math.Cos(tA),
+		Blen:        r1 * 2.0 * bA,
+		Bx:          r1 * math.Sin(bA),
+		Bx2:         2.0 * r1 * math.Sin(bA),
+		By:          r1 * math.Cos(bA),
+		Qx:          ringRadius * math.Sin(qA),
+		Qy:          ringRadius * math.Cos(qA),
+		Qr:          r1 * 0.03,
+	}
+	if t, err := template.New("webpage1").Parse(svgTemplate1); err == nil {
 		if err = t.Execute(w, data); err != nil {
 			fmt.Fprintf(w, "<h1>error %s</h1>", err.Error())
 		}

@@ -63,7 +63,8 @@ func main() {
 				if len(os.Args) > i+1 {
 					colonPort = ":" + os.Args[i+1]
 				}
-				http.HandleFunc("/", a.SvgHandler)
+				http.HandleFunc("/", a.SvgHandlerColor)
+				http.HandleFunc("/bw", a.SvgHandlerBlackWhite)
 				print("Serving SVG page Listenning at " + colonPort + ". CTRL+C to stop.")
 				http.ListenAndServe(colonPort, nil)
 			default:
