@@ -6,7 +6,7 @@ import (
 	"text/template"
 )
 
-var Dir string
+var Dir string = "."
 
 type HtmlDataType = struct {
 	DirName string

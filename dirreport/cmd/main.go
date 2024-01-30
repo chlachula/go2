@@ -35,9 +35,26 @@ func main() {
 		fmt.Printf("Elapsed time %s\n", time.Since(start))
 	}(time.Now())
 	help("")
-	a.Dir = "hello"
 	colonPort := ":8080"
-	http.HandleFunc("/", a.ShowDir)
-	print("Serving and listenning at " + colonPort + ". CTRL+C to stop.")
-	http.ListenAndServe(colonPort, nil)
+	if len(os.Args) < 2 {
+		help("Not enough arguments")
+	} else {
+		for i := 1; i < len(os.Args); i++ {
+			switch arg := os.Args[i]; arg {
+			case "-h":
+				help("")
+				os.Exit(0)
+			case "-d":
+				i += 1
+				a.Dir = os.Args[i]
+			case "-p":
+				http.HandleFunc("/", a.ShowDir)
+				print("Serving and listenning at " + colonPort + ". CTRL+C to stop.")
+				http.ListenAndServe(colonPort, nil)
+			default:
+				help("Unexpected argument " + arg)
+			}
+		}
+	}
+
 }
