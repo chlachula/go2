@@ -19,6 +19,10 @@ type typeStudent struct {
 	Age              int    `json:"AGE"`
 	ElectiveLanguage string `json:"elective language,omitempty"`
 }
+type typeClass struct {
+	Name     string `json:"class"`
+	Students []typeStudent
+}
 
 const (
 	B10   = true
@@ -200,9 +204,10 @@ func PrintJsonStudents() {
 	json.Unmarshal([]byte(studentsJson), &students)
 	fmt.Printf("Students : %+v\n\n", students)
 
-	var newStudents = []typeStudent{{Name: "Ann", Age: 16, ElectiveLanguage: "French"}, {Name: "Betty", Age: 16, ElectiveLanguage: "German"}}
-	bytes, _ := json.Marshal(newStudents)
-	fmt.Printf("New students in json format: %s\n\n", string(bytes))
+	var newClassOfStudents = typeClass{Name: "Language class", Students: []typeStudent{{Name: "Ann", Age: 16, ElectiveLanguage: "French"}, {Name: "Betty", Age: 16, ElectiveLanguage: "German"}}}
+	//var newStudents = []typeStudent{{Name: "Ann", Age: 16, ElectiveLanguage: "French"}, {Name: "Betty", Age: 16, ElectiveLanguage: "German"}}
+	bytes, _ := json.Marshal(newClassOfStudents)
+	fmt.Printf("New class students in json format: %s\n\n", string(bytes))
 }
 
 func PrintCurrentTime() {
