@@ -259,10 +259,6 @@ func computePoint(c TypeCrater, r, ela, elo, posa_rad float64) TypePoint {
 	return p
 }
 
-/*
-<circle cx="-318.92652943772" cy="-55.879578092369" r="2" stroke="yellow" fill="yellow" stroke-width="1" />
-<text    x="-313.92652943772"  y="-55.879578092369" fill="yellow" alignment-baseline="middle">Left edge 0,-90</text>
-*/
 func paintNamedPoint(c TypeCrater, r float64, p TypePoint) string {
 	s := fmt.Sprintf("%s %.1f,%.1f", c.N, c.La, c.Lo)
 	f := "\n<text    x=\"%.1f\"   y=\"%.1f\"  fill=\"yellow\" alignment-baseline=\"middle\">%s</text>\n"
