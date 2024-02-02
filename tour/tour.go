@@ -107,6 +107,12 @@ func FloatMinMax() {
 	fmt.Printf("float64: %24.15e .. %22.15e\n", math.SmallestNonzeroFloat64, math.MaxFloat64)
 }
 
+func QuotientAndModulo(dividend int, divisor int) (int, int) {
+	quotient := dividend / divisor
+	modulo := dividend % divisor // % is modulus operator (remainder operator), result is integer reminder
+	return quotient, modulo
+}
+
 func SystemInt() {
 	systemInt := 32
 	if math.MaxInt == math.MaxInt64 {
