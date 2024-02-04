@@ -48,7 +48,8 @@ func main() {
 				i += 1
 				a.Dir = os.Args[i]
 			case "-p":
-				http.HandleFunc("/", a.ShowDir)
+				http.HandleFunc("/", a.HandleHome)
+				http.HandleFunc("/show-dir", a.HandleShowDir)
 				print("Serving and listenning at " + colonPort + ". CTRL+C to stop.")
 				http.ListenAndServe(colonPort, nil)
 			default:
