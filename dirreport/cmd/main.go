@@ -25,8 +25,11 @@ func help(msg string) {
 	}
 	helptext := `Web displaying directory
  Usage:
- -h this help
+ -d dir-name #set directory to show
+ -p [port] #post to start web, default is 8080
+ -h #this help
  Example:
+ go2 -d /home/users/joedoe -p 8081
 `
 	fmt.Println(helptext)
 }
