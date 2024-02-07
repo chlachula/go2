@@ -5,10 +5,12 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
 )
 
 var Dir string = "."
+var ExcludeDotDirs = true
 
 type HtmlDataType = struct {
 	DirName string
@@ -51,6 +53,8 @@ func HandleShowDir(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, htmlEnd)
 }
 func displayDirectoryContents(dirPath string) (string, error) {
+	numberOfFiles := 0
+	totalFilesSize := 0
 	s := ""
 	// Open the directory
 	dir, err := os.Open(dirPath)
@@ -67,6 +71,9 @@ func displayDirectoryContents(dirPath string) (string, error) {
 
 	// Loop through each file/directory
 	for _, fileInfo := range fileInfos {
+		if ExcludeDotDirs && fileInfo.IsDir() && strings.HasPrefix(fileInfo.Name(), ".") {
+			continue
+		}
 		fullPath := filepath.Join(dirPath, fileInfo.Name())
 
 		// Print file/directory information
@@ -83,9 +90,12 @@ func displayDirectoryContents(dirPath string) (string, error) {
 			} else {
 				s += s2
 			}
+		} else {
+			numberOfFiles++
+			totalFilesSize += int(fileInfo.Size())
 		}
 		s += "\n"
-		//fmt.Println()
 	}
+	s += fmt.Sprintf("\nTotal of %d files of size %d in the directory %s\n", numberOfFiles, totalFilesSize, dirPath)
 	return s, nil
 }
