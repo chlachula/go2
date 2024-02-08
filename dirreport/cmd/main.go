@@ -26,6 +26,7 @@ func help(msg string) {
 	helptext := `Web displaying directory
  Usage:
  -d dir-name #set directory to show
+ -i include also hidden subdirs starting with dot .
  -p [port] #post to start web, default is 8080
  -h #this help
  Example:
@@ -37,7 +38,6 @@ func main() {
 	defer func(start time.Time) {
 		fmt.Printf("Elapsed time %s\n", time.Since(start))
 	}(time.Now())
-	help("")
 	colonPort := ":8080"
 	if len(os.Args) < 2 {
 		help("Not enough arguments")
@@ -50,6 +50,8 @@ func main() {
 			case "-d":
 				i += 1
 				a.Dir = os.Args[i]
+			case "-i":
+				a.ExcludeDotDirs = false
 			case "-p":
 				http.HandleFunc("/", a.HandleHome)
 				http.HandleFunc("/show-dir", a.HandleShowDir)

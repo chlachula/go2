@@ -16,6 +16,23 @@ type HtmlDataType = struct {
 	DirName string
 }
 
+const htmlHead1 = `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of %s</title>
+ </head>
+ <body>
+<h1>Index of %s</h1>
+<pre>      <a href="?C=N;O=D">Name</a>                    <a href="?C=L;O=A">Last modified</a>      <a href="?C=S;O=A">Size</a>  <a href="?C=M;O=A">Mode</a>  <a href="?C=D;O=A">Description</a>
+<hr>
+%s
+
+      <a href="/apod/">Parent Directory</a>                             -   
+      <a href="APODstyle.css">APODstyle.css</a>           11-Dec-2019 15:23  143   
+      <a href="IoTest.html">IoTest.html</a>             09-Feb-2021 21:50  2.7K  
+<hr></pre>
+</body></html>
+ `
 const htmlHead = `<html><head><title>%s</title></head>
 <body>`
 const htmlTemplateDir = `<h1>Hello dir {{.DirName}}</h1>
@@ -96,6 +113,6 @@ func displayDirectoryContents(dirPath string) (string, error) {
 		}
 		s += "\n"
 	}
-	s += fmt.Sprintf("\nTotal of %d files of size %d in the directory %s\n", numberOfFiles, totalFilesSize, dirPath)
+	s += fmt.Sprintf("\nTotal of %d files of size %d bytes in the directory %s\n", numberOfFiles, totalFilesSize, dirPath)
 	return s, nil
 }
