@@ -9,9 +9,6 @@ import (
 	"text/template"
 )
 
-var Dir string = "."
-var ExcludeDotDirs = true
-
 type HtmlDataType = struct {
 	DirName string
 }
@@ -19,10 +16,16 @@ type DirInf struct {
 	Files     []os.FileInfo
 	Dirs      []DirInf
 	Name      string
-	TotalSize int64
+	FilesNums int
+	FilesSize int
+	TotalSize int
 }
 
-const htmlHead1 = `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+var Dir string = "."
+var DI DirInf
+var ExcludeDotDirs = true
+
+const htmlPage2 = `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html>
  <head>
   <title>Index of %s</title>
@@ -30,11 +33,11 @@ const htmlHead1 = `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
  <body>
 <h1>Index of %s</h1>
 <!--SVG dirs image--> %s
-<pre>      <a href="?C=N;O=D">Name</a>                    <a href="?C=L;O=A">Last modified</a>      <a href="?C=S;O=A">Size</a>  <a href="?C=M;O=A">Mode</a>  <a href="?C=D;O=A">Description</a>
-<hr>
+<pre>
+      <a href="?C=N;O=D">Name</a>                    <a href="?C=L;O=A">Last modified</a>              <a href="?C=S;O=A">Size</a> <a href="?C=M;O=A">Mode</a>      <a href="?C=D;O=A">Description</a>
+<hr />      <a href="%s">Parent Directory</a>                             -   
 %s
 
-      <a href="/apod/">Parent Directory</a>                             -   
       <a href="APODstyle.css">APODstyle.css</a>           11-Dec-2019 15:23  143   
       <a href="IoTest.html">IoTest.html</a>             09-Feb-2021 21:50  2.7K  
 <hr></pre>
@@ -77,21 +80,18 @@ func HandleShowDir(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprint(w, htmlEnd)
 }
+func dirInf2string(dirInf DirInf) string {
+	s := ""
+	f1 := "      %-23s %-18s %12d %s \n"
+	for _, f := range dirInf.Files {
+		modTime := f.ModTime().Format("2006-Jan-01 15:04")
+		s += fmt.Sprintf(f1, f.Name(), modTime, f.Size(), f.Mode())
+	}
+	return s
+}
 func HandleShowDir2(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, htmlHead, "Dir Report")
-
-	if t, err := template.New("webpage2").Parse(htmlTemplateDir); err == nil {
-		data := getHtmlData()
-		if err = t.Execute(w, data); err != nil {
-			fmt.Fprintf(w, "<h1>error %s</h1>", err.Error())
-		}
-	}
-	if str, err := displayDirectoryContents(Dir); err == nil {
-		fmt.Fprint(w, "\n<pre>\n"+str+"\n</pre>\n")
-	} else {
-		fmt.Fprintf(w, "<h2>%s</h2>", err.Error())
-	}
-	fmt.Fprint(w, htmlEnd)
+	pageBody := dirInf2string(DI)
+	fmt.Fprintf(w, htmlPage2, Dir, Dir, "", "..", pageBody)
 }
 func displayDirectoryContents(dirPath string) (string, error) {
 	numberOfFiles := 0
@@ -139,4 +139,41 @@ func displayDirectoryContents(dirPath string) (string, error) {
 	}
 	s += fmt.Sprintf("\nTotal of %d files of size %d bytes in the directory %s\n", numberOfFiles, totalFilesSize, dirPath)
 	return s, nil
+}
+func SummarizeDirectory(dirPath string) DirInf {
+	var dirInf DirInf
+	dir, err := os.Open(dirPath) // Open the directory
+	if err != nil {
+		fmt.Printf("error opening %s: %s\n", dirPath, err.Error())
+		return dirInf
+	}
+	defer dir.Close()
+
+	fileInfos, err := dir.Readdir(-1) // Read the contents of the directory
+	if err != nil {
+		fmt.Printf("error Readdir %s: %s\n", dirPath, err.Error())
+		return dirInf
+	}
+	dirInf.Files = fileInfos
+	dirInf.Dirs = make([]DirInf, 0)
+	// Loop through each file/directory
+	for _, fileInfo := range fileInfos {
+		if ExcludeDotDirs && fileInfo.IsDir() && strings.HasPrefix(fileInfo.Name(), ".") {
+			continue
+		}
+		fullPath := filepath.Join(dirPath, fileInfo.Name())
+		// Check if the file/directory is a directory
+		if fileInfo.IsDir() {
+			di := SummarizeDirectory(fullPath) // If it is a directory, recursively call this function
+			dirInf.Dirs = append(dirInf.Dirs, di)
+		} else {
+			dirInf.FilesNums++
+			dirInf.FilesSize += int(fileInfo.Size())
+		}
+	}
+	return dirInf
+}
+
+func SetDirInf() {
+	DI = SummarizeDirectory(Dir)
 }

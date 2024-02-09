@@ -53,9 +53,10 @@ func main() {
 			case "-i":
 				a.ExcludeDotDirs = false
 			case "-p":
+				a.SetDirInf()
 				http.HandleFunc("/", a.HandleHome)
 				http.HandleFunc("/show-dir", a.HandleShowDir)
-				http.HandleFunc("/show-dir2", a.HandleShowDir)
+				http.HandleFunc("/show-dir2", a.HandleShowDir2)
 				print("Serving and listenning at " + colonPort + ". CTRL+C to stop.")
 				http.ListenAndServe(colonPort, nil)
 			default:
