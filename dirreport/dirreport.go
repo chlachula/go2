@@ -15,6 +15,12 @@ var ExcludeDotDirs = true
 type HtmlDataType = struct {
 	DirName string
 }
+type DirInf struct {
+	Files     []os.FileInfo
+	Dirs      []DirInf
+	Name      string
+	TotalSize int64
+}
 
 const htmlHead1 = `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html>
@@ -23,6 +29,7 @@ const htmlHead1 = `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
  </head>
  <body>
 <h1>Index of %s</h1>
+<!--SVG dirs image--> %s
 <pre>      <a href="?C=N;O=D">Name</a>                    <a href="?C=L;O=A">Last modified</a>      <a href="?C=S;O=A">Size</a>  <a href="?C=M;O=A">Mode</a>  <a href="?C=D;O=A">Description</a>
 <hr>
 %s
