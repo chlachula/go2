@@ -55,6 +55,7 @@ func main() {
 			case "-p":
 				http.HandleFunc("/", a.HandleHome)
 				http.HandleFunc("/show-dir", a.HandleShowDir)
+				http.HandleFunc("/show-dir2", a.HandleShowDir)
 				print("Serving and listenning at " + colonPort + ". CTRL+C to stop.")
 				http.ListenAndServe(colonPort, nil)
 			default:

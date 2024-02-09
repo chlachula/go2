@@ -56,11 +56,28 @@ func getHtmlData() HtmlDataType {
 func HandleHome(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, htmlHead, "Home")
 
-	fmt.Fprintf(w, "<h1>Home</h1><h1>Show dir <a href=\"%s\">%s</a></h1>", "/show-dir", Dir)
+	fmt.Fprintf(w, "<h1>Home</h1><h1>Show dir <a href=\"%s\">%s</a></h1><h1>Show dir <a href=\"%s\">%s</a></h1>",
+		"/show-dir", Dir, "/show-dir2", Dir)
 
 	fmt.Fprint(w, htmlEnd)
 }
 func HandleShowDir(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, htmlHead, "Dir Report")
+
+	if t, err := template.New("webpage2").Parse(htmlTemplateDir); err == nil {
+		data := getHtmlData()
+		if err = t.Execute(w, data); err != nil {
+			fmt.Fprintf(w, "<h1>error %s</h1>", err.Error())
+		}
+	}
+	if str, err := displayDirectoryContents(Dir); err == nil {
+		fmt.Fprint(w, "\n<pre>\n"+str+"\n</pre>\n")
+	} else {
+		fmt.Fprintf(w, "<h2>%s</h2>", err.Error())
+	}
+	fmt.Fprint(w, htmlEnd)
+}
+func HandleShowDir2(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, htmlHead, "Dir Report")
 
 	if t, err := template.New("webpage2").Parse(htmlTemplateDir); err == nil {
