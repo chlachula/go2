@@ -80,12 +80,36 @@ func HandleShowDir(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprint(w, htmlEnd)
 }
+func findDI(di DirInf, name string) DirInf {
+	var emptyDI DirInf
+	for _, d := range di.Dirs {
+		if name == d.Name {
+			return d
+		}
+	}
+	fmt.Println("ERROR, not found DI ", name)
+	return emptyDI
+}
+func spaces23(name string) string {
+	s := ""
+	for ; len(s)+len(name) < 23; s += " " {
+
+	}
+	return s
+}
 func dirInf2string(dirInf DirInf) string {
 	s := ""
+	f0 := "      <a href=\"%s\">%s</a>%s %-18s %12d %s \n"
 	f1 := "      %-23s %-18s %12d %s \n"
 	for _, f := range dirInf.Files {
 		modTime := f.ModTime().Format("2006-Jan-01 15:04")
-		s += fmt.Sprintf(f1, f.Name(), modTime, f.Size(), f.Mode())
+		if f.IsDir() {
+			link := "#" + f.Name()
+			di := findDI(dirInf, f.Name())
+			s += fmt.Sprintf(f0, link, f.Name(), spaces23(f.Name()), modTime, di.TotalSize, f.Mode())
+		} else {
+			s += fmt.Sprintf(f1, f.Name(), modTime, f.Size(), f.Mode())
+		}
 	}
 	return s
 }
@@ -165,12 +189,16 @@ func SummarizeDirectory(dirPath string) DirInf {
 		// Check if the file/directory is a directory
 		if fileInfo.IsDir() {
 			di := SummarizeDirectory(fullPath) // If it is a directory, recursively call this function
+			di.Name = fileInfo.Name()
+			dirInf.TotalSize += di.TotalSize
 			dirInf.Dirs = append(dirInf.Dirs, di)
 		} else {
 			dirInf.FilesNums++
 			dirInf.FilesSize += int(fileInfo.Size())
 		}
 	}
+	dirInf.TotalSize += dirInf.FilesSize
+	fmt.Println("TotalSize =", dirInf.TotalSize)
 	return dirInf
 }
 
