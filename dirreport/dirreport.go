@@ -97,6 +97,22 @@ func spaces23(name string) string {
 	}
 	return s
 }
+func dirInfPath2string(dirInf DirInf, path string) string {
+	s := ""
+	f0 := "      <a href=\"%s\">%s</a>%s %-18s %12d %s \n"
+	f1 := "      %-23s %-18s %12d %s \n"
+	for _, f := range dirInf.Files {
+		modTime := f.ModTime().Format("2006-Jan-01 15:04")
+		if f.IsDir() {
+			link := "?d=" + f.Name()
+			di := findDI(dirInf, f.Name())
+			s += fmt.Sprintf(f0, link, f.Name(), spaces23(f.Name()), modTime, di.TotalSize, f.Mode())
+		} else {
+			s += fmt.Sprintf(f1, f.Name(), modTime, f.Size(), f.Mode())
+		}
+	}
+	return s
+}
 func dirInf2string(dirInf DirInf) string {
 	s := ""
 	f0 := "      <a href=\"%s\">%s</a>%s %-18s %12d %s \n"
@@ -104,7 +120,7 @@ func dirInf2string(dirInf DirInf) string {
 	for _, f := range dirInf.Files {
 		modTime := f.ModTime().Format("2006-Jan-01 15:04")
 		if f.IsDir() {
-			link := "#" + f.Name()
+			link := "?d=" + f.Name()
 			di := findDI(dirInf, f.Name())
 			s += fmt.Sprintf(f0, link, f.Name(), spaces23(f.Name()), modTime, di.TotalSize, f.Mode())
 		} else {
@@ -114,7 +130,13 @@ func dirInf2string(dirInf DirInf) string {
 	return s
 }
 func HandleShowDir2(w http.ResponseWriter, r *http.Request) {
-	pageBody := dirInf2string(DI)
+	fmt.Println("r.URL =", r.URL)
+	pageBody := ""
+	if d := r.URL.Query().Get("d"); d != "" {
+		pageBody = dirInfPath2string(DI, d)
+	} else {
+		pageBody = dirInf2string(DI)
+	}
 	fmt.Fprintf(w, htmlPage2, Dir, Dir, "", "..", pageBody)
 }
 func displayDirectoryContents(dirPath string) (string, error) {
