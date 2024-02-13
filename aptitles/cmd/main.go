@@ -18,7 +18,7 @@ func help(msg string) {
 	-g gaps between dates in APOD archive
 	-c create APOD archive with titles to local json file
 	-l load local json APOD archive 
-	-t yymmdd seach title for give date
+	-t yymmdd search title for given date
 	`
 	fmt.Println(helptext)
 }
