@@ -26,6 +26,8 @@ type PersonRecord struct {
 }
 
 var verbose bool = true
+
+// https://regex101.com/r/4WLTRe/1
 var re1 = regexp.MustCompile(`(?m).*<li>.*title="(\d{4})".*?<a href="/wiki/(.*?)".*\(d\. (.*)?\)`)
 
 func getMMDD(mmdd string) (int, int) {
