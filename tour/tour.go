@@ -134,6 +134,12 @@ func Loops() {
 	for i, s := range []string{"a", "b"} {
 		fmt.Printf("%d:%s\n", i, s)
 	}
+	fmt.Print("int range example: ")
+	// since GO 1.22
+	iMax := 5
+	for i := range iMax {
+		fmt.Printf("0<=%d<%d; ", i, iMax)
+	}
 	fmt.Println()
 }
 

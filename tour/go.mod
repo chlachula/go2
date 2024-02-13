@@ -7,4 +7,5 @@
 
 module github.com/chlachula/go2/tour
 
-go 1.20
+//go 1.20 commented on 2024-0213
+go 1.22
