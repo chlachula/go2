@@ -5,8 +5,8 @@ import (
 )
 
 func TestMakeUrlString1(t *testing.T) {
-	want := "https://en.wikipedia.org/wiki/January_1"
-	got := makeUrlString(1, 1)
+	want := "January_1"
+	got := makeWikiDayFilename(1, 1)
 
 	if got != want {
 		t.Errorf("got %s, want %s", got, want)
@@ -14,8 +14,8 @@ func TestMakeUrlString1(t *testing.T) {
 
 }
 func TestMakeUrlString2(t *testing.T) {
-	want := "https://en.wikipedia.org/wiki/February_14"
-	got := makeUrlString(2, 14)
+	want := "February_14"
+	got := makeWikiDayFilename(2, 14)
 
 	if got != want {
 		t.Errorf("got %s, want %s", got, want)
