@@ -14,9 +14,11 @@ import (
 )
 
 type DayRecord struct {
-	MM      int
-	DD      int
-	Records []PersonRecord
+	MM       int
+	DD       int
+	Filename string
+	Deads    []PersonRecord
+	Births   []PersonRecord
 }
 type PersonRecord struct {
 	Age  int
@@ -37,14 +39,26 @@ func getMMDD(mmdd string) (int, int) {
 		return int(t.Month()), t.Day()
 	}
 }
-func makeUrlString(mm, dd int) string {
-	prefix := "https://en.wikipedia.org/wiki/" // February_13
+func makeWikiDayFilename(mm, dd int) string {
 	t := time.Date(2024, time.Month(mm), dd, 0, 0, 0, 0, time.UTC)
-	return fmt.Sprintf("%s%s_%d", prefix, t.Format("January"), dd)
+	return fmt.Sprintf("%s_%d", t.Format("January"), dd)
 }
+
 func WikiDay(mmdd string) {
-	m, d := getMMDD(mmdd)
-	urlString := makeUrlString(m, d)
+	jsonStr := ""
+	mm, dd := getMMDD(mmdd)
+	filename := makeWikiDayFilename(mm, dd)
+	filenameJson := filename + ".json"
+	if bytes, err := os.ReadFile(filenameJson); err == nil { //Read entire file content. No need to close
+		jsonStr = string(bytes)
+	} else {
+		jsonStr = downloadWikiDay(mm, dd, filename)
+	}
+	fmt.Println(jsonStr)
+}
+func downloadWikiDay(m, d int, filename string) string {
+	prefix := "https://en.wikipedia.org/wiki/" // February_13
+	urlString := prefix + filename
 	page, err := DownloadPage(urlString)
 	if err != nil {
 		fmt.Println(err.Error())
@@ -63,7 +77,14 @@ func WikiDay(mmdd string) {
 	bytes, _ := json.Marshal(dayRec)
 	s := strings.ReplaceAll(string(bytes), "},", "},\n")
 	s = strings.ReplaceAll(s, "[", "\n[")
-	fmt.Printf("\ndayRec: %s\n\n", s)
+
+	bytes = []byte(s)
+	f, err := os.Create(filename + ".json")
+	if _, err := f.Write(bytes); err != nil {
+		fmt.Printf("error: %s\n", err.Error())
+	}
+
+	return s
 }
 
 func DownloadPage(urlString string) (string, error) {
