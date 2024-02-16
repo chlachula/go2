@@ -226,7 +226,6 @@ func SummarizeDirectory(dirPath string) DirInf {
 		}
 	}
 	dirInf.TotalSize += dirInf.FilesSize
-	fmt.Println("TotalSize =", dirInf.TotalSize)
 	return dirInf
 }
 
