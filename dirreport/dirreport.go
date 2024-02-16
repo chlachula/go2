@@ -80,15 +80,15 @@ func HandleShowDir(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprint(w, htmlEnd)
 }
-func findDI(di DirInf, name string) DirInf {
+func findDI(di *DirInf, name string) *DirInf {
 	var emptyDI DirInf
 	for _, d := range di.Dirs {
 		if name == d.Name {
-			return d
+			return &d
 		}
 	}
 	fmt.Println("ERROR, not found DI ", name)
-	return emptyDI
+	return &emptyDI
 }
 func spaces23(name string) string {
 	s := ""
@@ -97,11 +97,17 @@ func spaces23(name string) string {
 	}
 	return s
 }
-func dirInfPath2string(dirInf DirInf, path string) string {
+func dirInfPath2string(dirInf *DirInf, path string) string {
+	DItoShow := dirInf
+	if path != "" {
+		if subDinf := findDI(dirInf, path); subDinf != nil {
+			DItoShow = subDinf
+		}
+	}
 	s := ""
 	f0 := "      <a href=\"%s\">%s</a>%s %-18s %12d %s \n"
 	f1 := "      %-23s %-18s %12d %s \n"
-	for _, f := range dirInf.Files {
+	for _, f := range DItoShow.Files {
 		modTime := f.ModTime().Format("2006-Jan-01 15:04")
 		if f.IsDir() {
 			link := "?d=" + f.Name()
@@ -121,7 +127,7 @@ func dirInf2string(dirInf DirInf) string {
 		modTime := f.ModTime().Format("2006-Jan-01 15:04")
 		if f.IsDir() {
 			link := "?d=" + f.Name()
-			di := findDI(dirInf, f.Name())
+			di := findDI(&dirInf, f.Name())
 			s += fmt.Sprintf(f0, link, f.Name(), spaces23(f.Name()), modTime, di.TotalSize, f.Mode())
 		} else {
 			s += fmt.Sprintf(f1, f.Name(), modTime, f.Size(), f.Mode())
@@ -133,7 +139,7 @@ func HandleShowDir2(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("r.URL =", r.URL)
 	pageBody := ""
 	if d := r.URL.Query().Get("d"); d != "" {
-		pageBody = dirInfPath2string(DI, d)
+		pageBody = dirInfPath2string(&DI, d)
 	} else {
 		pageBody = dirInf2string(DI)
 	}
