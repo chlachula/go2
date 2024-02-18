@@ -13,6 +13,7 @@ type HtmlDataType = struct {
 	DirName string
 }
 type DirInf struct {
+	Path      string
 	Files     []os.FileInfo
 	Dirs      []DirInf
 	Name      string
@@ -24,6 +25,7 @@ type DirInf struct {
 var Dir string = "."
 var DI DirInf
 var ExcludeDotDirs = true
+var verbose = false
 
 const htmlPage2 = `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html>
@@ -32,23 +34,30 @@ const htmlPage2 = `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
  </head>
  <body>
 <h1>Index of %s</h1>
-<!--SVG dirs image--> %s
+<!--SVG dirs image-->
+Sub dir: %s
 <pre>
       <a href="?C=N;O=D">Name</a>                    <a href="?C=L;O=A">Last modified</a>              <a href="?C=S;O=A">Size</a> <a href="?C=M;O=A">Mode</a>      <a href="?C=D;O=A">Description</a>
-<hr />      <a href="%s">Parent Directory</a>                             -   
-%s
-
-      <a href="APODstyle.css">APODstyle.css</a>           11-Dec-2019 15:23  143   
-      <a href="IoTest.html">IoTest.html</a>             09-Feb-2021 21:50  2.7K  
-<hr></pre>
+<hr/>%s%s<hr/></pre>
 </body></html>
  `
+const parentDirectory = "      <a href=\"%s\">Parent Directory</a>\n"
+
+/*
+<a href="APODstyle.css">APODstyle.css</a>           11-Dec-2019 15:23  143
+<a href="IoTest.html">IoTest.html</a>             09-Feb-2021 21:50  2.7K
+*/
 const htmlHead = `<html><head><title>%s</title></head>
 <body>`
 const htmlTemplateDir = `<h1>Hello dir {{.DirName}}</h1>
 `
 const htmlEnd = `</body></html>`
 
+func verbosePrint(s string) {
+	if verbose {
+		println(s)
+	}
+}
 func getHtmlData() HtmlDataType {
 	data := HtmlDataType{
 		DirName: Dir,
@@ -80,15 +89,30 @@ func HandleShowDir(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprint(w, htmlEnd)
 }
-func findDI(di *DirInf, name string) *DirInf {
-	var emptyDI DirInf
+func findDI(di *DirInf, relPathName string) *DirInf {
+	name := relPathName
+	i := strings.Index(relPathName, "/")
+	if i > -1 {
+		name = relPathName[:i]
+		relPathName = relPathName[i+1:]
+	}
+	verbosePrint("DEBUG-findDI: Path=" + di.Path)
+	//var emptyDI DirInf
 	for _, d := range di.Dirs {
+		verbosePrint("DEBUG-findDI: " + name + ": " + d.Name)
 		if name == d.Name {
-			return &d
+			verbosePrint("DEBUG-findDI FOUND!!!: " + name + ", Path=" + d.Path)
+			if i < 0 {
+				return &d
+			} else {
+				return findDI(&d, relPathName)
+			}
+
 		}
 	}
-	fmt.Println("ERROR, not found DI ", name)
-	return &emptyDI
+	fmt.Printf("ERROR,'%s' not found in DI.Path %s\n", name, di.Path)
+	//return &emptyDI
+	return nil
 }
 func spaces23(name string) string {
 	s := ""
@@ -101,17 +125,27 @@ func dirInfPath2string(dirInf *DirInf, rootpath string, path string) string {
 	DItoShow := dirInf
 	if path != "" {
 		if subDinf := findDI(dirInf, path); subDinf != nil {
+			verbosePrint("DEBUG-A1 subDinf.Path: " + subDinf.Path)
 			DItoShow = subDinf
 		}
 	}
 	s := ""
 	f0 := "      <a href=\"%s\">%s</a>%s %-18s %12d %s \n"
 	f1 := "      %-23s %-18s %12d %s \n"
+	verbosePrint("DEBUG-dirInfPath2string root:" + rootpath + ",leaf:" + path + "for loop DItoShow.Path: " + DItoShow.Path)
+	if rootpath != "" {
+		rootpath += path + "/"
+	} else {
+		if path != "" {
+			rootpath = path + "/"
+		}
+	}
 	for _, f := range DItoShow.Files {
 		modTime := f.ModTime().Format("2006-Jan-01 15:04")
+		verbosePrint("DEBUG-A2 : " + f.Name())
 		if f.IsDir() {
 			link := "?d=" + rootpath + f.Name()
-			di := findDI(dirInf, f.Name())
+			di := findDI(DItoShow, f.Name())
 			s += fmt.Sprintf(f0, link, f.Name(), spaces23(f.Name()), modTime, di.TotalSize, f.Mode())
 		} else {
 			s += fmt.Sprintf(f1, f.Name(), modTime, f.Size(), f.Mode())
@@ -136,24 +170,43 @@ func dirInf2string(dirInf DirInf) string {
 	return s
 }
 func HandleShowDir2(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("r.URL =", r.URL)
+	verbosePrint("\n\nr.URL = " + r.URL.String())
 	rootPath := ""
+	leaf := ""
 	pageBody := ""
 	if d := r.URL.Query().Get("d"); d != "" {
+		d = strings.TrimSuffix(d, "/")
+		subDI := findDI(&DI, d)
 		i := strings.LastIndex(d, "/")
 		if i > -1 {
 			rootPath = d[:i+1]
-			pageBody = dirInfPath2string(&DI, rootPath, d[i+1:])
+			leaf = d[i+1:]
+			verbosePrint("--Handle 3 second and more subdirs")
+			pageBody = dirInfPath2string(subDI, rootPath, leaf)
 		} else {
-			pageBody = dirInfPath2string(&DI, "", d)
+			verbosePrint("--Handle 2 first subdir")
+			leaf = d
+			pageBody = dirInfPath2string(subDI, rootPath, leaf) // rootPath==""
 		}
 	} else {
-		pageBody = dirInfPath2string(&DI, "", "")
+		verbosePrint("--Handle 1 root")
+		pageBody = dirInfPath2string(&DI, rootPath, d) // rootPath==""
 		//pageBody = dirInf2string(DI)
 	}
 	title := Dir
-	parentDirLink := ".."
-	fmt.Fprintf(w, htmlPage2, title, Dir, rootPath, parentDirLink, pageBody)
+	parentDirLink := "/show-dir2?d=" + rootPath
+	parentDirLink = fmt.Sprintf(parentDirectory, parentDirLink)
+	currentDir := rootPath
+	if rootPath == "" {
+		currentDir = leaf
+	} else {
+		currentDir += leaf
+	}
+	if currentDir == "" {
+		currentDir = "."
+		parentDirLink = "      .\n"
+	}
+	fmt.Fprintf(w, htmlPage2, title, Dir, currentDir, parentDirLink, pageBody)
 }
 func displayDirectoryContents(dirPath string) (string, error) {
 	numberOfFiles := 0
@@ -203,7 +256,9 @@ func displayDirectoryContents(dirPath string) (string, error) {
 	return s, nil
 }
 func SummarizeDirectory(dirPath string) DirInf {
+	verbosePrint("SummarizeDirectory p=" + dirPath)
 	var dirInf DirInf
+	dirInf.Path = dirPath
 	dir, err := os.Open(dirPath) // Open the directory
 	if err != nil {
 		fmt.Printf("error opening %s: %s\n", dirPath, err.Error())
