@@ -97,7 +97,7 @@ func spaces23(name string) string {
 	}
 	return s
 }
-func dirInfPath2string(dirInf *DirInf, path string) string {
+func dirInfPath2string(dirInf *DirInf, rootpath string, path string) string {
 	DItoShow := dirInf
 	if path != "" {
 		if subDinf := findDI(dirInf, path); subDinf != nil {
@@ -110,7 +110,7 @@ func dirInfPath2string(dirInf *DirInf, path string) string {
 	for _, f := range DItoShow.Files {
 		modTime := f.ModTime().Format("2006-Jan-01 15:04")
 		if f.IsDir() {
-			link := "?d=" + f.Name()
+			link := "?d=" + rootpath + f.Name()
 			di := findDI(dirInf, f.Name())
 			s += fmt.Sprintf(f0, link, f.Name(), spaces23(f.Name()), modTime, di.TotalSize, f.Mode())
 		} else {
@@ -137,13 +137,23 @@ func dirInf2string(dirInf DirInf) string {
 }
 func HandleShowDir2(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("r.URL =", r.URL)
+	rootPath := ""
 	pageBody := ""
 	if d := r.URL.Query().Get("d"); d != "" {
-		pageBody = dirInfPath2string(&DI, d)
+		i := strings.LastIndex(d, "/")
+		if i > -1 {
+			rootPath = d[:i+1]
+			pageBody = dirInfPath2string(&DI, rootPath, d[i+1:])
+		} else {
+			pageBody = dirInfPath2string(&DI, "", d)
+		}
 	} else {
-		pageBody = dirInf2string(DI)
+		pageBody = dirInfPath2string(&DI, "", "")
+		//pageBody = dirInf2string(DI)
 	}
-	fmt.Fprintf(w, htmlPage2, Dir, Dir, "", "..", pageBody)
+	title := Dir
+	parentDirLink := ".."
+	fmt.Fprintf(w, htmlPage2, title, Dir, rootPath, parentDirLink, pageBody)
 }
 func displayDirectoryContents(dirPath string) (string, error) {
 	numberOfFiles := 0
