@@ -144,11 +144,13 @@ func dirInfPath2string(dirInf *DirInf, rootpath string, path string) string {
 		modTime := f.ModTime().Format("2006-Jan-01 15:04")
 		verbosePrint("DEBUG-A2 : " + f.Name())
 		if f.IsDir() {
-			link := "?d=" + rootpath + f.Name()
-			if di := findDI(DItoShow, f.Name()); di != nil {
-				s += fmt.Sprintf(f0, link, f.Name(), spaces23(f.Name()), modTime, di.TotalSize, f.Mode())
-			} else {
-				fmt.Printf("error findDI rootpath:%s, path:%s, name:%s\n", rootpath, path, f.Name())
+			if !(ExcludeDotDirs && strings.HasPrefix(f.Name(), ".")) {
+				link := "?d=" + rootpath + f.Name()
+				if di := findDI(DItoShow, f.Name()); di != nil {
+					s += fmt.Sprintf(f0, link, f.Name(), spaces23(f.Name()), modTime, di.TotalSize, f.Mode())
+				} else {
+					fmt.Printf("error findDI rootpath:%s, path:%s, name:%s\n", rootpath, path, f.Name())
+				}
 			}
 		} else {
 			s += fmt.Sprintf(f1, f.Name(), modTime, f.Size(), f.Mode())
