@@ -110,7 +110,7 @@ func findDI(di *DirInf, relPathName string) *DirInf {
 
 		}
 	}
-	fmt.Printf("ERROR,'%s' not found in DI.Path %s\n", name, di.Path)
+	//fmt.Printf("ERROR,'%s' not found in DI.Path %s\n", name, di.Path)
 	//return &emptyDI
 	return nil
 }
@@ -145,8 +145,11 @@ func dirInfPath2string(dirInf *DirInf, rootpath string, path string) string {
 		verbosePrint("DEBUG-A2 : " + f.Name())
 		if f.IsDir() {
 			link := "?d=" + rootpath + f.Name()
-			di := findDI(DItoShow, f.Name())
-			s += fmt.Sprintf(f0, link, f.Name(), spaces23(f.Name()), modTime, di.TotalSize, f.Mode())
+			if di := findDI(DItoShow, f.Name()); di != nil {
+				s += fmt.Sprintf(f0, link, f.Name(), spaces23(f.Name()), modTime, di.TotalSize, f.Mode())
+			} else {
+				fmt.Printf("error findDI rootpath:%s, path:%s, name:%s\n", rootpath, path, f.Name())
+			}
 		} else {
 			s += fmt.Sprintf(f1, f.Name(), modTime, f.Size(), f.Mode())
 		}
