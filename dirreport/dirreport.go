@@ -154,6 +154,7 @@ func dirInfPath2string(dirInf *DirInf, rootpath string, path string) string {
 			s += fmt.Sprintf(f1, f.Name(), modTime, f.Size(), f.Mode())
 		}
 	}
+	s += fmt.Sprintf("<hr/>      Total size                                     %d\n", dirInf.TotalSize)
 	return s
 }
 func dirInf2string(dirInf DirInf) string {
