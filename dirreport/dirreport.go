@@ -68,8 +68,8 @@ func getHtmlData() HtmlDataType {
 func HandleHome(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, htmlHead, "Home")
 
-	fmt.Fprintf(w, "<h1>Home</h1><h1>Show dir <a href=\"%s\">%s</a></h1><h1>Show dir <a href=\"%s\">%s</a></h1>",
-		"/show-dir", Dir, "/show-dir2", Dir)
+	fmt.Fprintf(w, "<h1>Home</h1><h1>Show dir %s</h1><a href=\"%s\">%s</a> -  <a href=\"%s\">%s</a> <br/>", Dir,
+		"/show-dir", "One page", "/show-dir2", "Summarized subdirectories")
 
 	fmt.Fprint(w, htmlEnd)
 }
@@ -97,7 +97,6 @@ func findDI(di *DirInf, relPathName string) *DirInf {
 		relPathName = relPathName[i+1:]
 	}
 	verbosePrint("DEBUG-findDI: Path=" + di.Path)
-	//var emptyDI DirInf
 	for _, d := range di.Dirs {
 		verbosePrint("DEBUG-findDI: " + name + ": " + d.Name)
 		if name == d.Name {
@@ -110,8 +109,6 @@ func findDI(di *DirInf, relPathName string) *DirInf {
 
 		}
 	}
-	//fmt.Printf("ERROR,'%s' not found in DI.Path %s\n", name, di.Path)
-	//return &emptyDI
 	return nil
 }
 func spaces23(name string) string {
@@ -125,14 +122,12 @@ func dirInfPath2string(dirInf *DirInf, rootpath string, path string) string {
 	DItoShow := dirInf
 	if path != "" {
 		if subDinf := findDI(dirInf, path); subDinf != nil {
-			verbosePrint("DEBUG-A1 subDinf.Path: " + subDinf.Path)
 			DItoShow = subDinf
 		}
 	}
 	s := ""
 	f0 := "      <a href=\"%s\">%s</a>%s %-18s %12d %s \n"
 	f1 := "      %-23s %-18s %12d %s \n"
-	verbosePrint("DEBUG-dirInfPath2string root:" + rootpath + ",leaf:" + path + "for loop DItoShow.Path: " + DItoShow.Path)
 	if rootpath != "" {
 		rootpath += path + "/"
 	} else {
@@ -142,7 +137,6 @@ func dirInfPath2string(dirInf *DirInf, rootpath string, path string) string {
 	}
 	for _, f := range DItoShow.Files {
 		modTime := f.ModTime().Format("2006-Jan-01 15:04")
-		verbosePrint("DEBUG-A2 : " + f.Name())
 		if f.IsDir() {
 			if !(ExcludeDotDirs && strings.HasPrefix(f.Name(), ".")) {
 				link := "?d=" + rootpath + f.Name()
@@ -159,22 +153,7 @@ func dirInfPath2string(dirInf *DirInf, rootpath string, path string) string {
 	s += fmt.Sprintf("<hr/>      Total size                                     %d\n", dirInf.TotalSize)
 	return s
 }
-func dirInf2string(dirInf DirInf) string {
-	s := ""
-	f0 := "      <a href=\"%s\">%s</a>%s %-18s %12d %s \n"
-	f1 := "      %-23s %-18s %12d %s \n"
-	for _, f := range dirInf.Files {
-		modTime := f.ModTime().Format("2006-Jan-01 15:04")
-		if f.IsDir() {
-			link := "?d=" + f.Name()
-			di := findDI(&dirInf, f.Name())
-			s += fmt.Sprintf(f0, link, f.Name(), spaces23(f.Name()), modTime, di.TotalSize, f.Mode())
-		} else {
-			s += fmt.Sprintf(f1, f.Name(), modTime, f.Size(), f.Mode())
-		}
-	}
-	return s
-}
+
 func HandleShowDir2(w http.ResponseWriter, r *http.Request) {
 	verbosePrint("\n\nr.URL = " + r.URL.String())
 	rootPath := ""
@@ -197,7 +176,6 @@ func HandleShowDir2(w http.ResponseWriter, r *http.Request) {
 	} else {
 		verbosePrint("--Handle 1 root")
 		pageBody = dirInfPath2string(&DI, rootPath, d) // rootPath==""
-		//pageBody = dirInf2string(DI)
 	}
 	title := Dir
 	parentDirLink := "/show-dir2?d=" + rootPath
