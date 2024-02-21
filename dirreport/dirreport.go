@@ -5,8 +5,10 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"text/template"
+	"time"
 )
 
 type HtmlDataType = struct {
@@ -20,6 +22,12 @@ type DirInf struct {
 	FilesNums int
 	FilesSize int64
 	TotalSize int64
+}
+type FileInfo2Sort struct {
+	Name     string
+	Size     int64
+	ModTime  time.Time
+	FileInfo os.FileInfo
 }
 
 var Dir string = "."
@@ -164,7 +172,10 @@ func dirInfPath2string(dirInf *DirInf, rootpath string, path string) string {
 			rootpath = path + "/"
 		}
 	}
-	for _, f := range DItoShow.Files {
+	files := DItoShow.Files
+
+	sort.SliceStable(files, func(i, j int) bool { return files[i].Size() < files[j].Size() })
+	for _, f := range files {
 		modTime := f.ModTime().Format("2006-Jan-01 15:04")
 		if f.IsDir() {
 			if !(ExcludeDotDirs && strings.HasPrefix(f.Name(), ".")) {
