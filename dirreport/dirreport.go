@@ -18,8 +18,8 @@ type DirInf struct {
 	Dirs      []DirInf
 	Name      string
 	FilesNums int
-	FilesSize int
-	TotalSize int
+	FilesSize int64
+	TotalSize int64
 }
 
 var Dir string = "."
@@ -37,7 +37,7 @@ const htmlPage2 = `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <!--SVG dirs image-->
 Sub dir: %s
 <pre>
-      <a href="?C=N;O=D">Name</a>                    <a href="?C=L;O=A">Last modified</a>              <a href="?C=S;O=A">Size</a> <a href="?C=M;O=A">Mode</a>      <a href="?C=D;O=A">Description</a>
+      <a href="?C=N;O=D">Name</a>                              <a href="?C=L;O=A">Last modified</a>       <a href="?C=S;O=A">Size</a> <a href="?C=M;O=A">Mode</a>      <a href="?C=D;O=A">Description</a>
 <hr/>%s%s<hr/></pre>
 </body></html>
  `
@@ -56,6 +56,32 @@ const htmlEnd = `</body></html>`
 func verbosePrint(s string) {
 	if verbose {
 		println(s)
+	}
+}
+func strSize(i int64) string {
+	f := float64(i)
+	if i < 1000 {
+		return fmt.Sprintf("%3d ", i)
+	} else if i < 9951 {
+		return fmt.Sprintf("%.1fK", f*0.001)
+	} else if i < 1000*1000 {
+		return fmt.Sprintf("%3dK", int(f*1e-3))
+	} else if i < 10*1000*1000 {
+		return fmt.Sprintf("%.1fM", f*1e-6)
+	} else if i < 1000*1000*1000 {
+		return fmt.Sprintf("%3dM", int(f*1e-6))
+	} else if i < 10*1000*1000*1000 {
+		return fmt.Sprintf("%.1fG", f*1e-9)
+	} else if i < 1000*1000*1000*1000 {
+		return fmt.Sprintf("%3dG", int(f*1e-9))
+	} else if i < 10*1000*1000*1000*1000 {
+		return fmt.Sprintf("%.1fT", f*1e-12)
+	} else if i < 1000*1000*1000*1000*1000 {
+		return fmt.Sprintf("%3dT", int(f*1e-12))
+	} else if i < 10*1000*1000*1000*1000*1000 {
+		return fmt.Sprintf("%.1fP", f*1e-15)
+	} else {
+		return fmt.Sprintf("%3dP", int(f*1e-15))
 	}
 }
 func getHtmlData() HtmlDataType {
@@ -111,12 +137,15 @@ func findDI(di *DirInf, relPathName string) *DirInf {
 	}
 	return nil
 }
-func spaces23(name string) string {
+func spaces(name string, length int) string {
 	s := ""
-	for ; len(s)+len(name) < 23; s += " " {
+	for ; len(s)+len(name) < length; s += " " {
 
 	}
 	return s
+}
+func sizeSpan(size int64) string {
+	return fmt.Sprintf("<span title=\"%d\">%5s</span>", size, strSize(size))
 }
 func dirInfPath2string(dirInf *DirInf, rootpath string, path string) string {
 	DItoShow := dirInf
@@ -126,8 +155,8 @@ func dirInfPath2string(dirInf *DirInf, rootpath string, path string) string {
 		}
 	}
 	s := ""
-	f0 := "      <a href=\"%s\">%s</a>%s %-18s %12d %s \n"
-	f1 := "      %-23s %-18s %12d %s \n"
+	f0 := "      <a href=\"%s\">%s</a>%s %-18s %s %s \n"
+	f1 := "      %-33s %-18s %s %s \n"
 	if rootpath != "" {
 		rootpath += path + "/"
 	} else {
@@ -141,16 +170,16 @@ func dirInfPath2string(dirInf *DirInf, rootpath string, path string) string {
 			if !(ExcludeDotDirs && strings.HasPrefix(f.Name(), ".")) {
 				link := "?d=" + rootpath + f.Name()
 				if di := findDI(DItoShow, f.Name()); di != nil {
-					s += fmt.Sprintf(f0, link, f.Name(), spaces23(f.Name()), modTime, di.TotalSize, f.Mode())
+					s += fmt.Sprintf(f0, link, f.Name(), spaces(f.Name(), 33), modTime, sizeSpan(di.TotalSize), f.Mode())
 				} else {
 					fmt.Printf("error findDI rootpath:%s, path:%s, name:%s\n", rootpath, path, f.Name())
 				}
 			}
 		} else {
-			s += fmt.Sprintf(f1, f.Name(), modTime, f.Size(), f.Mode())
+			s += fmt.Sprintf(f1, f.Name(), modTime, sizeSpan(f.Size()), f.Mode())
 		}
 	}
-	s += fmt.Sprintf("<hr/>      Total size                                     %d\n", dirInf.TotalSize)
+	s += fmt.Sprintf("<hr/>      %-52s %s\n", "Total size", sizeSpan(dirInf.TotalSize))
 	return s
 }
 
@@ -271,7 +300,7 @@ func SummarizeDirectory(dirPath string) DirInf {
 			dirInf.Dirs = append(dirInf.Dirs, di)
 		} else {
 			dirInf.FilesNums++
-			dirInf.FilesSize += int(fileInfo.Size())
+			dirInf.FilesSize += fileInfo.Size()
 		}
 	}
 	dirInf.TotalSize += dirInf.FilesSize
