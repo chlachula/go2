@@ -24,10 +24,11 @@ type DirInf struct {
 	TotalSize int64
 }
 type FileInfo2Sort struct {
-	Name     string
-	Size     int64
-	ModTime  time.Time
-	FileInfo os.FileInfo
+	Name    string
+	Size    int64
+	ModTime time.Time
+	Mode    os.FileMode
+	IsDir   bool
 }
 
 var Dir string = "."
@@ -155,6 +156,37 @@ func spaces(name string, length int) string {
 func sizeSpan(size int64) string {
 	return fmt.Sprintf("<span title=\"%d\">%5s</span>", size, strSize(size))
 }
+func createFileInfo2(dirInf DirInf, f os.FileInfo) FileInfo2Sort {
+	var f2 FileInfo2Sort
+	f2.Name = f.Name()
+	f2.ModTime = f.ModTime()
+	f2.Mode = f.Mode()
+	f2.Size = f.Size()
+	f2.IsDir = false
+	if f.IsDir() {
+		f2.IsDir = true
+		if di := findDI(&dirInf, f.Name()); di != nil {
+			f2.Size = di.TotalSize
+		}
+	}
+	return f2
+}
+func sortFiles2(dirInf DirInf) []FileInfo2Sort {
+	files := make([]FileInfo2Sort, 0)
+	for _, f := range dirInf.Files {
+		if f.IsDir() {
+			if !(ExcludeDotDirs && strings.HasPrefix(f.Name(), ".")) {
+				f2 := createFileInfo2(dirInf, f)
+				files = append(files, f2)
+			}
+		} else {
+			f2 := createFileInfo2(dirInf, f)
+			files = append(files, f2)
+		}
+	}
+	sort.SliceStable(files, func(i, j int) bool { return files[i].Size > files[j].Size })
+	return files
+}
 func dirInfPath2string(dirInf *DirInf, rootpath string, path string) string {
 	DItoShow := dirInf
 	if path != "" {
@@ -172,22 +204,21 @@ func dirInfPath2string(dirInf *DirInf, rootpath string, path string) string {
 			rootpath = path + "/"
 		}
 	}
-	files := DItoShow.Files
+	files := sortFiles2(*DItoShow)
 
-	sort.SliceStable(files, func(i, j int) bool { return files[i].Size() < files[j].Size() })
 	for _, f := range files {
-		modTime := f.ModTime().Format("2006-Jan-01 15:04")
-		if f.IsDir() {
-			if !(ExcludeDotDirs && strings.HasPrefix(f.Name(), ".")) {
-				link := "?d=" + rootpath + f.Name()
-				if di := findDI(DItoShow, f.Name()); di != nil {
-					s += fmt.Sprintf(f0, link, f.Name(), spaces(f.Name(), 33), modTime, sizeSpan(di.TotalSize), f.Mode())
+		modTime := f.ModTime.Format("2006-Jan-01 15:04")
+		if f.IsDir {
+			if !(ExcludeDotDirs && strings.HasPrefix(f.Name, ".")) {
+				link := "?d=" + rootpath + f.Name
+				if di := findDI(DItoShow, f.Name); di != nil {
+					s += fmt.Sprintf(f0, link, f.Name, spaces(f.Name, 33), modTime, sizeSpan(di.TotalSize), f.Mode)
 				} else {
-					fmt.Printf("error findDI rootpath:%s, path:%s, name:%s\n", rootpath, path, f.Name())
+					fmt.Printf("error findDI rootpath:%s, path:%s, name:%s\n", rootpath, path, f.Name)
 				}
 			}
 		} else {
-			s += fmt.Sprintf(f1, f.Name(), modTime, sizeSpan(f.Size()), f.Mode())
+			s += fmt.Sprintf(f1, f.Name, modTime, sizeSpan(f.Size), f.Mode)
 		}
 	}
 	s += fmt.Sprintf("<hr/>      %-52s %s\n", "Total size", sizeSpan(dirInf.TotalSize))
