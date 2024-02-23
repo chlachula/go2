@@ -67,32 +67,35 @@ func verbosePrint(s string) {
 		println(s)
 	}
 }
-func strSize(i int64) string {
-	f := float64(i)
-	if i < 1000 {
-		return fmt.Sprintf("%3d ", i)
-	} else if i < 9951 {
-		return fmt.Sprintf("%.1fK", f*0.001)
-	} else if i < 1000*1000 {
-		return fmt.Sprintf("%3dK", int(f*1e-3))
-	} else if i < 10*1000*1000 {
-		return fmt.Sprintf("%.1fM", f*1e-6)
-	} else if i < 1000*1000*1000 {
-		return fmt.Sprintf("%3dM", int(f*1e-6))
-	} else if i < 10*1000*1000*1000 {
-		return fmt.Sprintf("%.1fG", f*1e-9)
-	} else if i < 1000*1000*1000*1000 {
-		return fmt.Sprintf("%3dG", int(f*1e-9))
-	} else if i < 10*1000*1000*1000*1000 {
-		return fmt.Sprintf("%.1fT", f*1e-12)
-	} else if i < 1000*1000*1000*1000*1000 {
-		return fmt.Sprintf("%3dT", int(f*1e-12))
-	} else if i < 10*1000*1000*1000*1000*1000 {
-		return fmt.Sprintf("%.1fP", f*1e-15)
-	} else {
-		return fmt.Sprintf("%3dP", int(f*1e-15))
-	}
+
+func numberPower3Units() []string {
+	// unmutable slice returned
+	return []string{" ", "K", "M", "G", "T", "P", "E", "Z"}
 }
+
+// three chars mantissa and unit
+func num10p3str(n int64) string {
+	u := numberPower3Units()
+	i := 0
+	n1 := n
+	var mod int64
+	for n1 >= 1000 {
+		mod = n1 % 1000
+		n1 = n1 / 1000
+		i += 1
+	}
+	s := fmt.Sprintf("%3d", n1)
+	if n1 < 10 && i > 0 {
+		if n1 == 9 && mod > 949 {
+			s = " 10"
+		} else {
+			s = fmt.Sprintf("%3.1f", float64(n1)+float64(mod)*0.001)
+		}
+	}
+	s += u[i]
+	return s
+}
+
 func getHtmlData() HtmlDataType {
 	data := HtmlDataType{
 		DirName: Dir,
@@ -154,7 +157,7 @@ func spaces(name string, length int) string {
 	return s
 }
 func sizeSpan(size int64) string {
-	return fmt.Sprintf("<span title=\"%d\">%5s</span>", size, strSize(size))
+	return fmt.Sprintf("<span title=\"%d\">%5s</span>", size, num10p3str(size))
 }
 func createFileInfo2(dirInf DirInf, f os.FileInfo) FileInfo2Sort {
 	var f2 FileInfo2Sort
