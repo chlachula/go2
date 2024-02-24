@@ -52,10 +52,6 @@ Sub dir: %s
  `
 const parentDirectory = "      <a href=\"%s\">Parent Directory</a>\n"
 
-/*
-<a href="APODstyle.css">APODstyle.css</a>           11-Dec-2019 15:23  143
-<a href="IoTest.html">IoTest.html</a>             09-Feb-2021 21:50  2.7K
-*/
 const htmlHead = `<html><head><title>%s</title></head>
 <body>`
 const htmlTemplateDir = `<h1>Hello dir {{.DirName}}</h1>
