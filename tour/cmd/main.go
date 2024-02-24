@@ -32,4 +32,5 @@ func main() {
 	a.PrintJsonStudents()
 	a.PrintCurrentTime()
 	a.VariadicSum(1, 2, 3, 4, 5)
+	a.SortSliceExample()
 }

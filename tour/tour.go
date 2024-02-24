@@ -6,6 +6,7 @@ import (
 	"math"
 	"os"
 	"runtime"
+	"sort"
 	"strconv"
 	"time"
 )
@@ -216,12 +217,19 @@ func PrintJsonStudents() {
 	json.Unmarshal([]byte(studentsJson), &students)
 	fmt.Printf("Students : %+v\n\n", students)
 
-	var newClassOfStudents = typeClass{Name: "Language class", Students: []typeStudent{{Name: "Ann", Age: 16, ElectiveLanguage: "French"}, {Name: "Betty", Age: 16, ElectiveLanguage: "German"}}}
-	//var newStudents = []typeStudent{{Name: "Ann", Age: 16, ElectiveLanguage: "French"}, {Name: "Betty", Age: 16, ElectiveLanguage: "German"}}
+	var newClassOfStudents = typeClass{Name: "Language class", Students: []typeStudent{{Name: "Ann", Age: 17, ElectiveLanguage: "French"}, {Name: "Betty", Age: 16, ElectiveLanguage: "German"}}}
 	bytes, _ := json.Marshal(newClassOfStudents)
 	fmt.Printf("New class students in json format: %s\n\n", string(bytes))
 }
 
+func SortSliceExample() {
+	var people = make([]person, 0)
+	people = append(people, person{name: "Bob", height: 195.0})
+	people = append(people, person{name: "Ann", height: 150.0})
+	people = append(people, person{name: "Chuck", height: 182.0})
+	sort.SliceStable(people, func(i, j int) bool { return people[i].height < people[j].height })
+	fmt.Printf("Sorted by height: %v\n", people)
+}
 func PrintCurrentTime() {
 	t := time.Now()
 
