@@ -36,6 +36,48 @@ var DI DirInf
 var ExcludeDotDirs = true
 var verbose = false
 
+const htmlHead = `<html><head><title>%s</title>
+<style>
+body {
+	font-family: Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+}
+.textCenter{
+	text-align: center;
+}
+nav {
+	background-color: #333;
+	color: #fff;
+	text-align: center;
+	padding: 10px 0;
+}
+
+nav ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+nav li {
+	display: inline;
+	margin-right: 20px;
+}
+
+nav a {
+	text-decoration: none;
+	color: #fff;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+nav a:hover {
+	color: #ffd700; /* Change the color on hover */
+}
+</style>
+</head>
+<body>`
+
 const htmlPage2 = `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html>
  <head>
@@ -52,8 +94,6 @@ Sub dir: %s
  `
 const parentDirectory = "      <a href=\"%s\">Parent Directory</a>\n"
 
-const htmlHead = `<html><head><title>%s</title></head>
-<body>`
 const htmlTemplateDir = `<h1>Hello dir {{.DirName}}</h1>
 `
 const htmlEnd = `</body></html>`
@@ -99,8 +139,33 @@ func getHtmlData() HtmlDataType {
 	return data
 }
 
+type MenuItem struct {
+	Link string
+	Name string
+}
+
+var menuItems = []MenuItem{{Link: "/", Name: "Home"},
+	{Link: "/show-dir", Name: "One page"},
+	{Link: "/show-dir2", Name: " Summarized subdirectories"},
+	{Link: "/#contact", Name: "Contact"},
+	{Link: "/#about", Name: "About"}}
+
+func navMenu(ActiveLink string) string {
+	s := "<nav>\n    <ul>\n"
+	for _, item := range menuItems {
+		link := item.Link
+		if item.Link == ActiveLink {
+			link = "#"
+		}
+		s += fmt.Sprintf("<li><a href=\"%s\">%s</a></li>", link, item.Name)
+	}
+	s += "    </ul>\n</nav>\n\n"
+	return s
+}
+
 func HandleHome(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, htmlHead, "Home")
+	fmt.Fprint(w, navMenu("/"))
 
 	fmt.Fprintf(w, "<h1>Home</h1><h1>Show dir %s</h1><a href=\"%s\">%s</a> -  <a href=\"%s\">%s</a> <br/>", Dir,
 		"/show-dir", "One page", "/show-dir2", "Summarized subdirectories")
