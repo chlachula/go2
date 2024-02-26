@@ -79,8 +79,6 @@ nav a:hover {
 <body>`
 
 const htmlPage2 = `
-<h1>Index of %s</h1>
-<!--SVG dirs image-->
 Sub dir: %s
 <pre>
       <a href="?C=N;O=D">Name</a>                              <a href="?C=L;O=A">Last modified</a>       <a href="?C=S;O=A">Size</a> <a href="?C=M;O=A">Mode</a>      <a href="?C=D;O=A">Description</a>
@@ -89,7 +87,7 @@ Sub dir: %s
  `
 const parentDirectory = "      <a href=\"%s\">Parent Directory</a>\n"
 
-const htmlTemplateDir = `<h1>Hello dir {{.DirName}}</h1>
+const htmlTemplateDir = `<h1 class="textCenter">Directory {{.DirName}}</h1>
 `
 const htmlEnd = `</body></html>`
 
@@ -262,10 +260,17 @@ func dirInfPath2string(dirInf *DirInf, rootpath string, path string) string {
 func HandleHome(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, htmlHead, "Home")
 	fmt.Fprint(w, navMenu("/"))
+	if t, err := template.New("webpage2").Parse(htmlTemplateDir); err == nil {
+		data := getHtmlData()
+		if err = t.Execute(w, data); err != nil {
+			fmt.Fprintf(w, "<h1>error %s</h1>", err.Error())
+		}
+	}
 
-	fmt.Fprintf(w, "<h1>Home</h1><h1>Show dir %s</h1><a href=\"%s\">%s</a> -  <a href=\"%s\">%s</a> <br/>", Dir,
-		"/show-dir", "One page", "/show-dir2", "Summarized subdirectories")
-
+	//	fmt.Fprintf(w, "<h1>Home</h1><h1>Show dir %s</h1><a href=\"%s\">%s</a> -  <a href=\"%s\">%s</a> <br/>", Dir,
+	//		"/show-dir", "One page", "/show-dir2", "Summarized subdirectories")
+	fmt.Fprint(w, "<a name=\"about\"></a><h2>About</h2><p>This is best and from scratch!</p>\n")
+	fmt.Fprint(w, "<a name=\"contact\"></a><h2>Contact</h2><p>... will be provided here in future ...</p>\n")
 	fmt.Fprint(w, htmlEnd)
 }
 func HandleShowDir(w http.ResponseWriter, r *http.Request) {
@@ -323,8 +328,13 @@ func HandleShowDir2(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprintf(w, htmlHead, "Summarized subdirectories")
 	fmt.Fprint(w, navMenu("/show-dir2"))
-
-	fmt.Fprintf(w, htmlPage2, Dir, currentDir, parentDirLink, pageBody)
+	if t, err := template.New("webpage2").Parse(htmlTemplateDir); err == nil {
+		data := getHtmlData()
+		if err = t.Execute(w, data); err != nil {
+			fmt.Fprintf(w, "<h1>error %s</h1>", err.Error())
+		}
+	}
+	fmt.Fprintf(w, htmlPage2, currentDir, parentDirLink, pageBody)
 }
 func displayDirectoryContents(dirPath string) (string, error) {
 	numberOfFiles := 0
