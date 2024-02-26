@@ -74,6 +74,16 @@ nav a {
 nav a:hover {
 	color: #ffd700; /* Change the color on hover */
 }
+.indexdir {
+	display: flex;           /* Enables horizontal alignment */
+	justify-content: center; /* Centers content horizontally */
+	align-items: center;     /* Centers content vertically */
+	width: 100%%;            /* Sets width to 100 percent */
+	background-color: lightgray; /* Sets background color to green */
+	color: black;              /* Sets text color to red */
+	font-size: 18px;         /* Sets font size (optional) */
+  }
+
 </style>
 </head>
 <body>`
@@ -87,7 +97,7 @@ Sub dir: %s
  `
 const parentDirectory = "      <a href=\"%s\">Parent Directory</a>\n"
 
-const htmlTemplateDir = `<h1 class="textCenter">Directory {{.DirName}}</h1>
+const htmlTemplateDir = `<div class="indexdir" >Index of directory {{.DirName}}</div>
 `
 const htmlEnd = `</body></html>`
 
