@@ -78,12 +78,7 @@ nav a:hover {
 </head>
 <body>`
 
-const htmlPage2 = `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<html>
- <head>
-  <title>Index of %s</title>
- </head>
- <body>
+const htmlPage2 = `
 <h1>Index of %s</h1>
 <!--SVG dirs image-->
 Sub dir: %s
@@ -146,7 +141,7 @@ type MenuItem struct {
 
 var menuItems = []MenuItem{{Link: "/", Name: "Home"},
 	{Link: "/show-dir", Name: "One page"},
-	{Link: "/show-dir2", Name: " Summarized subdirectories"},
+	{Link: "/show-dir2", Name: "Summarized subdirectories"},
 	{Link: "/#contact", Name: "Contact"},
 	{Link: "/#about", Name: "About"}}
 
@@ -163,31 +158,6 @@ func navMenu(ActiveLink string) string {
 	return s
 }
 
-func HandleHome(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, htmlHead, "Home")
-	fmt.Fprint(w, navMenu("/"))
-
-	fmt.Fprintf(w, "<h1>Home</h1><h1>Show dir %s</h1><a href=\"%s\">%s</a> -  <a href=\"%s\">%s</a> <br/>", Dir,
-		"/show-dir", "One page", "/show-dir2", "Summarized subdirectories")
-
-	fmt.Fprint(w, htmlEnd)
-}
-func HandleShowDir(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, htmlHead, "Dir Report")
-
-	if t, err := template.New("webpage2").Parse(htmlTemplateDir); err == nil {
-		data := getHtmlData()
-		if err = t.Execute(w, data); err != nil {
-			fmt.Fprintf(w, "<h1>error %s</h1>", err.Error())
-		}
-	}
-	if str, err := displayDirectoryContents(Dir); err == nil {
-		fmt.Fprint(w, "\n<pre>\n"+str+"\n</pre>\n")
-	} else {
-		fmt.Fprintf(w, "<h2>%s</h2>", err.Error())
-	}
-	fmt.Fprint(w, htmlEnd)
-}
 func findDI(di *DirInf, relPathName string) *DirInf {
 	name := relPathName
 	i := strings.Index(relPathName, "/")
@@ -289,6 +259,33 @@ func dirInfPath2string(dirInf *DirInf, rootpath string, path string) string {
 	return s
 }
 
+func HandleHome(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, htmlHead, "Home")
+	fmt.Fprint(w, navMenu("/"))
+
+	fmt.Fprintf(w, "<h1>Home</h1><h1>Show dir %s</h1><a href=\"%s\">%s</a> -  <a href=\"%s\">%s</a> <br/>", Dir,
+		"/show-dir", "One page", "/show-dir2", "Summarized subdirectories")
+
+	fmt.Fprint(w, htmlEnd)
+}
+func HandleShowDir(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, htmlHead, "One page dir report")
+	fmt.Fprint(w, navMenu("/show-dir"))
+
+	if t, err := template.New("webpage2").Parse(htmlTemplateDir); err == nil {
+		data := getHtmlData()
+		if err = t.Execute(w, data); err != nil {
+			fmt.Fprintf(w, "<h1>error %s</h1>", err.Error())
+		}
+	}
+	if str, err := displayDirectoryContents(Dir); err == nil {
+		fmt.Fprint(w, "\n<pre>\n"+str+"\n</pre>\n")
+	} else {
+		fmt.Fprintf(w, "<h2>%s</h2>", err.Error())
+	}
+	fmt.Fprint(w, htmlEnd)
+}
+
 func HandleShowDir2(w http.ResponseWriter, r *http.Request) {
 	verbosePrint("\n\nr.URL = " + r.URL.String())
 	rootPath := ""
@@ -312,7 +309,6 @@ func HandleShowDir2(w http.ResponseWriter, r *http.Request) {
 		verbosePrint("--Handle 1 root")
 		pageBody = dirInfPath2string(&DI, rootPath, d) // rootPath==""
 	}
-	title := Dir
 	parentDirLink := "/show-dir2?d=" + rootPath
 	parentDirLink = fmt.Sprintf(parentDirectory, parentDirLink)
 	currentDir := rootPath
@@ -325,7 +321,10 @@ func HandleShowDir2(w http.ResponseWriter, r *http.Request) {
 		currentDir = "."
 		parentDirLink = "      .\n"
 	}
-	fmt.Fprintf(w, htmlPage2, title, Dir, currentDir, parentDirLink, pageBody)
+	fmt.Fprintf(w, htmlHead, "Summarized subdirectories")
+	fmt.Fprint(w, navMenu("/show-dir2"))
+
+	fmt.Fprintf(w, htmlPage2, Dir, currentDir, parentDirLink, pageBody)
 }
 func displayDirectoryContents(dirPath string) (string, error) {
 	numberOfFiles := 0
