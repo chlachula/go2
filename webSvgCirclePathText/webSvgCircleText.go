@@ -188,6 +188,21 @@ func HandlerSvgRoundLogoColor(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprint(w, htmlEnd)
 }
+func HandlerImageSvgRoundLogoColor(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "image/svg+xml")
+
+	// Optional: Set additional headers if needed
+	// w.Header().Set("Last-Modified", "...")
+
+	if t, err := template.New("SvgRoundLogoColor").Parse(svgTemplate1); err == nil {
+		data := getSvgData(true)
+		if err = t.Execute(w, data); err != nil {
+			fmt.Fprintf(w, "<h1>error %s</h1>", err.Error())
+		}
+	}
+	// Send the response
+	w.WriteHeader(http.StatusOK)
+}
 func HandlerSvgRoundLogoBlackWhite(w http.ResponseWriter, r *http.Request) {
 	writeHtmlHeadAndMenu(w, "/svg-roundlogo-bw", "B&amp;W")
 
