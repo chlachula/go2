@@ -8,12 +8,12 @@ import (
 )
 
 const (
-	htmlHead = `<html><head><title>SVG round logo: %s</title>
+	htmlHead0 = `<html><head><title>SVG round logo: %s</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="icon" type="image/ico" href="favicon.ico">
 </head>
 <body style="text-align: center;">
-<a href="%s">%s</a>
+
 `
 	htmlEnd      = "\n<br/></body></html>"
 	svgTemplate1 = `
@@ -157,10 +157,29 @@ func getSvgData(color bool) SvgDataType {
 	}
 	return data
 }
-func SvgHandlerColor(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, htmlHead, "Color version", "/bw", "Black &amp; version")
+func HandlerHome(w http.ResponseWriter, r *http.Request) {
+	writeHtmlHeadAndMenu(w, "/", "Home")
+	fmt.Fprint(w, `<div class="container70percentFlex">
+	<div>
+	<a name="about"></a><h2>About</h2>
+	<p>SVG round logo color and black &amp; white
+	was developed by 
+	<a href="https://github.com/chlachula">Josef Chlachula</a> 
+	under <a href="https://github.com/chlachula/go2/tree/main?tab=MIT-1-ov-file#readme">MIT license</a>.
+	</p>
+    <a name=\"contact\"></a>
+	<h2>Contact</h2>
+	<p>... will be provided here in future ...</p>
+	</div>
+</div>
+	`)
 
-	if t, err := template.New("webpage1").Parse(svgTemplate1); err == nil {
+	fmt.Fprint(w, htmlEnd)
+}
+func HandlerSvgRoundLogoColor(w http.ResponseWriter, r *http.Request) {
+	writeHtmlHeadAndMenu(w, "/svg-roundlogo-color", "Color")
+
+	if t, err := template.New("SvgRoundLogoColor").Parse(svgTemplate1); err == nil {
 		data := getSvgData(true)
 		if err = t.Execute(w, data); err != nil {
 			fmt.Fprintf(w, "<h1>error %s</h1>", err.Error())
@@ -169,10 +188,10 @@ func SvgHandlerColor(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprint(w, htmlEnd)
 }
-func SvgHandlerBlackWhite(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, htmlHead, "Black & White version", "/", "Color version")
+func HandlerSvgRoundLogoBlackWhite(w http.ResponseWriter, r *http.Request) {
+	writeHtmlHeadAndMenu(w, "/svg-roundlogo-bw", "B&amp;W")
 
-	if t, err := template.New("webpage1").Parse(svgTemplate1); err == nil {
+	if t, err := template.New("SvgRoundLogoBlackWhite").Parse(svgTemplate1); err == nil {
 		data := getSvgData(false)
 		if err = t.Execute(w, data); err != nil {
 			fmt.Fprintf(w, "<h1>error %s</h1>", err.Error())
