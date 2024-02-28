@@ -161,15 +161,19 @@ func HandlerHome(w http.ResponseWriter, r *http.Request) {
 	writeHtmlHeadAndMenu(w, "/", "Home")
 	fmt.Fprint(w, `<div class="container70percentFlex">
 	<div>
-	<a name="about"></a><h2>About</h2>
-	<p>SVG round logo color and black &amp; white
-	was developed by 
-	<a href="https://github.com/chlachula">Josef Chlachula</a> 
-	under <a href="https://github.com/chlachula/go2/tree/main?tab=MIT-1-ov-file#readme">MIT license</a>.
-	</p>
-    <a name=\"contact\"></a>
-	<h2>Contact</h2>
-	<p>... will be provided here in future ...</p>
+	  <p>
+	    <img src="/img/svg-roundlogo-color" width="150" />
+	  </p>
+
+	 <a name="about"></a><h2>About</h2>
+	   <p>
+	     SVG round logo color and black &amp; white was developed by 
+	     <a href="https://github.com/chlachula">Josef Chlachula</a> 
+	     under <a href="https://github.com/chlachula/go2/tree/main?tab=MIT-1-ov-file#readme">MIT license</a>.
+	   </p>
+
+    <a name=\"contact\"></a><h2>Contact</h2>
+	   <p>... will be provided here in future ...</p>
 	</div>
 </div>
 	`)
