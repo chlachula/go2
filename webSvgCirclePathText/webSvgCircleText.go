@@ -162,7 +162,8 @@ func HandlerHome(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, `<div class="container70percentFlex">
 	<div>
 	  <p>
-	    <img src="/img/svg-roundlogo-color" width="150" />
+	  <img src="/img/svg-roundlogo-color" width="150" />
+	  <img src="/img/svg-roundlogo-bw" width="150" />
 	  </p>
 
 	 <a name="about"></a><h2>About</h2>
@@ -218,4 +219,18 @@ func HandlerSvgRoundLogoBlackWhite(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Fprint(w, htmlEnd)
+}
+func HandlerImageSvgRoundLogoBlackWhite(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "image/svg+xml")
+
+	// Optional: Set additional headers if needed
+	// w.Header().Set("Last-Modified", "...")
+	if t, err := template.New("SvgRoundLogoBlackWhite").Parse(svgTemplate1); err == nil {
+		data := getSvgData(false)
+		if err = t.Execute(w, data); err != nil {
+			fmt.Fprintf(w, "<h1>error %s</h1>", err.Error())
+		}
+	}
+	// Send the response
+	w.WriteHeader(http.StatusOK)
 }
