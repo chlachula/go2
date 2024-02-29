@@ -8,13 +8,6 @@ import (
 )
 
 const (
-	htmlHead0 = `<html><head><title>SVG round logo: %s</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link rel="icon" type="image/ico" href="favicon.ico">
-</head>
-<body style="text-align: center;">
-
-`
 	htmlEnd      = "\n<br/></body></html>"
 	svgTemplate1 = `
 <svg xmlns="http://www.w3.org/2000/svg" 
@@ -206,7 +199,7 @@ func HandlerImageSvgRoundLogoColor(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	// Send the response
-	w.WriteHeader(http.StatusOK)
+	//w.WriteHeader(http.StatusOK)
 }
 func HandlerSvgRoundLogoBlackWhite(w http.ResponseWriter, r *http.Request) {
 	writeHtmlHeadAndMenu(w, "/svg-roundlogo-bw", "B&amp;W")
@@ -232,5 +225,5 @@ func HandlerImageSvgRoundLogoBlackWhite(w http.ResponseWriter, r *http.Request) 
 		}
 	}
 	// Send the response
-	w.WriteHeader(http.StatusOK)
+	//w.WriteHeader(http.StatusOK)
 }
