@@ -68,6 +68,7 @@ func main() {
 				http.HandleFunc("/img/svg-roundlogo-color", a.HandlerImageSvgRoundLogoColor)
 				http.HandleFunc("/svg-roundlogo-bw", a.HandlerSvgRoundLogoBlackWhite)
 				http.HandleFunc("/img/svg-roundlogo-bw", a.HandlerImageSvgRoundLogoBlackWhite)
+				http.HandleFunc("/img/svg-smartphone", a.HandlerImageSvgSmartphone)
 				print("Serving SVG page Listenning at " + colonPort + ". CTRL+C to stop.")
 				http.ListenAndServe(colonPort, nil)
 			default:
