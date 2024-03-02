@@ -30,6 +30,11 @@ const svgSmartphoneTemplate1 = `
      xmlns:xlink="http://www.w3.org/1999/xlink" width="{{.Width}}" height="{{.Height}}" viewBox="-{{.W0}} -{{.H0}} {{.Width}} {{.Height}}" >
 <title>Smartphone</title>
 <defs>
+  <style>
+    .font_smart { 
+	   font-size: 3px;
+    }
+  </style>
   <g id="smartphone">
   <rect x="-{{.W0}}" y="-{{.H0}}"  width="{{.Width}}" height="{{.H2}}" fill="#F3F3F3" />
   <rect x="-{{.W0}}" y="{{.Y2}}"   width="{{.Width}}" height="{{.H2}}" fill="#F3F3F3" />
@@ -58,6 +63,8 @@ const svgSmartphoneTemplate1 = `
    d="M{{.W3R}},-{{.H1}} m0,{{.MicW}} 0,{{.MicW}} 0,{{.MicW}} 0,{{.MicW}} h{{.MicH}} v{{.MicW}} h-{{.MicH}} z"/>
 
    <circle id="camera" r="{{.CamR}}" cx="{{.CamX}}" cy="{{.CamY}}" fill="black" stroke="darkgray" stroke-width="0.5" />
+
+   <text x="0" y="{{.CamY}}" dominant-baseline="text-before-edge" alignment-baseline="middle" class="font_smart">&#x2706; &#9681; &#128222; &#x2314;   &#x25E3;   12:00   </text>
   </g>
 </defs> 
 <circle r="55" cx="0" cy="0" fill="red" stroke="green" stroke-width="6" />
