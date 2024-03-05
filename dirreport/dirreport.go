@@ -83,7 +83,12 @@ nav a:hover {
 	color: black;              /* Sets text color to red */
 	font-size: 18px;         /* Sets font size (optional) */
   }
-
+  .container70percentFlex {
+	display: flex;
+	justify-content: center; /* Horizontally center  */
+	width: 70%%;              /* Total width of 70%%, leaving 15%% on each side */
+	margin: 0 auto;          /* Center the container within the page */
+  }
 </style>
 </head>
 <body>`
@@ -277,10 +282,25 @@ func HandleHome(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	//	fmt.Fprintf(w, "<h1>Home</h1><h1>Show dir %s</h1><a href=\"%s\">%s</a> -  <a href=\"%s\">%s</a> <br/>", Dir,
-	//		"/show-dir", "One page", "/show-dir2", "Summarized subdirectories")
-	fmt.Fprint(w, "<a name=\"about\"></a><h2>About</h2><p>This is best and from scratch!</p>\n")
-	fmt.Fprint(w, "<a name=\"contact\"></a><h2>Contact</h2><p>... will be provided here in future ...</p>\n")
+	fmt.Fprint(w, `<div class="container70percentFlex">
+	<div>
+	  <p>
+	  <b>DirReport</b> description is comming...
+	  </p>
+
+	 <a name="about"></a><h2>About</h2>
+	   <p>
+	     <b>DirReport</b> was developed by 
+	     <a href="https://github.com/chlachula">Josef Chlachula</a> 
+	     under <a href="https://github.com/chlachula/go2/tree/main?tab=MIT-1-ov-file#readme">MIT license</a>.
+	   </p>
+
+    <a name=\"contact\"></a><h2>Contact</h2>
+	   <p>... will be provided here in future ...</p>
+	</div>
+</div>
+	`)
+
 	fmt.Fprint(w, htmlEnd)
 }
 func HandleShowDir(w http.ResponseWriter, r *http.Request) {
