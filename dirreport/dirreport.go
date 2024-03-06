@@ -194,11 +194,31 @@ func findDI(di *DirInf, relPathName string) *DirInf {
 	return nil
 }
 func spaces(name string, length int) string {
+	runes := []rune(name)
 	s := ""
-	for ; len(s)+len(name) < length; s += " " {
+	for ; len(s)+len(runes) < length; s += " " {
 
 	}
 	return s
+}
+func maxLenName(name string, length int) string {
+	runes := []rune(name)
+	if len(runes) <= length {
+		return name
+	}
+	indexOfLastDot := -1
+	for i := len(runes) - 1; i > 0; i-- {
+		if runes[i] == '.' {
+			indexOfLastDot = i
+			break
+		}
+	}
+	lenExtension := len(runes) - indexOfLastDot
+	if indexOfLastDot < 0 || lenExtension >= length {
+		return string(runes[:length-1]) + "…"
+	}
+	s1 := string(runes[:length-lenExtension]) + "…"
+	return s1 + string(runes[indexOfLastDot+1:])
 }
 func sizeSpan(size int64) string {
 	return fmt.Sprintf("<span title=\"%d\">%5s</span>", size, num10p3str(size))
@@ -242,8 +262,8 @@ func dirInfPath2string(dirInf *DirInf, rootpath string, path string) string {
 		}
 	}
 	s := ""
-	f0 := "      <a href=\"%s\">%s</a>%s %-18s %s %s \n"
-	f1 := "      %-33s %-18s %s %s \n"
+	f0 := "      <a href=\"%s\" title=\"%s\">%s</a>%s %-18s %s %s \n"
+	//f1 := "      %-33s %-18s %s %s \n"
 	if rootpath != "" {
 		rootpath += path + "/"
 	} else {
@@ -259,14 +279,16 @@ func dirInfPath2string(dirInf *DirInf, rootpath string, path string) string {
 			if !(ExcludeDotDirs && strings.HasPrefix(f.Name, ".")) {
 				link := "?d=" + rootpath + f.Name
 				if di := findDI(DItoShow, f.Name); di != nil {
-					s += fmt.Sprintf(f0, link, f.Name, spaces(f.Name, 33), modTime, sizeSpan(di.TotalSize), f.Mode)
+					s += fmt.Sprintf(f0, link, f.Name, maxLenName(f.Name, 33), spaces(f.Name, 33), modTime, sizeSpan(di.TotalSize), f.Mode)
 				} else {
 					fmt.Printf("error findDI rootpath:%s, path:%s, name:%s\n", rootpath, path, f.Name)
 				}
 			}
 		} else {
-			link := fmt.Sprintf("<a href=\"/show-file?f=%s\">%s</a>", rootpath+f.Name, f.Name)
-			s += fmt.Sprintf(f1, link, modTime, sizeSpan(f.Size), f.Mode)
+			// link := fmt.Sprintf("<a href=\"/show-file?f=%s\">%s</a>", rootpath+f.Name, f.Name)
+			// s += fmt.Sprintf(f1, spaces(link, 33), modTime, sizeSpan(f.Size), f.Mode)
+			link := "/show-file?f=" + rootpath + f.Name
+			s += fmt.Sprintf(f0, link, f.Name, maxLenName(f.Name, 33), spaces(f.Name, 33), modTime, sizeSpan(f.Size), f.Mode)
 		}
 	}
 	s += fmt.Sprintf("<hr/>      %-52s %s\n", "Total size", sizeSpan(dirInf.TotalSize))
