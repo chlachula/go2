@@ -265,7 +265,8 @@ func dirInfPath2string(dirInf *DirInf, rootpath string, path string) string {
 				}
 			}
 		} else {
-			s += fmt.Sprintf(f1, f.Name, modTime, sizeSpan(f.Size), f.Mode)
+			link := fmt.Sprintf("<a href=\"/show-file?f=%s\">%s</a>", rootpath+f.Name, f.Name)
+			s += fmt.Sprintf(f1, link, modTime, sizeSpan(f.Size), f.Mode)
 		}
 	}
 	s += fmt.Sprintf("<hr/>      %-52s %s\n", "Total size", sizeSpan(dirInf.TotalSize))
@@ -454,4 +455,31 @@ func SummarizeDirectory(dirPath string) DirInf {
 
 func SetDirInf() {
 	DI = SummarizeDirectory(Dir)
+}
+
+func HandleShowFile(w http.ResponseWriter, r *http.Request) {
+	// Get a file path relative to the directory
+	f := ""
+	if f = r.URL.Query().Get("f"); f == "" {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "Error processing URL: %v", r.URL)
+		return
+	}
+
+	randomFile := filepath.Join(Dir, f)
+
+	// Read the file content
+	fileContent, err := os.ReadFile(randomFile)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "Error reading file: %v", err)
+		return
+	}
+
+	// Set the content type based on the file extension
+	contentType := http.DetectContentType(fileContent)
+	w.Header().Set("Content-Type", contentType)
+
+	// Write the file content to the response
+	w.Write(fileContent)
 }
