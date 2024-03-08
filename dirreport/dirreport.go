@@ -94,7 +94,7 @@ nav a:hover {
 <body>`
 
 const htmlPage2 = `
-Sub dir: %s
+&nbsp; &nbsp; Sub dir: %s
 <pre>
       <a href="?C=N;O=D">Name</a>                              <a href="?C=L;O=A">Last modified</a>       <a href="?C=S;O=A">Size</a> <a href="?C=M;O=A">Mode</a>      <a href="?C=D;O=A">Description</a>
 <hr/>%s%s<hr/></pre>
@@ -262,7 +262,7 @@ func dirInfPath2string(dirInf *DirInf, rootpath string, path string) string {
 		}
 	}
 	s := ""
-	f0 := "      <a href=\"%s\" title=\"%s\">%s</a>%s %-18s %s %s \n"
+	f0 := "  <input type=\"checkbox\" name=\"n1\" value=\"v1\"> <a href=\"%s\" title=\"%s\">%s</a>%s %-18s %s %s \n"
 	//f1 := "      %-33s %-18s %s %s \n"
 	if rootpath != "" {
 		rootpath += path + "/"
