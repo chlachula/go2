@@ -262,7 +262,8 @@ func dirInfPath2string(dirInf *DirInf, rootpath string, path string) string {
 		}
 	}
 	s := ""
-	f0 := "  <input type=\"checkbox\" name=\"n1\" value=\"v1\"> <a href=\"%s\" title=\"%s\">%s</a>%s %-18s %s %s \n"
+	fcheck := "  <input type=\"checkbox\" name=\"check%d\" value=\"%s\"> "
+	f0 := "<a href=\"%s\" title=\"%s\">%s</a>%s %-18s %s %s \n"
 	//f1 := "      %-33s %-18s %s %s \n"
 	if rootpath != "" {
 		rootpath += path + "/"
@@ -273,12 +274,13 @@ func dirInfPath2string(dirInf *DirInf, rootpath string, path string) string {
 	}
 	files := sortFiles2(*DItoShow)
 
-	for _, f := range files {
+	for i, f := range files {
 		modTime := f.ModTime.Format("2006-Jan-01 15:04")
 		if f.IsDir {
 			if !(ExcludeDotDirs && strings.HasPrefix(f.Name, ".")) {
 				link := "?d=" + rootpath + f.Name
 				if di := findDI(DItoShow, f.Name); di != nil {
+					s += fmt.Sprintf(fcheck, i, f.Name)
 					s += fmt.Sprintf(f0, link, f.Name, maxLenName(f.Name, 33), spaces(f.Name, 33), modTime, sizeSpan(di.TotalSize), f.Mode)
 				} else {
 					fmt.Printf("error findDI rootpath:%s, path:%s, name:%s\n", rootpath, path, f.Name)
@@ -288,6 +290,7 @@ func dirInfPath2string(dirInf *DirInf, rootpath string, path string) string {
 			// link := fmt.Sprintf("<a href=\"/show-file?f=%s\">%s</a>", rootpath+f.Name, f.Name)
 			// s += fmt.Sprintf(f1, spaces(link, 33), modTime, sizeSpan(f.Size), f.Mode)
 			link := "/show-file?f=" + rootpath + f.Name
+			s += fmt.Sprintf(fcheck, i, f.Name)
 			s += fmt.Sprintf(f0, link, f.Name, maxLenName(f.Name, 33), spaces(f.Name, 33), modTime, sizeSpan(f.Size), f.Mode)
 		}
 	}
