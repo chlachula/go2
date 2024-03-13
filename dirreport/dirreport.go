@@ -96,8 +96,11 @@ nav a:hover {
 const htmlPage2 = `
 &nbsp; &nbsp; Sub dir: %s
 <pre>
+<form action="/action_delete" method="POST">
 <button>Del</button> <a href="?C=N;O=D">Name</a>                              <a href="?C=L;O=A">Last modified</a>       <a href="?C=S;O=A">Size</a> <a href="?C=M;O=A">Mode</a>      <a href="?C=D;O=A">Description</a>
-<hr/>%s%s<hr/></pre>
+<hr/>%s%s<hr/>
+</form>
+</pre>
 </body></html>
  `
 const parentDirectory = "      <a href=\"%s\">Parent Directory</a>\n"
