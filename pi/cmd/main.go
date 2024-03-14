@@ -33,6 +33,9 @@ func main() {
 			case "-h":
 				help("")
 				os.Exit(0)
+			case "-b":
+				// other algorithms like the Bailey-Borwein-Plouffe formula are more efficient
+				a.BaileyBorweinPlouffe()
 			case "-l":
 				a.Leibniz()
 			default:

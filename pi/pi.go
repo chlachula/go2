@@ -37,3 +37,7 @@ func Leibniz() {
 	// Optional: Compare with math.Pi constant
 	fmt.Printf("Difference from math.Pi: %.10f\n", math.Abs(pi-math.Pi))
 }
+
+func BaileyBorweinPlouffe() {
+
+}
