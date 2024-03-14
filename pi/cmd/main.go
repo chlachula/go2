@@ -14,6 +14,7 @@ func help(msg string) {
 	}
 	helptext := `Web displaying directory
  Usage:
+ -b  Bailey-Borwein-Plouffe formula of the calculating PI
  -l  Leibniz formula of the calculating PI
  -h #this help
  Example:
