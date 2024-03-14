@@ -267,7 +267,6 @@ func dirInfPath2string(dirInf *DirInf, rootpath string, path string) string {
 	s := ""
 	fcheck := "  <input type=\"checkbox\" name=\"check%d\" value=\"%s\"> "
 	f0 := "<a href=\"%s\" title=\"%s\">%s</a>%s %-18s %s %s \n"
-	//f1 := "      %-33s %-18s %s %s \n"
 	if rootpath != "" {
 		rootpath += path + "/"
 	} else {
@@ -290,8 +289,6 @@ func dirInfPath2string(dirInf *DirInf, rootpath string, path string) string {
 				}
 			}
 		} else {
-			// link := fmt.Sprintf("<a href=\"/show-file?f=%s\">%s</a>", rootpath+f.Name, f.Name)
-			// s += fmt.Sprintf(f1, spaces(link, 33), modTime, sizeSpan(f.Size), f.Mode)
 			link := "/show-file?f=" + rootpath + f.Name
 			s += fmt.Sprintf(fcheck, i, f.Name)
 			s += fmt.Sprintf(f0, link, f.Name, maxLenName(f.Name, 33), spaces(f.Name, 33), modTime, sizeSpan(f.Size), f.Mode)
