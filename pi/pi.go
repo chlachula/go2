@@ -40,5 +40,74 @@ func Leibniz() {
 
 // https://en.wikipedia.org/wiki/Bailey%E2%80%93Borwein%E2%80%93Plouffe_formula
 func BaileyBorweinPlouffe() {
+	var sum, k8, k16, n1, n2, n4, n5, n6 float64
+	k16 = 1.0
+	n1 = 1
+	n2 = 2
+	n4 = 4
+	n5 = 5
+	n6 = 6
 
+	kmax := 10
+	for k := 0; k <= kmax; k++ {
+		k8 = float64(k) * 8.0
+		sum += (k16 * (n4/(k8+n1) - n2/(k8+n4) - n1/(k8+n5) - n1/(k8+n6)))
+		k16 /= 16.0
+	}
+	fmt.Printf("PI (using BBP formula, %d digits): %.10f\n", kmax, sum)
+	/*	var (
+			precision int = 30 // Adjust for desired precision (number of decimal places)
+			k         *big.Int
+			piStr     string
+		)
+
+		// Initialize big.Int variables with high precision
+		k = new(big.Int)
+		k.SetString("16", 10) // Base 16 for BBP formula
+
+		// Define constants used in the formula
+		one := new(big.Int)
+		one.SetInt64(1)
+		four := new(big.Int)
+		four.SetInt64(4)
+		five := new(big.Int).SetInt64(5)
+		six := new(big.Int).SetInt64(6)
+		eight := new(big.Int).SetInt64(8)
+		ten := new(big.Int).SetInt64(10)
+
+		// Perform BBP formula calculation iteratively
+		for i := 0; i < precision; i++ {
+			term1 := new(big.Int)
+			term1.Mul(k, k)
+			term1.Add(term1, one)
+
+			term2 := new(big.Int)
+			term2.Mul(k, k)
+			term2.Add(term2, four)
+
+			term3 := new(big.Int)
+			term3.Mul(k, k)
+			term3.Add(term3, five)
+
+			term4 := new(big.Int)
+			term4.Mul(k, k)
+			term4.Add(term4, six)
+
+			// Calculate the summation and update piStr
+			sum := new(big.Int)
+			sum.Sub(term1, term2)
+			sum.Sub(sum, term3)
+			sum.Sub(sum, term4)
+			piStr += fmt.Sprintf("%d", sum.Mod(sum, ten))
+
+			// Increment k for the next iteration
+			k.Add(k, eight)
+		}
+
+		// Convert the calculated digits to a float64 value
+		//	pi, _ := new(big.Float).SetString(piStr, 10)
+		pi, _ := new(big.Float).SetString(piStr)
+
+		fmt.Printf("PI (using BBP formula, %d digits): %.10f\n", precision, pi)
+	*/
 }
