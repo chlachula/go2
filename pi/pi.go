@@ -39,19 +39,13 @@ func Leibniz() {
 }
 
 // https://en.wikipedia.org/wiki/Bailey%E2%80%93Borwein%E2%80%93Plouffe_formula
-func BaileyBorweinPlouffe() {
-	var sum, k8, k16, n1, n2, n4, n5, n6 float64
-	k16 = 1.0
-	n1 = 1
-	n2 = 2
-	n4 = 4
-	n5 = 5
-	n6 = 6
-
-	kmax := 10
+// https://go.dev/play/p/WPABH3SPdRu
+func BaileyBorweinPlouffe(kmax int) {
+	var sum, k8, k16 float64
+	k16 = 1.
 	for k := 0; k <= kmax; k++ {
 		k8 = float64(k) * 8.0
-		sum += (k16 * (n4/(k8+n1) - n2/(k8+n4) - n1/(k8+n5) - n1/(k8+n6)))
+		sum += (k16 * (4./(k8+1.) - 2./(k8+4.) - 1./(k8+5.) - 1./(k8+6.)))
 		k16 /= 16.0
 	}
 	fmt.Printf("PI (using BBP formula, %d digits): %.10f\n", kmax, sum)
