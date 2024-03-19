@@ -62,7 +62,7 @@ func GlobalVariables() {
 	type_b = true //false
 	type_string = "ABC"
 	type_int = -1
-	type_uint = 1
+	type_uint = 1_000_000 // MILLION
 	fmt.Printf("%v %v %v %v %v \n", type_b, type_string, type_int, type_uint, type_uintptr)
 	type_byte = 255
 	type_rune = 255
