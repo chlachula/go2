@@ -26,6 +26,7 @@ func main() {
 	a.FloatMinMax()
 	a.GlobalVariables()
 	a.Loops()
+	a.GotoFunc()
 	a.Switches()
 	a.PrintStringLiterals()
 	a.PrintIntLiterals()

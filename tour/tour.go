@@ -144,6 +144,22 @@ func Loops() {
 	fmt.Println()
 }
 
+func GotoFunc() {
+	/* local variable definition */
+	var a int = 10
+
+	/* do loop execution */
+LOOP1:
+	for a < 20 {
+		if a == 15 {
+			/* skip the iteration */
+			a = a + 1
+			goto LOOP1
+		}
+		fmt.Printf("value of a: %d\n", a)
+		a++
+	}
+}
 func Pointers() {
 	i, j := 42, 2701
 
