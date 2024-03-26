@@ -13,7 +13,8 @@ func help(msg string) {
 	if msg != "" {
 		fmt.Println(msg)
 	}
-	helptext := `Moon views
+	helptext := `Moon views:
+	Based on 730 px images from NASA SVS with 1 hour steps
 	-h this help
 	-p [port] preview to port 8080 
 	`
