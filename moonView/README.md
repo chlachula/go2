@@ -1,4 +1,4 @@
-Program **moonView** shows Earth Moon from geocentric perspective with one hour steps. It is based on renderred 730 px images from NASA SVS.
+Program **moonView** shows Earth Moon from geocentric perspective with one hour steps with major craters and other features labeled. It is based on renderred 730 px images from NASA SVS. 
 
     Usage:
 
