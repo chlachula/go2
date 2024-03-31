@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
 
 	a "github.com/chlachula/go2/randomgroups"
 )
@@ -55,7 +56,7 @@ func help(msg string) {
 	-g group-number #default is 2
 	Examples:
 	-d 
-	-g 4 -f people.txt
+	-g 4 -f people.json
 	`
 	fmt.Println(helptext)
 }
@@ -75,8 +76,20 @@ func main() {
 			printDemoGroupJson()
 			a.ShowRandomWorkGroups(demoGroup, demoGroupSize)
 			os.Exit(0)
+		case "-g":
+			i += 1
+			if i >= len(os.Args) {
+				help("not -g argument")
+				os.Exit(1)
+			}
+			groupSize, _ = strconv.Atoi(os.Args[i])
 		case "-f":
-			a.ShowRandomWorkGroups(group, groupSize)
+			i += 1
+			if i >= len(os.Args) {
+				help("not -g argument")
+				os.Exit(1)
+			}
+			a.SplitRandomlyPeopleInFile(os.Args[i], groupSize)
 			os.Exit(0)
 		default:
 			help("unexpected argument " + arg)
