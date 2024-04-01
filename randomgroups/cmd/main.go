@@ -9,8 +9,8 @@ import (
 	a "github.com/chlachula/go2/randomgroups"
 )
 
-var groupMinSize int = 2
-var demoGroupMinSize int = 3
+var groupSize int = 2
+var groupsNumber int
 
 func PrettyJsonStruct(data interface{}) (string, error) {
 	val, err := json.MarshalIndent(data, "", "    ")
@@ -34,8 +34,8 @@ func help(msg string) {
 	Usage:
 	-h this help
 	-d demo
-	-f filename     #line oriented
-	-g group-min-size #default is 2 = 2+1
+	-f filename         #json
+	-g group-max-size   #default is 2 
 	Examples:
 	-d 
 	-g 4 -f people.json
@@ -56,7 +56,7 @@ func main() {
 			os.Exit(0)
 		case "-d":
 			printDemoGroupJson()
-			a.ShowRandomWorkGroups(a.DemoGroup, demoGroupMinSize)
+			a.ShowRandomWorkGroups(a.DemoGroup, groupSize)
 			os.Exit(0)
 		case "-g":
 			i += 1
@@ -64,14 +64,14 @@ func main() {
 				help("not -g argument")
 				os.Exit(1)
 			}
-			groupMinSize, _ = strconv.Atoi(os.Args[i])
+			groupSize, _ = strconv.Atoi(os.Args[i])
 		case "-f":
 			i += 1
 			if i >= len(os.Args) {
 				help("not -g argument")
 				os.Exit(1)
 			}
-			a.SplitRandomlyPeopleInFile(os.Args[i], groupMinSize)
+			a.SplitRandomlyPeopleInFile(os.Args[i], groupSize)
 			os.Exit(0)
 		default:
 			help("unexpected argument " + arg)

@@ -9,7 +9,7 @@ import (
 )
 
 var version string = "1.0.0"
-
+var verbose bool = true
 var DemoGroup = []Person{
 	{Nick: "Ann1", Name: "Ann Anderson"},
 	{Nick: "Bob2", Name: "Bob Brown"},
@@ -33,6 +33,11 @@ type Person struct {
 }
 type Workgroup []Person
 
+func printVerbose(s string) {
+	if verbose {
+		print(s)
+	}
+}
 func removeIndex(s1 []Person, index int) []Person {
 	s2 := make([]Person, 0)
 	s2 = append(s2, s1[:index]...)
@@ -40,24 +45,60 @@ func removeIndex(s1 []Person, index int) []Person {
 }
 func createRandomWorkGroups(mainGroup []Person, groupSize int) []Workgroup {
 	var group []Person = mainGroup
-	var workgroups []Workgroup = make([]Workgroup, 0)
+	//var workgroups []Workgroup = make([]Workgroup, 0)
 
-	number := len(group) / groupSize
-	for i := 0; i < number; i++ {
-		var workgroup = make(Workgroup, groupSize)
-		for j := 0; j < groupSize; j++ {
-			randomIndex := rand.IntN(len(group))
-			workgroup[j] = group[randomIndex]
-			group = removeIndex(group, randomIndex)
-		}
-		workgroups = append(workgroups, workgroup)
+	// determine number of groups
+	numberOfGroups := len(group) / groupSize
+	var workgroups []Workgroup = make([]Workgroup, numberOfGroups)
+	for i := 0; i < numberOfGroups; i++ {
+		workgroups[i] = make(Workgroup, groupSize)
 	}
 	modulo := len(group) % groupSize
-	for i := 0; i < modulo; i++ {
-		randomIndex := rand.IntN(len(group))
-		workgroups[i] = append(workgroups[i], group[randomIndex])
-		group = removeIndex(group, randomIndex)
+	if modulo != 0 {
+		numberOfGroups += 1
+		workgroups = append(workgroups, make(Workgroup, modulo))
 	}
+	printVerbose(fmt.Sprintf("people count = %d, maxSize = %d, numberOfGroups = %d, modulo = %d\n", len(group), groupSize, numberOfGroups, modulo))
+
+	// create groups and randomly populate them
+	/*
+		// first groups max size, last remainder
+	*/
+	/*
+		for i := 0; i < numberOfGroups; i++ {
+			printVerbose(fmt.Sprintf("group # %d\n", i))
+			var workgroup = make(Workgroup, groupSize)
+			for j := 0; j < groupSize && len(group) > 0; j++ {
+				leng := len(group)
+				printVerbose(fmt.Sprintf("leng = %d\n", leng))
+				randomIndex := rand.IntN(leng)
+				workgroup[j] = group[randomIndex]
+				group = removeIndex(group, randomIndex)
+			}
+			workgroups = append(workgroups, workgroup)
+		}
+	*/
+
+	for i := 0; i < numberOfGroups; i++ {
+		for j := 0; j < len(workgroups[i]); j++ {
+			leng := len(group)
+			randomIndex := rand.IntN(leng)
+			printVerbose(fmt.Sprintf("i = %d, j = %d, len(group) = %d\n", i, j, len(group)))
+			workgroups[i][j] = group[randomIndex]
+			group = removeIndex(group, randomIndex)
+		}
+	}
+	/*
+		printVerbose(fmt.Sprintf("modulo = %d\n", modulo))
+		for i := 0; i < modulo; i++ {
+			leng := len(group)
+			printVerbose(fmt.Sprintf("LenG = %d\n", leng))
+			randomIndex := rand.IntN(leng)
+			printVerbose(fmt.Sprintf("randomIndex = %d\n", randomIndex))
+			workgroups[i] = append(workgroups[i], group[randomIndex])
+			group = removeIndex(group, randomIndex)
+		}
+	*/
 	return workgroups
 }
 func ShowRandomWorkGroups(mainGroup []Person, groupSize int) {
@@ -67,8 +108,8 @@ func ShowRandomWorkGroups(mainGroup []Person, groupSize int) {
 	for i := 0; i < len(w); i++ {
 		fmt.Printf("%d. Group:\n", i+1)
 		members := w[i]
-		for _, member := range members {
-			fmt.Printf("     %s - %s\n", member.Nick, member.Name)
+		for j, member := range members {
+			fmt.Printf("     %d. %s - %s\n", (j + 1), member.Nick, member.Name)
 		}
 	}
 
