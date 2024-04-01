@@ -9,26 +9,8 @@ import (
 	a "github.com/chlachula/go2/randomgroups"
 )
 
-var group = []a.Person{}
-var groupSize int = 2
-
-var demoGroup = []a.Person{
-	{Nick: "Ann1", Name: "Ann Anderson"},
-	{Nick: "Bob2", Name: "Bob Brown"},
-	{Nick: "Chuck3", Name: "Charles Jones"},
-	{Nick: "Dave4", Name: "David Davis"},
-	{Nick: "Eve5", Name: "Evelyne Smiths"},
-	{Nick: "Fred6", Name: "Frederick Miller"},
-	{Nick: "Greg7", Name: "Gregory Garcia"},
-	{Nick: "Helen8", Name: "Helen Rodriguez"},
-	{Nick: "Ian9", Name: "Ian Wilson"},
-	{Nick: "Joe10", Name: "Joseph Williams"},
-	{Nick: "Kam11", Name: "Kamila Thompson"},
-	{Nick: "Lil12", Name: "Lillian Lopez"},
-	{Nick: "Mat13", Name: "Mathew Johnson"},
-	{Nick: "Neil14", Name: "Neil Young"},
-}
-var demoGroupSize int = 3
+var groupMinSize int = 2
+var demoGroupMinSize int = 3
 
 func PrettyJsonStruct(data interface{}) (string, error) {
 	val, err := json.MarshalIndent(data, "", "    ")
@@ -38,7 +20,7 @@ func PrettyJsonStruct(data interface{}) (string, error) {
 	return string(val), nil
 }
 func printDemoGroupJson() {
-	if str, err := PrettyJsonStruct(demoGroup); err == nil {
+	if str, err := PrettyJsonStruct(a.DemoGroup); err == nil {
 		fmt.Printf("Demo json file example:\n\n%s\n\n", str)
 	} else {
 		fmt.Printf("Error:\n %s\n", err.Error())
@@ -53,7 +35,7 @@ func help(msg string) {
 	-h this help
 	-d demo
 	-f filename     #line oriented
-	-g group-number #default is 2
+	-g group-min-size #default is 2 = 2+1
 	Examples:
 	-d 
 	-g 4 -f people.json
@@ -74,7 +56,7 @@ func main() {
 			os.Exit(0)
 		case "-d":
 			printDemoGroupJson()
-			a.ShowRandomWorkGroups(demoGroup, demoGroupSize)
+			a.ShowRandomWorkGroups(a.DemoGroup, demoGroupMinSize)
 			os.Exit(0)
 		case "-g":
 			i += 1
@@ -82,14 +64,14 @@ func main() {
 				help("not -g argument")
 				os.Exit(1)
 			}
-			groupSize, _ = strconv.Atoi(os.Args[i])
+			groupMinSize, _ = strconv.Atoi(os.Args[i])
 		case "-f":
 			i += 1
 			if i >= len(os.Args) {
 				help("not -g argument")
 				os.Exit(1)
 			}
-			a.SplitRandomlyPeopleInFile(os.Args[i], groupSize)
+			a.SplitRandomlyPeopleInFile(os.Args[i], groupMinSize)
 			os.Exit(0)
 		default:
 			help("unexpected argument " + arg)
