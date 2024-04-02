@@ -30,7 +30,7 @@ func help(msg string) {
 	if msg != "" {
 		fmt.Println(msg)
 	}
-	helptext := `Splitting into number of groups
+	helptext := `Splitting people into number of groups of the maximum size
 	Usage:
 	-h this help
 	-d demo
@@ -38,6 +38,7 @@ func help(msg string) {
 	-g group-max-size   #default is 2 
 	Examples:
 	-d 
+	-g 3 -d 
 	-g 4 -f people.json
 	`
 	fmt.Println(helptext)

@@ -44,10 +44,9 @@ func removeIndex(s1 []Person, index int) []Person {
 	return append(s2, s1[index+1:]...)
 }
 func createRandomWorkGroups(mainGroup []Person, groupSize int) []Workgroup {
-	var group []Person = mainGroup
-	//var workgroups []Workgroup = make([]Workgroup, 0)
+	var group []Person = mainGroup // copy of the mainGroup
 
-	// determine number of groups
+	// determine number of groups and create them
 	numberOfGroups := len(group) / groupSize
 	var workgroups []Workgroup = make([]Workgroup, numberOfGroups)
 	for i := 0; i < numberOfGroups; i++ {
@@ -60,25 +59,7 @@ func createRandomWorkGroups(mainGroup []Person, groupSize int) []Workgroup {
 	}
 	printVerbose(fmt.Sprintf("people count = %d, maxSize = %d, numberOfGroups = %d, modulo = %d\n", len(group), groupSize, numberOfGroups, modulo))
 
-	// create groups and randomly populate them
-	/*
-		// first groups max size, last remainder
-	*/
-	/*
-		for i := 0; i < numberOfGroups; i++ {
-			printVerbose(fmt.Sprintf("group # %d\n", i))
-			var workgroup = make(Workgroup, groupSize)
-			for j := 0; j < groupSize && len(group) > 0; j++ {
-				leng := len(group)
-				printVerbose(fmt.Sprintf("leng = %d\n", leng))
-				randomIndex := rand.IntN(leng)
-				workgroup[j] = group[randomIndex]
-				group = removeIndex(group, randomIndex)
-			}
-			workgroups = append(workgroups, workgroup)
-		}
-	*/
-
+	// randomly populate groups
 	for i := 0; i < numberOfGroups; i++ {
 		for j := 0; j < len(workgroups[i]); j++ {
 			leng := len(group)
@@ -88,17 +69,7 @@ func createRandomWorkGroups(mainGroup []Person, groupSize int) []Workgroup {
 			group = removeIndex(group, randomIndex)
 		}
 	}
-	/*
-		printVerbose(fmt.Sprintf("modulo = %d\n", modulo))
-		for i := 0; i < modulo; i++ {
-			leng := len(group)
-			printVerbose(fmt.Sprintf("LenG = %d\n", leng))
-			randomIndex := rand.IntN(leng)
-			printVerbose(fmt.Sprintf("randomIndex = %d\n", randomIndex))
-			workgroups[i] = append(workgroups[i], group[randomIndex])
-			group = removeIndex(group, randomIndex)
-		}
-	*/
+
 	return workgroups
 }
 func ShowRandomWorkGroups(mainGroup []Person, groupSize int) {
