@@ -32,6 +32,17 @@ const (
 	S10   = "#10"
 )
 
+const (
+	NoInnerPlanetNumber = iota
+	Mercury
+	Venus
+	Earth
+	Mars
+)
+
+func InnerPlanetsOrder() {
+	fmt.Printf("Order of inner planets: Mercury:%d, Venus:%d, Earth:%d, Mars:%d \n", Mercury, Venus, Earth, Mars)
+}
 func unmutableSlice_rgbNames() []string {
 	return []string{"red", "green", "blue"}
 }

@@ -32,6 +32,7 @@ func main() {
 	a.PrintIntLiterals()
 	a.PrintJsonStudents()
 	a.PrintCurrentTime()
+	a.InnerPlanetsOrder()
 	a.VariadicSum(1, 2, 3, 4, 5)
 	a.SortSliceExample()
 }
