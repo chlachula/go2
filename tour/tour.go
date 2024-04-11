@@ -56,6 +56,10 @@ var Coordinates = map[string]Coordinate{
 	},
 }
 
+func CoordinatesByName(name string) {
+	coord := Coordinates[name]
+	fmt.Printf("%s coordinates: %v\n", name, coord)
+}
 func InnerPlanetsOrder() {
 	fmt.Printf("Order of inner planets: Mercury:%d, Venus:%d, Earth:%d, Mars:%d \n", Mercury, Venus, Earth, Mars)
 }
