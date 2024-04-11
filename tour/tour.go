@@ -24,6 +24,9 @@ type typeClass struct {
 	Name     string `json:"class"`
 	Students []typeStudent
 }
+type Coordinate struct {
+	Lat, Long float64
+}
 
 const (
 	B10   = true
@@ -39,6 +42,19 @@ const (
 	Earth
 	Mars
 )
+
+// map literal
+var Coordinates = map[string]Coordinate{
+	"Buenos Aires": {
+		-34.6156548, -58.515698,
+	},
+	"New York": {
+		40.6976312, -74.1444846,
+	},
+	"Prague": {
+		50.0597507, 14.3832245,
+	},
+}
 
 func InnerPlanetsOrder() {
 	fmt.Printf("Order of inner planets: Mercury:%d, Venus:%d, Earth:%d, Mars:%d \n", Mercury, Venus, Earth, Mars)
