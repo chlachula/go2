@@ -12,13 +12,14 @@ func help(msg string) {
 	if msg != "" {
 		fmt.Printf("%s \n\n", msg)
 	}
-	helptext := `Web displaying directory
+	helptext := `PI computing
  Usage:
  -b  Bailey-Borwein-Plouffe formula of the calculating PI https://en.wikipedia.org/wiki/Bailey%E2%80%93Borwein%E2%80%93Plouffe_formula
  -l  Leibniz formula of the calculating PI
- -h #this help
- Example:
- go2 -l
+ -h  #this help
+ Examples:
+ go2 -b #Bailey-Borwein-Plouffe method
+ go2 -l #Leibniz method 
 `
 	fmt.Println(helptext)
 }
