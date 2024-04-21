@@ -27,7 +27,7 @@ func help(msg string) {
  -t date       
  -c coordinates
  Example:
- go2 -t 2024-04-21 -c 18h36m56.33635s,+38°47'01.2802" #Vega J2000.0
+ go2 -t 2024-04-21 -c 18h36m56.33635s,+38d47m01.2802s #Vega J2000.0
 `
 	fmt.Println(helptext)
 }
@@ -48,7 +48,7 @@ func main() {
 				a.SetOutputTime(os.Args[i])
 			case "-c":
 				i += 1
-				a.ConvertCoordsStr(os.Args[i])
+				a.ConvertCoords(os.Args[i])
 			default:
 				help("Unexpected argument " + arg)
 			}

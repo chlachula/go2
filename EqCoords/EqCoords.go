@@ -9,6 +9,13 @@ import (
 	"time"
 )
 
+type (
+	SphericalCoordsRad struct {
+		RA float64
+		DE float64
+	}
+)
+
 var (
 	inputJD  = 2451545.0     // J2000.0 = January 1, 2000 at 12:00 TT
 	outputJD = 2460676.50000 // 2025-01-01 0:00 UTC
@@ -99,13 +106,33 @@ func SetOutputTime(str string) {
 }
 
 // 18h36m56.33635s,+38°47'01.2802" //J2000.0 Vega
-func ConvertCoordsStr(str string) {
+func ConvertCoords(str string) {
+	c1 := ConvertCoordsStr2Rad(str)
+	c2 := ConvertCoordToJD(inputJD, outputJD, c1)
+	fmt.Printf("Coordinates: input %v, output %v", c1, c2)
+}
+func ConvertCoordToJD(j1, j2 float64, c1 SphericalCoordsRad) SphericalCoordsRad {
+	var c2 SphericalCoordsRad
+	return c2
+}
+func ConvertCoordsStr2Rad(str string) SphericalCoordsRad {
+	var c SphericalCoordsRad
 	a := strings.Split(str, ",")
 	if i := len(a); i != 2 {
 		fmt.Printf("error: string '%s' split into %d parts instead of 2.", str, i)
-		return
+		return c
 	}
 	strings.Split(str, ",")
 	delta := outputJD - inputJD
 	fmt.Printf("Days since J2000.0: %.3f \n", delta)
+
+	var err error
+	if c.RA, err = HourMinSecStr2rad(a[0]); err != nil {
+		fmt.Printf("%s\n", err.Error())
+	}
+	if c.DE, err = DegMinSecStr2rad(a[1]); err != nil {
+		fmt.Printf("%s\n", err.Error())
+	}
+	fmt.Printf("radians: RA %f, DE %f \n", c.RA, c.DE)
+	return c
 }
