@@ -27,6 +27,12 @@ type typeClass struct {
 type Coordinate struct {
 	Lat, Long float64
 }
+type Star struct {
+	Name string
+	RA   string
+	DE   string
+	Mag  float32
+}
 
 const (
 	B10   = true
@@ -42,6 +48,16 @@ const (
 	Earth
 	Mars
 )
+
+var BrightStars = []Star{
+	{Name: "Sirius", RA: "06h 45m 08.917s", DE: "−16° 42′ 58.02″", Mag: -1.46},
+	{Name: "Canopus", RA: "06h 23m 57.10988s", DE: "−52° 41′ 44.3810″", Mag: -0.74},
+	{Name: "Alpha Centauri", RA: "14h 39m 36.49400s", DE: "−60° 50′ 02.3737″", Mag: +0.01},
+	{Name: "Arcturus", RA: "14h 15m 39.7s", DE: "+19° 10′ 56″", Mag: -0.05},
+	{Name: "Vega", RA: "18h 36m 56.33635s", DE: "+38° 47′ 01.2802″", Mag: +0.026},
+	{Name: "Capella", RA: "05h 16m 41.35871s", DE: "+45° 59′ 52.7693″", Mag: +0.08},
+	{Name: "Rigel", RA: "05h 14m 32.27210s", DE: "−08° 12′ 05.8981″", Mag: +0.13},
+}
 
 // map literal
 var Coordinates = map[string]Coordinate{
