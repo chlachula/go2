@@ -32,6 +32,7 @@ type Star struct {
 	RA   string
 	DE   string
 	Mag  float32
+	Dist float32
 }
 
 const (
@@ -50,13 +51,13 @@ const (
 )
 
 var BrightStars = []Star{
-	{Name: "Sirius", RA: "06h 45m 08.917s", DE: "−16° 42′ 58.02″", Mag: -1.46},
-	{Name: "Canopus", RA: "06h 23m 57.10988s", DE: "−52° 41′ 44.3810″", Mag: -0.74},
-	{Name: "Rigil Kentaurus", RA: "14h 39m 36.49400s", DE: "−60° 50′ 02.3737″", Mag: +0.01},
-	{Name: "Arcturus", RA: "14h 15m 39.7s", DE: "+19° 10′ 56″", Mag: -0.05},
-	{Name: "Vega", RA: "18h 36m 56.33635s", DE: "+38° 47′ 01.2802″", Mag: +0.026},
-	{Name: "Capella", RA: "05h 16m 41.35871s", DE: "+45° 59′ 52.7693″", Mag: +0.08},
-	{Name: "Rigel", RA: "05h 14m 32.27210s", DE: "−08° 12′ 05.8981″", Mag: +0.13},
+	{Name: "Sirius", RA: "06h 45m 08.917s", DE: "−16° 42′ 58.02″", Mag: -1.46, Dist: 8.6},
+	{Name: "Canopus", RA: "06h 23m 57.10988s", DE: "−52° 41′ 44.3810″", Mag: -0.74, Dist: 310},
+	{Name: "Rigil Kentaurus", RA: "14h 39m 36.49400s", DE: "−60° 50′ 02.3737″", Mag: +0.01, Dist: 4.34},
+	{Name: "Arcturus", RA: "14h 15m 39.7s", DE: "+19° 10′ 56″", Mag: -0.05, Dist: 37},
+	{Name: "Vega", RA: "18h 36m 56.33635s", DE: "+38° 47′ 01.2802″", Mag: +0.026, Dist: 25},
+	{Name: "Capella", RA: "05h 16m 41.35871s", DE: "+45° 59′ 52.7693″", Mag: +0.08, Dist: 43},
+	{Name: "Rigel", RA: "05h 14m 32.27210s", DE: "−08° 12′ 05.8981″", Mag: +0.13, Dist: 860},
 }
 
 // map literal
@@ -329,7 +330,7 @@ func VariadicSum(numbers ...int) {
 }
 func PrintBrightStars() {
 	for _, star := range BrightStars {
-		fmt.Printf("  %-20s %-18s %-18s %5.2f  \n", star.Name, star.RA, star.DE, star.Mag)
+		fmt.Printf("  %-20s %-18s %-18s %5.2f  %5.1f  \n", star.Name, star.RA, star.DE, star.Mag, star.Dist)
 	}
 	fmt.Println()
 }
