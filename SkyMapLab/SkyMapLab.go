@@ -139,6 +139,13 @@ func getSvgData(color bool) SvgDataType {
 	}
 	return data
 }
+
+func hourRoundScale() {
+
+}
+func dateRoundScale() {
+
+}
 func HandlerHome(w http.ResponseWriter, r *http.Request) {
 	//writeHtmlHeadAndMenu(w, "/", "Home")
 	fmt.Fprint(w, `<html>
@@ -168,6 +175,8 @@ func HandlerImageSkymapColor(w http.ResponseWriter, r *http.Request) {
 	// w.Header().Set("Last-Modified", "...")
 	if t, err := template.New("SvgRoundLogoBlackWhite").Parse(svgTemplate1); err == nil {
 		data := getSvgData(false)
+		data.UpperText = "Upper color round text"
+		data.BottomText = "Bottom text"
 		if err = t.Execute(w, data); err != nil {
 			fmt.Fprintf(w, "<h1>error %s</h1>", err.Error())
 		}
