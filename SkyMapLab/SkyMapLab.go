@@ -29,20 +29,9 @@ const (
 	}
 </style>
 </defs> 
-<!--
-<path d="M0,0 m-100,0 a100,100 0 1,1  200,0 " style="fill:none;fill-opacity: 1;stroke:blue;stroke-width: 1"/>
-<path d="M0,0 m-100,0 a100,100 0 0,0  200,0 " style="fill:none;fill-opacity: 1;stroke:green;stroke-width: 1"/>
-<path id="linT"    d="M0,0 m-{{.Tx}},{{.Ty}} l{{.Tx}},-{{.Ty}} {{.Tx}},{{.Ty}}" style="fill:none;fill-opacity: 1;stroke:black;stroke-width: 0.5"/>
-<path id="linB" d="M0,0 m-{{.Bx}},{{.By}} l{{.Bx}},-{{.By}} {{.Bx}},{{.By}}" style="fill:none;fill-opacity: 1;stroke:black;stroke-width: 0.5"/>
--->
- <path id="relT" d="M0,0 m-{{.Tx}},{{.Ty}} a{{.R1}},{{.R1}} 0 1,1  {{.Tx2}},0 " style="fill:none;fill-opacity: 1;stroke:pink;stroke-width: 10.5"/>
- <path id="relB" d="M0,0 m-{{.Bx}},{{.By}} a{{.R1}},{{.R1}} 0 0,0  {{.Bx2}},0 " style="fill:none;fill-opacity: 1;stroke:yellow;stroke-width: 10.5"/>
- <!--text 
-  text-anchor="start|middle|end" 
-  lengthAdjust="spacing|spacingAndGlyphs"
-  alignment-baseline="auto|baseline|before-edge|text-before-edge|middle|central|after-edge|text-after-edge|ideographic|alphabetic|hanging|mathematical|top|center|bottom"
-  dominant-baseline="auto | text-bottom | alphabetic | ideographic | middle | central | mathematical | hanging | text-top"
-  ></text-->
+
+  <path id="relT" d="M0,0 m-{{.Tx}},{{.Ty}} a{{.R1}},{{.R1}} 0 1,1  {{.Tx2}},0 " style="fill:none;fill-opacity: 1;stroke:pink;stroke-width: 10.5"/>
+  <path id="relB" d="M0,0 m-{{.Bx}},{{.By}} a{{.R1}},{{.R1}} 0 0,0  {{.Bx2}},0 " style="fill:none;fill-opacity: 1;stroke:yellow;stroke-width: 10.5"/>
 
   <circle cx="0" cy="0" r="{{.RingRadius}}" stroke="{{.RingColor}}" stroke-width="{{.RingWidth}}" fill="none" />
 
@@ -55,10 +44,10 @@ const (
   <circle cx="{{.Qx}}" cy="{{.Qy}}" r="{{.Qr}}" stroke="none" stroke-width="0" fill="black" />
   <circle cx="-{{.Qx}}" cy="{{.Qy}}" r="{{.Qr}}" stroke="none" stroke-width="0" fill="black" />
   
-    <circle cx="0" cy="0" r="{{.R0}}" stroke="black" stroke-width="0.5" fill="none" />
-	<circle cx="0" cy="0" r="{{.RupperDown}}" stroke="black" stroke-width="0.5" fill="none" />
-	<circle cx="0" cy="0" r="{{.RbottomTop}}" stroke="black" stroke-width="0.5" fill="none" />
-	<circle cx="0" cy="0" r="{{.R1}}" stroke="black" stroke-width="0.5" fill="none" />
+  <circle cx="0" cy="0" r="{{.R0}}" stroke="black" stroke-width="0.5" fill="none" />
+  <circle cx="0" cy="0" r="{{.RupperDown}}" stroke="black" stroke-width="0.5" fill="none" />
+  <circle cx="0" cy="0" r="{{.RbottomTop}}" stroke="black" stroke-width="0.5" fill="none" />
+  <circle cx="0" cy="0" r="{{.R1}}" stroke="black" stroke-width="0.5" fill="none" />
 
 </svg>
 `
