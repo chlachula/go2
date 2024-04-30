@@ -173,7 +173,7 @@ func HandlerImageSkymapColor(w http.ResponseWriter, r *http.Request) {
 
 	// Optional: Set additional headers if needed
 	// w.Header().Set("Last-Modified", "...")
-	if t, err := template.New("SvgRoundLogoBlackWhite").Parse(svgTemplate1); err == nil {
+	if t, err := template.New("SkyMap").Parse(svgTemplate1); err == nil {
 		data := getSvgData(false)
 		data.UpperText = "Upper color round text"
 		data.BottomText = "Bottom text"
