@@ -12,7 +12,7 @@ const (
 	svgTemplate1 = `
 <svg xmlns="http://www.w3.org/2000/svg" 
     xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-250 -250 500 500">
-    <title>Red Hot Chilli Peppers Logo http://thenewcode.com/482/Placing-Text-on-a-Circle-with-SVG </title>
+    <title>Round Logo</title>
 <defs>
     <style>
 	.font1 { 
