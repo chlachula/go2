@@ -40,3 +40,12 @@ func TestInc1sec(t *testing.T) {
 	expectedSec = float64(((2021-1971)*365+13)*86400 + 27)
 	expectedDiffDatesSecs(t, expectedSec, 27, 1971, time.January, 1, 12, 0, 0, 2021, time.January, 1, 12, 0, 0)
 }
+func TestSeconds2DHMS(t *testing.T) {
+	want := "1d00h00m1.0s"
+	seconds := 86401.0
+	got := seconds2DHMS(seconds)
+	if want != got {
+		t.Errorf("for %.1f s expected %s, got %s", seconds, want, got)
+	}
+
+}
