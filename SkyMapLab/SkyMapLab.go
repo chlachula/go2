@@ -12,76 +12,42 @@ const (
 	svgTemplate1 = `
 <svg xmlns="http://www.w3.org/2000/svg" 
     xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-250 -250 500 500">
-    <title>Red Hot Chilli Peppers Logo http://thenewcode.com/482/Placing-Text-on-a-Circle-with-SVG </title>
-<defs>
+    <title>Sky Map</title>
+ <defs>
     <style>
-	.font1 { 
+	 .font1 { 
 		font-size: {{.FontSize}}px;
 		font-family: Franklin Gothic, sans-serif;
 		font-weight: 90; 		
 		letter-spacing: 2px;
-	}
-	.upFont { 
+	 }
+	 .upFont { 
 		fill: {{.TopColor}};
-	}
-	.downFont { 
+	 }
+	 .downFont { 
 		fill: {{.BottomColor}};
-	}
-</style>
-</defs> 
+	 }
+	 .cross {
+		stroke:black;
+		stroke-width:0.5
+	 }
+    </style>
+  %s
+ </defs> 
 
-  <path id="relT" d="M0,0 m-{{.Tx}},{{.Ty}} a{{.R1}},{{.R1}} 0 1,1  {{.Tx2}},0 " style="fill:none;fill-opacity: 1;stroke:pink;stroke-width: 10.5"/>
-  <path id="relB" d="M0,0 m-{{.Bx}},{{.By}} a{{.R1}},{{.R1}} 0 0,0  {{.Bx2}},0 " style="fill:none;fill-opacity: 1;stroke:yellow;stroke-width: 10.5"/>
-
-  <circle cx="0" cy="0" r="{{.RingRadius}}" stroke="{{.RingColor}}" stroke-width="{{.RingWidth}}" fill="none" />
-
-  <text dy="{{.Dy1}}" dx="{{.Dx1}}" textLength="{{.Tlen}}" dominant-baseline="hanging" class="font1 upFont">
-      <textPath xlink:href="#relT" >{{.UpperText}}</textPath>
-  </text>    
-  <text dy="{{.Dy2}}" dx="{{.Dx2}}" textLength="{{.Blen}}"  class="font1 downFont">
-      <textPath xlink:href="#relB">{{.BottomText}}</textPath>
-  </text>
-  <circle cx="{{.Qx}}" cy="{{.Qy}}" r="{{.Qr}}" stroke="none" stroke-width="0" fill="black" />
-  <circle cx="-{{.Qx}}" cy="{{.Qy}}" r="{{.Qr}}" stroke="none" stroke-width="0" fill="black" />
-  
-  <circle cx="0" cy="0" r="{{.R0}}" stroke="black" stroke-width="0.5" fill="none" />
-  <circle cx="0" cy="0" r="{{.RupperDown}}" stroke="black" stroke-width="0.5" fill="none" />
-  <circle cx="0" cy="0" r="{{.RbottomTop}}" stroke="black" stroke-width="0.5" fill="none" />
-  <circle cx="0" cy="0" r="{{.R1}}" stroke="black" stroke-width="0.5" fill="none" />
+  <g id="draw">
+    <use xlink:href="#raHourScale" /> 
+    <use xlink:href="#raCross" /> 
+  </g>
 
 </svg>
 `
 )
 
 type SvgDataType = struct {
-	RingColor   string
+	FontSize    float64
 	TopColor    string
 	BottomColor string
-	UpperText   string
-	BottomText  string
-
-	RingRadius float64
-	RingWidth  float64
-	RbottomTop float64
-	RupperDown float64
-	R0         float64
-	R1         float64
-	Dy1        float64
-	Dx1        float64
-	Tlen       float64
-	Dy2        float64
-	Dx2        float64
-	Blen       float64
-	Tx         float64
-	Tx2        float64
-	Ty         float64
-	Bx         float64
-	Bx2        float64
-	By         float64
-	Qx         float64
-	Qy         float64
-	Qr         float64
-	FontSize   float64
 }
 
 var (
@@ -96,55 +62,53 @@ func SetVariables(top, bottom string) {
 }
 
 func getSvgData(color bool) SvgDataType {
-	topAngle := 260.0
-	botAngle := 76.0
-	tA := topAngle * math.Pi / 360.0
-	bA := botAngle * math.Pi / 360.0
-	qA := ((360-topAngle-botAngle)*0.5 + botAngle) * math.Pi / 360.0
-	r1 := 120.0
-	ringRadius := r1 * 170.0 / 200.0
 	data := SvgDataType{
-		RingColor:   "lightblue",
 		TopColor:    "green",
 		BottomColor: "red",
-		UpperText:   TopText,
-		BottomText:  BottomText,
-		RingRadius:  ringRadius,
-		RingWidth:   70.0 / 200.0 * r1,
-		R0:          100.0,
-		RupperDown:  141.0,
-		RbottomTop:  161.0,
-		R1:          r1,
-		Dy1:         0,
-		Dx1:         0,
-		Dy2:         0,
-		Dx2:         0,
-		Tlen:        r1 * 2.0 * tA,
-		Tx:          r1 * math.Sin(tA),
-		Tx2:         2.0 * r1 * math.Sin(tA),
-		Ty:          -r1 * math.Cos(tA),
-		Blen:        r1 * 2.0 * bA,
-		Bx:          r1 * math.Sin(bA),
-		Bx2:         2.0 * r1 * math.Sin(bA),
-		By:          r1 * math.Cos(bA),
-		Qx:          ringRadius * math.Sin(qA),
-		Qy:          ringRadius * math.Cos(qA),
-		Qr:          r1 * 0.03,
-		FontSize:    59.0 / 200.0 * r1,
+		FontSize:    1.5,
 	}
 	if !color {
-		data.RingColor = "lightgray"
 		data.TopColor = "black"
 		data.BottomColor = "darkgray"
 	}
 	return data
 }
 
-func hourRoundScale() {
-
+func raCross() string {
+	str := `
+	<g id="raCross">
+	  <line x1="-154" y1="0" x2="154" y2="0" class="cross" />
+	  <line x1="0" y1="-154" x2="0" y2="154" class="cross" />
+	</g>
+`
+	return str
 }
-func dateRoundScale() {
+func raHourRoundScale() string {
+	r1 := 150.0
+	r2 := 154.0
 
+	f0 := `
+	<g id="raHourScale">
+	  <circle cx="0" cy="0" r="150" stroke="black" stroke-width="0.5" fill="none" />
+	  <circle cx="0" cy="0" r="152" stroke="black" stroke-width="0.5" fill="none" />
+	  %s
+	</g>
+`
+	s := "\n"
+	f1 := "      <line x1=\"%.1f\" y1=\"%.1f\" x2=\"%.1f\" y2=\"%.1f\" class=\"cross\" />\n"
+	for ra := 0; ra <= 23; ra++ {
+		a := float64(ra*15) * math.Pi / 180.0
+		x1 := -r1 * math.Sin(a)
+		y1 := r1 * math.Cos(a)
+		x2 := -r2 * math.Sin(a)
+		y2 := r2 * math.Cos(a)
+		s += fmt.Sprintf(f1, x1, y1, x2, y2)
+	}
+	return fmt.Sprintf(f0, s)
+}
+func dateRoundScale() string {
+	str := ""
+	return str
 }
 func HandlerHome(w http.ResponseWriter, r *http.Request) {
 	//writeHtmlHeadAndMenu(w, "/", "Home")
@@ -171,12 +135,13 @@ func HandlerSkyMapLab(w http.ResponseWriter, r *http.Request) {
 func HandlerImageSkymapColor(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "image/svg+xml")
 
-	// Optional: Set additional headers if needed
-	// w.Header().Set("Last-Modified", "...")
-	if t, err := template.New("SkyMap").Parse(svgTemplate1); err == nil {
+	defs := raCross()
+	defs += raHourRoundScale()
+	defs += dateRoundScale()
+
+	svgTemplate2 := fmt.Sprintf(svgTemplate1, defs)
+	if t, err := template.New("SkyMap").Parse(svgTemplate2); err == nil {
 		data := getSvgData(false)
-		data.UpperText = "Upper color round text"
-		data.BottomText = "Bottom text"
 		if err = t.Execute(w, data); err != nil {
 			fmt.Fprintf(w, "<h1>error %s</h1>", err.Error())
 		}
