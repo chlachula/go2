@@ -5,6 +5,7 @@ import (
 	"math"
 	"net/http"
 	"text/template"
+	"time"
 )
 
 const (
@@ -36,8 +37,9 @@ const (
  </defs> 
 
   <g id="draw">
-    <use xlink:href="#raHourScale" /> 
-    <use xlink:href="#raCross" /> 
+  <use xlink:href="#dateRoundScale" /> 
+  <use xlink:href="#raHourScale" /> 
+  <use xlink:href="#raCross" /> 
   </g>
 
 </svg>
@@ -65,7 +67,7 @@ func getSvgData(color bool) SvgDataType {
 	data := SvgDataType{
 		TopColor:    "green",
 		BottomColor: "red",
-		FontSize:    1.5,
+		FontSize:    8,
 	}
 	if !color {
 		data.TopColor = "black"
@@ -83,9 +85,15 @@ func raCross() string {
 `
 	return str
 }
+func cartesianXY(r, a float64) (float64, float64) {
+	x := -r * math.Sin(a)
+	y := r * math.Cos(a)
+	return x, y
+}
 func raHourRoundScale() string {
 	r1 := 150.0
-	r2 := 154.0
+	r2 := 155.0
+	r3 := 162.0
 
 	f0 := `
 	<g id="raHourScale">
@@ -96,19 +104,61 @@ func raHourRoundScale() string {
 `
 	s := "\n"
 	f1 := "      <line x1=\"%.1f\" y1=\"%.1f\" x2=\"%.1f\" y2=\"%.1f\" class=\"cross\" />\n"
+	f2 := ` 
+	 <path id="relB" d="M0,0 m-{{.Bx}},{{.By}} a{{.R1}},{{.R1}} 0 0,0  {{.Bx2}},0 " style="fill:none;fill-opacity: 1;stroke:yellow;stroke-width: 10.5"/>
+	 <text dy="{{.Dy2}}" dx="{{.Dx2}}" textLength="{{.Blen}}"  class="font1 downFont">
+	     <textPath xlink:href="#relB">{{.BottomText}}</textPath>
+     </text>
+`
+	f2 = `      <path id="raHour%d" d="M%.1f,%.1f A162.0,162.0 0 0,0  %.1f,%.1f " style="fill:none;fill-opacity: 1;stroke:green;stroke-width: 0.7"/>
+      <text Xdy="15" Xdx="0" alignment-baseline="baseline" text-anchor="start"  XXtextLength="300"  class="font1 downFont">
+	    <textPath xlink:href="#raHour%d">%d</textPath>
+      </text>
+
+`
+	aQuaterHour := math.Pi / 48.0
 	for ra := 0; ra <= 23; ra++ {
 		a := float64(ra*15) * math.Pi / 180.0
-		x1 := -r1 * math.Sin(a)
-		y1 := r1 * math.Cos(a)
-		x2 := -r2 * math.Sin(a)
-		y2 := r2 * math.Cos(a)
-		s += fmt.Sprintf(f1, x1, y1, x2, y2)
+		x1, y1 := cartesianXY(r1, a)
+		x2, y2 := cartesianXY(r2, a)
+		s += fmt.Sprintf(f1, x1, y1, x2, y2) // hour
+		x1, y1 = cartesianXY(r1, a+2.0*aQuaterHour)
+		x2, y2 = cartesianXY(r2-0.9, a+2.0*aQuaterHour)
+		s += fmt.Sprintf(f1, x1, y1, x2, y2) // hour and half
+		x1, y1 = cartesianXY(r3, a-aQuaterHour)
+		x2, y2 = cartesianXY(r3, a+aQuaterHour)
+		s += fmt.Sprintf(f2, ra, x2, y2, x1, y1, ra, ra)
 	}
 	return fmt.Sprintf(f0, s)
 }
 func dateRoundScale() string {
-	str := ""
-	return str
+	s := "      <g id=\"dateRoundScale\">\n"
+	r1 := 172.0
+	f1 := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"black\" stroke-width=\"0.05\" fill=\"%s\" />\n"
+	f1 = "<line x1=\"%.1f\" y1=\"%.1f\" x2=\"%.1f\" y2=\"%.1f\" class=\"cross\" />\n"
+	aDelta := 2.0 * math.Pi / 365.0
+	date := time.Date(2000, time.March, 21, 0, 0, 0, 0, time.UTC)
+	for d := 0; d < 365; d++ {
+		a := float64(d) * aDelta
+		x1, y1 := cartesianXY(r1, a)
+		r := 0.7
+		if date.Day()%5 == 0 {
+			r = 1.5
+		}
+		if date.Day()%10 == 0 {
+			r = 4.0
+		}
+		if date.Day() == 1 {
+			r = 5.5
+		}
+		//s += fmt.Sprintf(f1, x1, y1, r, "black")
+		x2, y2 := cartesianXY(r1-r, a)
+		s += fmt.Sprintf(f1, x1, y1, x2, y2)
+		date = date.Add(24 * time.Hour)
+	}
+	s += "      </g>\n"
+
+	return s
 }
 func HandlerHome(w http.ResponseWriter, r *http.Request) {
 	//writeHtmlHeadAndMenu(w, "/", "Home")
