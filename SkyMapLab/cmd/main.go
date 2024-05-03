@@ -50,6 +50,7 @@ func main() {
 				if len(os.Args) > i+1 {
 					colonPort = ":" + os.Args[i+1]
 				}
+				a.LoadStars("data/SkyMap.json")
 				http.HandleFunc("/", a.HandlerHome)
 				http.HandleFunc("/img/svg-skymap-color", a.HandlerImageSkymapColor)
 				http.HandleFunc("/img/svg-skymap-bw", a.HandlerImageSkymapBW)

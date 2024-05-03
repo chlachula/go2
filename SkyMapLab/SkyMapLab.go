@@ -1,6 +1,7 @@
 package SkyMapLab
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
 	"net/http"
@@ -15,6 +16,8 @@ type StarRecord struct {
 	De  float64 `json:"De"`
 	Mag float32 `json:"Mag"`
 }
+
+var Stars []StarRecord
 
 const (
 	htmlEnd      = "\n<br/></body></html>"
@@ -191,6 +194,16 @@ func LoadECSV(filename string) ([][]string, error) {
 	return rows, nil
 }
 
+func LoadStars(filename string) {
+	if bytes, err := os.ReadFile(filename); err != nil {
+		fmt.Printf("Error loading file %s: %s\n", filename, err.Error())
+		return
+	} else {
+		if err1 := json.Unmarshal([]byte(bytes), &Stars); err1 != nil {
+			fmt.Printf("Error unmarshaling content of the json file %s: %s\n", filename, err1.Error())
+		}
+	}
+}
 func HandlerHome(w http.ResponseWriter, r *http.Request) {
 	//writeHtmlHeadAndMenu(w, "/", "Home")
 	fmt.Fprint(w, `<html>
