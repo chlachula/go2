@@ -10,6 +10,12 @@ import (
 	"time"
 )
 
+type StarRecord struct {
+	RA  float64 `json:"RA"`
+	De  float64 `json:"De"`
+	Mag float32 `json:"Mag"`
+}
+
 const (
 	htmlEnd      = "\n<br/></body></html>"
 	svgTemplate1 = `
