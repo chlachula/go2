@@ -6,6 +6,7 @@ import (
 	"math"
 	"net/http"
 	"os"
+	"sort"
 	"strings"
 	"text/template"
 	"time"
@@ -14,10 +15,12 @@ import (
 type StarRecord struct {
 	RA  float64 `json:"RA"`
 	De  float64 `json:"De"`
-	Mag float32 `json:"Mag"`
+	Mag float64 `json:"Mag"`
 }
 
 var Stars []StarRecord
+var magBrightest = -1.5 // Sirius
+var magMin = 5.5
 
 const (
 	htmlEnd      = "\n<br/></body></html>"
@@ -51,6 +54,7 @@ const (
   <use xlink:href="#dateRoundScale" /> 
   <use xlink:href="#raHourScale" /> 
   <use xlink:href="#raCross" /> 
+  <use xlink:href="#plotStars" /> 
   </g>
 
 </svg>
@@ -145,7 +149,7 @@ func raHourRoundScale() string {
 func dateRoundScale() string {
 	s := "      <g id=\"dateRoundScale\">\n"
 	r1 := 172.0
-	f1 := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"black\" stroke-width=\"0.05\" fill=\"%s\" />\n"
+	f1 := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"black\" stroke-width=\"0.09\" fill=\"%s\" />\n"
 	f1 = "<line x1=\"%.1f\" y1=\"%.1f\" x2=\"%.1f\" y2=\"%.1f\" class=\"cross\" />\n"
 	aDelta := 2.0 * math.Pi / 365.0
 	date := time.Date(2000, time.March, 21, 0, 0, 0, 0, time.UTC)
@@ -166,6 +170,34 @@ func dateRoundScale() string {
 		x2, y2 := cartesianXY(r1-r, a)
 		s += fmt.Sprintf(f1, x1, y1, x2, y2)
 		date = date.Add(24 * time.Hour)
+	}
+	s += "      </g>\n"
+
+	return s
+}
+func magToRadius(mag float64) float64 {
+	if mag < magBrightest {
+		mag = magBrightest
+	}
+	magRange := magMin - magBrightest
+	rMag := 0.6 + 3.6*(magMin-mag)/magRange
+	return rMag
+}
+func plotStars() string {
+	s := "      <g id=\"plotStars\">\n"
+	r0 := 100.0
+	f1 := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"white\" stroke-width=\"0.05\" fill=\"%s\" />\n"
+	magMin = 4.0
+	lowestDeclination := -45.0
+	sort.SliceStable(Stars, func(i, j int) bool { return Stars[i].Mag < Stars[j].Mag })
+	for _, star := range Stars {
+		if star.Mag < magMin && star.De > lowestDeclination {
+			a := star.RA * math.Pi / 180.0
+			r := r0 * (1.0 - star.De/90.0)
+			rMag := magToRadius(star.Mag)
+			x, y := cartesianXY(r, a)
+			s += fmt.Sprintf(f1, x, y, rMag, "blue")
+		}
 	}
 	s += "      </g>\n"
 
@@ -232,6 +264,7 @@ func HandlerImageSkymapColor(w http.ResponseWriter, r *http.Request) {
 	defs := raCross()
 	defs += raHourRoundScale()
 	defs += dateRoundScale()
+	defs += plotStars()
 
 	svgTemplate2 := fmt.Sprintf(svgTemplate1, defs)
 	if t, err := template.New("SkyMap").Parse(svgTemplate2); err == nil {
