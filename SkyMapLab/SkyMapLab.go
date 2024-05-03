@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"math"
 	"net/http"
+	"os"
+	"strings"
 	"text/template"
 	"time"
 )
@@ -160,6 +162,29 @@ func dateRoundScale() string {
 
 	return s
 }
+
+func LoadECSV(filename string) ([][]string, error) {
+	rows := make([][]string, 0)
+	bytes, err := os.ReadFile(filename)
+	if err != nil {
+		return nil, err
+	}
+
+	text := string(bytes)
+	lines := strings.Split(text, "\n")
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		cols := strings.Split(line, ",")
+		if len(line) > 0 && !strings.HasPrefix(line, "#") && len(cols) > 1 {
+			for i := 0; i < len(cols); i++ {
+				cols[i] = strings.TrimSpace(cols[i])
+			}
+			rows = append(rows, cols)
+		}
+	}
+	return rows, nil
+}
+
 func HandlerHome(w http.ResponseWriter, r *http.Request) {
 	//writeHtmlHeadAndMenu(w, "/", "Home")
 	fmt.Fprint(w, `<html>
