@@ -18,9 +18,20 @@ type StarRecord struct {
 	Mag float64 `json:"Mag"`
 }
 
-var Stars []StarRecord
+var SliceOfStars []StarRecord
 var magBrightest = -1.5 // Sirius
-var magMin = 5.5
+var magMin = 5.0
+var SliceOfConstellations []ConstellationCoordPoints
+
+type EqCoords struct {
+	RA float64 `json:"RA"`
+	De float64 `json:"De"`
+}
+type EqPoints []EqCoords
+type ConstellationCoordPoints struct {
+	Abbr  string
+	Lines []EqPoints
+}
 
 const (
 	htmlEnd      = "\n<br/></body></html>"
@@ -42,20 +53,27 @@ const (
 	 .downFont { 
 		fill: {{.BottomColor}};
 	 }
+	 .board {
+		stroke:orange;
+		stroke-width:0.5
+		fill:pink;
+	 }
 	 .cross {
 		stroke:black;
-		stroke-width:0.5
+		stroke-width:0.25
+		fill:none
 	 }
     </style>
   %s
  </defs> 
 
   <g id="draw">
-  <use xlink:href="#dateRoundScale" /> 
-  <use xlink:href="#raHourScale" /> 
-  <use xlink:href="#raCross" /> 
-  <use xlink:href="#plotStars" /> 
-  </g>
+   <use xlink:href="#plotConstellations" />
+   <use xlink:href="#plotStars" />
+   <use xlink:href="#dateRoundScale" />
+   <use xlink:href="#raHourScale" />
+   <use xlink:href="#raCross" />
+   </g>
 
 </svg>
 `
@@ -93,9 +111,10 @@ func getSvgData(color bool) SvgDataType {
 
 func raCross() string {
 	str := `
-	<g id="raCross">
-	  <line x1="-154" y1="0" x2="154" y2="0" class="cross" />
+	<g id="raCross">	  
+      <line x1="-154" y1="0" x2="154" y2="0" class="cross" />
 	  <line x1="0" y1="-154" x2="0" y2="154" class="cross" />
+	  <circle cx="0" cy="0" r="100" stroke="black" stroke-width="0.5" fill="none" />
 	</g>
 `
 	return str
@@ -183,22 +202,45 @@ func magToRadius(mag float64) float64 {
 	rMag := 0.6 + 3.6*(magMin-mag)/magRange
 	return rMag
 }
+func eqToCartesianXY(RA, De float64) (float64, float64) {
+	r0 := 100.0
+	a := RA * math.Pi / 180.0
+	r := r0 * (1.0 - De/90.0)
+	return cartesianXY(r, a)
+}
 func plotStars() string {
 	s := "      <g id=\"plotStars\">\n"
-	r0 := 100.0
+
 	f1 := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"white\" stroke-width=\"0.05\" fill=\"%s\" />\n"
-	magMin = 4.0
 	lowestDeclination := -45.0
-	sort.SliceStable(Stars, func(i, j int) bool { return Stars[i].Mag < Stars[j].Mag })
-	for _, star := range Stars {
+	sort.SliceStable(SliceOfStars, func(i, j int) bool { return SliceOfStars[i].Mag < SliceOfStars[j].Mag })
+	for _, star := range SliceOfStars {
 		if star.Mag < magMin && star.De > lowestDeclination {
-			a := star.RA * math.Pi / 180.0
-			r := r0 * (1.0 - star.De/90.0)
+			x, y := eqToCartesianXY(star.RA, star.De)
 			rMag := magToRadius(star.Mag)
-			x, y := cartesianXY(r, a)
 			s += fmt.Sprintf(f1, x, y, rMag, "blue")
 		}
 	}
+	s += "      </g>\n"
+
+	return s
+}
+
+func plotConstellations() string {
+	s := "      <g id=\"plotConstellations\">\n"
+	f1 := "        <path d=\"%s\" stroke=\"red\" stroke-width=\"0.25\" fill=\"none\" />\n"
+	d := ""
+	for _, c := range SliceOfConstellations {
+		for _, line := range c.Lines {
+			x, y := eqToCartesianXY(line[0].RA, line[0].De)
+			d += fmt.Sprintf("M%.1f,%.1f ", x, y)
+			for i := 1; i < len(line); i++ {
+				x, y = eqToCartesianXY(line[i].RA, line[i].De)
+				d += fmt.Sprintf("L%.1f,%.1f ", x, y)
+			}
+		}
+	}
+	s += fmt.Sprintf(f1, d)
 	s += "      </g>\n"
 
 	return s
@@ -231,7 +273,17 @@ func LoadStars(filename string) {
 		fmt.Printf("Error loading file %s: %s\n", filename, err.Error())
 		return
 	} else {
-		if err1 := json.Unmarshal([]byte(bytes), &Stars); err1 != nil {
+		if err1 := json.Unmarshal([]byte(bytes), &SliceOfStars); err1 != nil {
+			fmt.Printf("Error unmarshaling content of the json file %s: %s\n", filename, err1.Error())
+		}
+	}
+}
+func LoadConstellations(filename string) {
+	if bytes, err := os.ReadFile(filename); err != nil {
+		fmt.Printf("Error loading file %s: %s\n", filename, err.Error())
+		return
+	} else {
+		if err1 := json.Unmarshal([]byte(bytes), &SliceOfConstellations); err1 != nil {
 			fmt.Printf("Error unmarshaling content of the json file %s: %s\n", filename, err1.Error())
 		}
 	}
@@ -264,6 +316,7 @@ func HandlerImageSkymapColor(w http.ResponseWriter, r *http.Request) {
 	defs := raCross()
 	defs += raHourRoundScale()
 	defs += dateRoundScale()
+	defs += plotConstellations()
 	defs += plotStars()
 
 	svgTemplate2 := fmt.Sprintf(svgTemplate1, defs)
