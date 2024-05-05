@@ -155,11 +155,11 @@ func raHourRoundScale() string {
 		a := float64(ra*15) * math.Pi / 180.0
 		x1, y1 := cartesianXY(r1, a)
 		x2, y2 := cartesianXY(r2, a)
-		s += fmt.Sprintf(f1, x1, y1, x2, y2) // hour line
+		s += fmt.Sprintf(f1, x1, y1, x2, y2) // concentric hour short line
 
 		x1, y1 = cartesianXY(r1, a+2.0*aQuaterHour)
 		x2, y2 = cartesianXY(r2-0.9, a+2.0*aQuaterHour)
-		s += fmt.Sprintf(f1, x1, y1, x2, y2) // hour and half line
+		s += fmt.Sprintf(f1, x1, y1, x2, y2) // concentric hour and half short line
 
 		//improvement needed: to center an hour digit to middle of the arc
 		ah := 0.3 * aQuaterHour
@@ -194,7 +194,7 @@ func dateRoundScale() string {
 		}
 		//s += fmt.Sprintf(f1, x1, y1, r, "black")
 		x2, y2 := cartesianXY(r1-r, a)
-		s += fmt.Sprintf(f1, x1, y1, x2, y2)
+		s += fmt.Sprintf(f1, x1, y1, x2, y2) // concentric day(1,5,10) short line
 		date = date.Add(24 * time.Hour)
 	}
 	s += "      </g>\n"
