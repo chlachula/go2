@@ -155,13 +155,20 @@ func raHourRoundScale() string {
 		a := float64(ra*15) * math.Pi / 180.0
 		x1, y1 := cartesianXY(r1, a)
 		x2, y2 := cartesianXY(r2, a)
-		s += fmt.Sprintf(f1, x1, y1, x2, y2) // hour
+		s += fmt.Sprintf(f1, x1, y1, x2, y2) // hour line
+
 		x1, y1 = cartesianXY(r1, a+2.0*aQuaterHour)
 		x2, y2 = cartesianXY(r2-0.9, a+2.0*aQuaterHour)
-		s += fmt.Sprintf(f1, x1, y1, x2, y2) // hour and half
-		x1, y1 = cartesianXY(r3, a-aQuaterHour)
-		x2, y2 = cartesianXY(r3, a+aQuaterHour)
-		s += fmt.Sprintf(f2, ra, x2, y2, x1, y1, ra, ra)
+		s += fmt.Sprintf(f1, x1, y1, x2, y2) // hour and half line
+
+		//improvement needed: to center an hour digit to middle of the arc
+		ah := 0.3 * aQuaterHour
+		if ra > 9 {
+			ah *= 2.0
+		}
+		x1, y1 = cartesianXY(r3, a-ah)
+		x2, y2 = cartesianXY(r3, a+ah)
+		s += fmt.Sprintf(f2, ra, x2, y2, x1, y1, ra, ra) // circle arch for an hour number text
 	}
 	return fmt.Sprintf(f0, s)
 }
