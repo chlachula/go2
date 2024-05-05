@@ -145,7 +145,7 @@ func raHourRoundScale() string {
      </text>
 `
 	f2 = `      <path id="raHour%d" d="M%.1f,%.1f A162.0,162.0 0 0,0  %.1f,%.1f " style="fill:none;fill-opacity: 1;stroke:green;stroke-width: 0.7"/>
-      <text Xdy="15" Xdx="0" alignment-baseline="baseline" text-anchor="start"  XXtextLength="300"  class="font1 downFont">
+      <text alignment-baseline="baseline" text-anchor="start" class="font1 downFont">
 	    <textPath xlink:href="#raHour%d">%d</textPath>
       </text>
 
@@ -199,7 +199,7 @@ func magToRadius(mag float64) float64 {
 		mag = magBrightest
 	}
 	magRange := magMin - magBrightest
-	rMag := 0.6 + 3.6*(magMin-mag)/magRange
+	rMag := 0.3 + 2.6*(magMin-mag)/magRange
 	return rMag
 }
 func eqToCartesianXY(RA, De float64) (float64, float64) {
