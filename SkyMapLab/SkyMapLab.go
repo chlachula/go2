@@ -69,6 +69,7 @@ const (
 
   <g id="draw">
    <use xlink:href="#plotConstellations" />
+   <use xlink:href="#plotEcliptic" />
    <use xlink:href="#plotStars" />
    <use xlink:href="#dateRoundScale" />
    <use xlink:href="#raHourScale" />
@@ -301,6 +302,23 @@ func plotConstellations() string {
 
 	return s
 }
+func plotEcliptic() string {
+	s := "      <g id=\"plotEcliptic\">\n"
+	f1 := "        <path d=\"%s\" stroke=\"orange\" stroke-width=\"0.25\" fill=\"none\" />\n"
+	toRad := math.Pi / 180.0
+	toDeg := 180.0 / math.Pi
+	x, y := eqToCartesianXY(0.0, 0.0)
+	d := fmt.Sprintf("M%.1f,%.1f L", x, y)
+	for la := 1.0; la < 360.1; la = la + 1.0 {
+		ra, de := EclipticalToEquatorial(la*toRad, 0.0)
+		x, y := eqToCartesianXY(ra*toDeg, de*toDeg)
+		d += fmt.Sprintf("%.1f,%.1f ", x, y)
+	}
+	s += fmt.Sprintf(f1, d)
+	s += "      </g>\n"
+
+	return s
+}
 
 func LoadECSV(filename string) ([][]string, error) {
 	rows := make([][]string, 0)
@@ -373,6 +391,7 @@ func HandlerImageSkymapColor(w http.ResponseWriter, r *http.Request) {
 	defs += raHourRoundScale()
 	defs += dateRoundScale()
 	defs += plotConstellations()
+	defs += plotEcliptic()
 	defs += plotStars()
 
 	svgTemplate2 := fmt.Sprintf(svgTemplate1, defs)
