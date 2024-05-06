@@ -90,6 +90,21 @@ var (
 	BottomText string
 )
 
+/*
+obliquity = 23.43929111 - 46.8150"t - 0.00059"t^2 + 0.001813*t^3
+
+	T = (JD-2451545)/36525 ... centuries since J2000.0
+	Y:2000 T:0.00 𝜀 = 23.439291
+	Y:2025 T:0.25 𝜀 = 23.436040
+	Y:2050 T:0.50 𝜀 = 23.432789
+	Y:2075 T:0.75 𝜀 = 23.429538
+	Y:2100 T:1.00 𝜀 = 23.426287
+*/
+func eclipticObliquity(T float64) float64 {
+	𝜀 := 23.43929111 - (1.300416666666666666666666666667e-2+(1.6388888888888888888888888888889e-7-5.0361111111111111111111111111111e-7*T)*T)*T
+	return 𝜀
+}
+
 func SetVariables(top, bottom string) {
 	TopText = top
 	BottomText = bottom
@@ -172,6 +187,19 @@ func raHourRoundScale() string {
 	}
 	return fmt.Sprintf(f0, s)
 }
+func circleArchText(id, text string, r, a, deltaA float64) string {
+	f1 := `      <path id="raHour%s" d="M%.1f,%.1f A%.1f,%.1f 0 0,0  %.1f,%.1f " style="fill:none;fill-opacity: 1;stroke:pink;stroke-width: 0.7"/>
+      <text class="font1 downFont">
+	    <textPath xlink:href="#raHour%s" text-anchor="start">%s</textPath>
+      </text>
+
+`
+	s := ""
+	x1, y1 := cartesianXY(r, a)
+	x2, y2 := cartesianXY(r, a+deltaA)
+	s += fmt.Sprintf(f1, id, x2, y2, r, r, x1, y1, id, text) // circle arch for an hour number text
+	return s
+}
 func dateRoundScale() string {
 	s := "      <g id=\"dateRoundScale\">\n"
 	r1 := 172.0
@@ -191,6 +219,7 @@ func dateRoundScale() string {
 		}
 		if date.Day() == 1 {
 			r = 5.5
+			s += circleArchText("MONTH_"+date.Format("Jan"), date.Format("January"), r1+10.0, a, 27.0/31.0*math.Pi/6.0)
 		}
 		//s += fmt.Sprintf(f1, x1, y1, r, "black")
 		x2, y2 := cartesianXY(r1-r, a)
