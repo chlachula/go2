@@ -92,17 +92,37 @@ var (
 
 /*
 obliquity = 23.43929111 - 46.8150"t - 0.00059"t^2 + 0.001813*t^3
-
-	T = (JD-2451545)/36525 ... centuries since J2000.0
-	Y:2000 T:0.00 𝜀 = 23.439291
-	Y:2025 T:0.25 𝜀 = 23.436040
-	Y:2050 T:0.50 𝜀 = 23.432789
-	Y:2075 T:0.75 𝜀 = 23.429538
-	Y:2100 T:1.00 𝜀 = 23.426287
+T = (JD-2451545)/36525 ... centuries since J2000.0
+Y:2000 T:0.00 𝜀 = 23.439291
+Y:2025 T:0.25 𝜀 = 23.436040
+Y:2050 T:0.50 𝜀 = 23.432789
+Y:2075 T:0.75 𝜀 = 23.429538
+Y:2100 T:1.00 𝜀 = 23.426287
 */
-func eclipticObliquity(T float64) float64 {
+func EclipticObliquity(T float64) float64 {
 	𝜀 := 23.43929111 - (1.300416666666666666666666666667e-2+(1.6388888888888888888888888888889e-7-5.0361111111111111111111111111111e-7*T)*T)*T
 	return 𝜀
+}
+
+/*
+cos𝛿*cos𝛼 = cos𝛽*cos𝜆 => cos𝛿 = cos𝛽*cos𝜆 / cos𝛼
+cos𝛿*sin𝛼 = cos𝛽*sin𝜆*cos𝜀 − sin𝜀*sin𝛽 = sin𝛼/cos𝛼 * cos𝛽*cos𝜆 = tan𝛼*cos𝛽*cos𝜆
+
+	sin𝛿 = sin𝛽*cos𝜀 + sin𝜀*cos𝛽*sin𝜆
+*/
+func EclipticalToEquatorial(La, Be float64) (float64, float64) {
+	𝜀 := 23.436040 * math.Pi / 180.0 //for year 2025
+	sinRAcosDe := math.Cos(Be)*math.Sin(La)*math.Cos(𝜀) - math.Sin(𝜀)*math.Sin(Be)
+
+	RA := math.Atan2(sinRAcosDe, (math.Cos(Be) * math.Cos(La)))
+	if RA < 0.0 {
+		RA += 2.0 * math.Pi
+	}
+
+	sinDe := math.Sin(Be)*math.Cos(𝜀) + math.Sin(𝜀)*math.Cos(Be)*math.Sin(La)
+	De := math.Asin(sinDe)
+
+	return RA, De
 }
 
 func SetVariables(top, bottom string) {
