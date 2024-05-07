@@ -1,6 +1,10 @@
 package SkyMapLab
 
-import "testing"
+import (
+	"fmt"
+	"math"
+	"testing"
+)
 
 func TestLoadECSV(t *testing.T) {
 	filename := "data/test01.csv"
@@ -17,4 +21,28 @@ func TestLoadECSV(t *testing.T) {
 		}
 	}
 
+}
+func TestEclipticalToEquatorial(t *testing.T) {
+	toRad := math.Pi / 180.0
+	for La := 0.0; La < 360.1; La = La + 30.0 {
+		LaR := La * toRad
+		ra, de := EclipticalToEquatorial(LaR, 0.0)
+		raD := ra / toRad
+		deD := de / toRad
+		fmt.Printf("La:%3.0f    ra:%6.2f,de:%6.2f\n", La, raD, deD)
+	}
+}
+func TestAzimutalToEquatoreal_I(t *testing.T) {
+	toRad := math.Pi / 180.0
+	toDeg := 180.0 / math.Pi
+	fi := 50.0
+	fiR := fi * toRad
+	fmt.Printf("fi:%3.0f\n", fi)
+	for Az := 0.0; Az < 360.1; Az = Az + 30.0 {
+		AzR := Az * toRad
+		t, de := AzimutalToEquatoreal_I(AzR, 0.0, fiR)
+		tD := t * toDeg
+		deD := de * toDeg
+		fmt.Printf("Az:%3.0f    t:%6.2f,de:%6.2f\n", Az, tD, deD)
+	}
 }
