@@ -107,50 +107,26 @@ func EclipticObliquity(T float64) float64 {
 }
 
 /*
-https://www.astro-forum.cz/viewtopic.php?t=4890&start=75
-https://sirrah.troja.mff.cuni.cz/~mira/astrofyzika_pro_fyziky/2_souradnice/astronomicka_prirucka_souradnice.pdf
-https://sirrah.troja.mff.cuni.cz/~mira/astrofyzika_pro_fyziky/
-
-1. cos h * sinA = cos𝛿 * sinT;                     => cos𝛿 = cos h * sinA / sinT; sin𝛿 = sqrt(1 - cos𝛿*cos𝛿) = sqrt(1-(cos h * sinA)^2)
-2. cos h * cosA = cos𝛿 * cosT * sinφ - sin𝛿 * cosφ => cosT = (cos h * cosA + sin𝛿 * cosφ)/(cos𝛿 * sinφ)
-3. sin h = cos𝛿 * cosT * cosφ + sin𝛿 * sinφ
--
-2.a cos h * cosA = cos h * sinA / sinT * cosT * sinφ - sqrt(1-(cos h * sinA)^2) * cosφ
-2.b cos h * cosA + sqrt(1-(cos h * sinA)^2) * cosφ = cos h * sinA / sinT * cosT * sinφ
-2.c (cos h * cosA + sqrt(1-(cos h * sinA)^2) * cosφ)/(cos h * sinA * sinφ) = cosT / sinT
-2.c tanT = sinT / cosT  = (cos h * sinA * sinφ)  / (cos h * cosA + sqrt(1-(cos h * sinA)^2) * cosφ)
-
-3.a sin h = cos𝛿 * cosφ * (cos h * cosA + sin𝛿 * cosφ)/(cos𝛿 * sinφ) + sin𝛿 * sinφ
-3.b sin h = cosφ*(cos h * cosA + sin𝛿 * cosφ)/sinφ  + sin𝛿 * sinφ
-3.c sin h * sinφ = cosφ * (cos h * cosA + sin𝛿 * cosφ) + sin𝛿 * sinφ * sinφ
-3.d sin h * sinφ = cos h * cosA * cosφ + sin𝛿 * cosφ * cosφ + sin𝛿 * sinφ * sinφ
-3.e sin h * sinφ = cos h * cosA * cosφ + sin𝛿 *(cosφ * cosφ + sinφ * sinφ)
-3.f sin h * sinφ - cos h * cosA * cosφ = sin𝛿 *(cosφ * cosφ + sinφ * sinφ)
-3.g sin𝛿 = (sin h * sinφ - cos h * cosA * cosφ) / (cosφ * cosφ + sinφ * sinφ)
-3.z sin𝛿 = (sin h * sinφ - cos h * cosA * cosφ) / (sinφ*(cosφ +  * sinφ))
+sinTcos𝛿 = cosHsinA
+cosTcos𝛿 = cosFsinH + sinFcosHcosA
+sin𝛿 = sinFsinH - cosFcosHcosA
 */
 func AzimutalToEquatoreal_I(A, h, fi float64) (float64, float64) {
-	sinT := math.Cos(h) * math.Sin(A) * math.Sin(fi)
-	cosT := math.Cos(h)*math.Cos(A) + math.Sqrt(1.0-(math.Cos(h)*math.Sin(A)*math.Cos(h)*math.Sin(A)))*math.Cos(fi)
+	sinT := math.Cos(h) * math.Sin(A)
+	cosT := math.Cos(fi)*math.Sin(h) + math.Sin(fi)*math.Cos(h)*math.Cos(A)
+	sinD := math.Sin(fi)*math.Sin(h) - math.Cos(fi)*math.Cos(h)*math.Cos(A)
 	t := math.Atan2(sinT, cosT)
 	if t < 0.0 {
 		t += 2.0 * math.Pi
 	}
-	dx := math.Sin(h)*math.Sin(fi) - math.Cos(h)*math.Cos(A)*math.Cos(fi)
-	dy := math.Sin(fi) * (math.Cos(fi) + math.Sin(fi))
-	cosD := dx / dy
-	de := math.Asin(cosD)
-	//	if de > math.Pi/2.0 {
-	//		de = math.Pi - de
-	//	}
+	de := math.Asin(sinD)
 	return t, de
 }
 
 /*
 cos𝛿*cos𝛼 = cos𝛽*cos𝜆 => cos𝛿 = cos𝛽*cos𝜆 / cos𝛼
 cos𝛿*sin𝛼 = cos𝛽*sin𝜆*cos𝜀 − sin𝜀*sin𝛽 = sin𝛼/cos𝛼 * cos𝛽*cos𝜆 = tan𝛼*cos𝛽*cos𝜆
-
-	sin𝛿 = sin𝛽*cos𝜀 + sin𝜀*cos𝛽*sin𝜆
+sin𝛿 = sin𝛽*cos𝜀 + sin𝜀*cos𝛽*sin𝜆
 */
 func EclipticalToEquatorial(La, Be float64) (float64, float64) {
 	𝜀 := 23.436040 * math.Pi / 180.0 //for year 2025
@@ -366,13 +342,15 @@ func plotHorizon() string {
 	f1 := "        <path d=\"%s\" stroke=\"green\" stroke-width=\"0.25\" fill=\"none\" />\n"
 	toRad := math.Pi / 180.0
 	toDeg := 180.0 / math.Pi
-	fi := 50.0
+	hR := 0.0
+	fi := 44.0
 	fiR := fi * toRad
-	x, y := AzimutalToEquatoreal_I(0.0, 0.0, fiR)
+	t, de := AzimutalToEquatoreal_I(0.0, hR, fiR)
+	x, y := eqToCartesianXY(t*toDeg, de*toDeg)
 	d := fmt.Sprintf("M%.1f,%.1f L", x, y)
 	for az := 1.0; az < 360.1; az = az + 1.0 {
-		t, de := AzimutalToEquatoreal_I(az*toRad, 0.0, fiR)
-		x, y := eqToCartesianXY(t*toDeg, de*toDeg)
+		t, de = AzimutalToEquatoreal_I(az*toRad, hR, fiR)
+		x, y = eqToCartesianXY(t*toDeg, de*toDeg)
 		d += fmt.Sprintf("%.1f,%.1f ", x, y)
 	}
 	s += fmt.Sprintf(f1, d)
