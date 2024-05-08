@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" 
+	width="297.4mm" height="215.9mm" version="1.1"
+	style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd;background:#010630"
+	viewBox="0 0 3000 5000"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+        onload="initiation();">
+<!-- letter 215.9 by 279.4 mm https://css-tricks.com/scale-svg/-->
+    <script type="application/ecmascript"> <![CDATA[
+    function getChildElementById(childNodes, id){
+      for(var i=0;i < childNodes.length;i++){
+         var node = childNodes[i];
+         if (node.id == id) return node;
+      }
+      return null;
+    }
+    function styleFontSizebyRadius(r, size){
+      var size2 = r/100*size;
+      return "font-family:Arial;font-size:"+size2+";stroke:black;fill:black;"
+    }
+    function setValuesFor2(id, ra, rb, tx1,tx2,tx3,tx4,tx5) {
+       setValuesFor(id+"a", ra, tx1,tx2,tx3,tx4,tx5);
+       setValuesFor(id+"b", rb, tx1,tx2,tx3,tx4,tx5);
+    }
+    function setValuesFor(id, r, tx1,tx2,tx3,tx4,tx5) {
+      var elem = document.getElementById(id);
+      var circle = getChildElementById(elem.childNodes, 'c1');
+      circle.setAttribute("r", r);
+
+      var t1 = getChildElementById(elem.childNodes, 't1');
+      t1.innerHTML = tx1;
+      t1.setAttribute("y", -0.75*r);
+      t1.setAttribute("style", styleFontSizebyRadius(r, 72));
+
+      var t2 = getChildElementById(elem.childNodes, 't2');
+      t2.innerHTML = tx2;
+      t2.setAttribute("style", styleFontSizebyRadius(r, 24));
+
+      var t3 = getChildElementById(elem.childNodes, 't3');
+      t3.innerHTML = tx3;
+      t3.setAttribute("x", -0.67*r);
+      t3.setAttribute("y", 0.67*r);
+      t3.setAttribute("style", styleFontSizebyRadius(r, 32));
+
+      var t4 = getChildElementById(elem.childNodes, 't4');
+      t4.innerHTML = tx4;
+      t4.setAttribute("x", 0.67*r);
+      t4.setAttribute("y", 0.67*r);
+      t4.setAttribute("style", styleFontSizebyRadius(r, 32));
+
+      lowerhalf = document.getElementById("lowerhalf_"+id);
+      var r2 = 2*r;
+      lowerhalf.setAttribute("d", "M-"+r+",0 a"+r+","+r+" 0 0,0 "+r2+",0");//M-100,0 a100,100 0 0,0 200,00
+      var t5 = getChildElementById(elem.childNodes, 't5');
+      t5.setAttribute("style", styleFontSizebyRadius(r, 11));
+
+      var t5path = getChildElementById(t5.childNodes, 't5path');
+      t5path.innerHTML = tx5;
+    }
+    function initiation() {
+      var elem = document.getElementById('e1');
+      var lower_text = "y o u r - o w n . o r g";
+
+      setValuesFor2('k1', 44, 40, "40","mm","64x","42'",lower_text);
+      setValuesFor2('k2', 44, 40, "32","mm","79x","40'",lower_text);
+      setValuesFor2('k3', 44, 40, "26","mm","98x","34'",lower_text);
+      setValuesFor2('k4', 40, 34, "20","mm","127x","25'",lower_text);
+      setValuesFor2('k5', 39, 34, "15","mm","169x","19'",lower_text);
+      setValuesFor2('k6', 39, 34, "12.4","mm","205x","16'",lower_text);
+      setValuesFor2('k7', 39, 34, "9.7","mm","262x","12'",lower_text);
+      setValuesFor2('k8', 39, 34, "6.4","mm","397x","8'",lower_text);
+//2x3x 44/40 mm
+//2x1x 40/34 mm
+//2x4x 39/34 mm
+//LX200 10" f/10 focus length = 2540mm
+//Meade series 4000   mm  Magnification View angle
+//Meade Super Plössl  6.4 397x  8'
+//Meade Super Plössl  9.7 262x 12'
+//Meade Super Plössl 12.4 205x 16'
+//Meade Super Plössl 15   169x 19'
+//Meade Super Plössl 20   127x 25'
+//Meade Super Plössl 26    98x 34'
+//Meade Super Plössl 32    79x 40'
+//Meade Super Plössl 40    64x 42'
+
+    }
+  ]]> </script>
+
+<defs>
+<path id="lowerhalf_k1a" d="M-100,0 a100,100 0 0,0 200,00" />
+<g id="k1a">
+  <circle id="c1" cx="0" cy="0" r="100" stroke="gray" stroke-width="1" stroke-dasharray="5,5" d="M5 20 l215 0"  fill="none" />
+  <text id="t1" x="0"  y="-75" text-anchor="middle" alignment-baseline="hanging"  style="font-family:Arial;font-size: 72;stroke:black;fill:black;">32</text>
+  <text id="t2" x="0"  y="0"   text-anchor="middle" alignment-baseline="baseline" style="font-family:Arial;font-size: 24;stroke:black;fill:black;">mm</text>
+  <text id="t3" x="-67" y="67" text-anchor="start" alignment-baseline="baseline"  style="font-family:Arial;font-size: 32;stroke:black;fill:black;">162x</text>
+  <text id="t4" x="67"  y="67" text-anchor="end" alignment-baseline="baseline"    style="font-family:Arial;font-size: 32;stroke:black;fill:black;">32'</text>
+  <text id="t5" x="0" y="0" style="stroke: black;font-family: Arial;font-size: 11;" text-anchor="middle" alignment-baseline="baseline">
+        <textPath id="t5path" xlink:href="#lowerhalf_k1a" startOffset="50%">a b c d e f g h i j k l m</textPath>
+  </text>
+</g>
+
+<path id="lowerhalf_k1b" d="M-100,0 a100,100 0 0,0 200,00" />
+<g id="k1b">
+  <circle id="c1" cx="0" cy="0" r="100" stroke="gray" stroke-width="1" stroke-dasharray="5,5" d="M5 20 l215 0"  fill="none" />
+  <text id="t1" x="0"  y="-75" text-anchor="middle" alignment-baseline="hanging"  style="font-family:Arial;font-size: 72;stroke:black;fill:black;">32</text>
+  <text id="t2" x="0"  y="0"   text-anchor="middle" alignment-baseline="baseline" style="font-family:Arial;font-size: 24;stroke:black;fill:black;">mm</text>
+  <text id="t3" x="-67" y="67" text-anchor="start" alignment-baseline="baseline"  style="font-family:Arial;font-size: 32;stroke:black;fill:black;">162x</text>
+  <text id="t4" x="67"  y="67" text-anchor="end" alignment-baseline="baseline"    style="font-family:Arial;font-size: 32;stroke:black;fill:black;">32'</text>
+  <text id="t5" x="0" y="0" style="stroke: black;font-family: Arial;font-size: 11;" text-anchor="middle" alignment-baseline="baseline">
+        <textPath id="t5path" xlink:href="#lowerhalf_k1b" startOffset="50%">a b c d e f g h i j k l m</textPath>
+  </text>
+</g>
+
+<path id="lowerhalf_k2a" d="M-100,0 a100,100 0 0,0 200,00" />
+<g id="k2a">
+  <circle id="c1" cx="0" cy="0" r="100" stroke="gray" stroke-width="1" stroke-dasharray="5,5" d="M5 20 l215 0"  fill="none" />
+  <text id="t1" x="0"  y="-75" text-anchor="middle" alignment-baseline="hanging"  style="font-family:Arial;font-size: 72;stroke:black;fill:black;">32</text>
+  <text id="t2" x="0"  y="0"   text-anchor="middle" alignment-baseline="baseline" style="font-family:Arial;font-size: 24;stroke:black;fill:black;">mm</text>
+  <text id="t3" x="-67" y="67" text-anchor="start" alignment-baseline="baseline"  style="font-family:Arial;font-size: 32;stroke:black;fill:black;">162x</text>
+  <text id="t4" x="67"  y="67" text-anchor="end" alignment-baseline="baseline"    style="font-family:Arial;font-size: 32;stroke:black;fill:black;">32'</text>
+  <text id="t5" x="0" y="0" style="stroke: black;font-family: Arial;font-size: 11;" text-anchor="middle" alignment-baseline="baseline">
+        <textPath id="t5path" xlink:href="#lowerhalf_k2a" startOffset="50%">a b c d e f g h i j k l m</textPath>
+  </text>
+</g>
+
+<path id="lowerhalf_k2b" d="M-100,0 a100,100 0 0,0 200,00" />
+<g id="k2b">
+  <circle id="c1" cx="0" cy="0" r="100" stroke="gray" stroke-width="1" stroke-dasharray="5,5" d="M5 20 l215 0"  fill="none" />
+  <text id="t1" x="0"  y="-75" text-anchor="middle" alignment-baseline="hanging"  style="font-family:Arial;font-size: 72;stroke:black;fill:black;">32</text>
+  <text id="t2" x="0"  y="0"   text-anchor="middle" alignment-baseline="baseline" style="font-family:Arial;font-size: 24;stroke:black;fill:black;">mm</text>
+  <text id="t3" x="-67" y="67" text-anchor="start" alignment-baseline="baseline"  style="font-family:Arial;font-size: 32;stroke:black;fill:black;">162x</text>
+  <text id="t4" x="67"  y="67" text-anchor="end" alignment-baseline="baseline"    style="font-family:Arial;font-size: 32;stroke:black;fill:black;">32'</text>
+  <text id="t5" x="0" y="0" style="stroke: black;font-family: Arial;font-size: 11;" text-anchor="middle" alignment-baseline="baseline">
+        <textPath id="t5path" xlink:href="#lowerhalf_k2b" startOffset="50%">a b c d e f g h i j k l m</textPath>
+  </text>
+</g>
+
+<path id="lowerhalf_k3a" d="M-100,0 a100,100 0 0,0 200,00" />
+<g id="k3a">
+  <circle id="c1" cx="0" cy="0" r="100" stroke="gray" stroke-width="1" stroke-dasharray="5,5" d="M5 20 l215 0"  fill="none" />
+  <text id="t1" x="0"  y="-75" text-anchor="middle" alignment-baseline="hanging"  style="font-family:Arial;font-size: 72;stroke:black;fill:black;">32</text>
+  <text id="t2" x="0"  y="0"   text-anchor="middle" alignment-baseline="baseline" style="font-family:Arial;font-size: 24;stroke:black;fill:black;">mm</text>
+  <text id="t3" x="-67" y="67" text-anchor="start" alignment-baseline="baseline"  style="font-family:Arial;font-size: 32;stroke:black;fill:black;">162x</text>
+  <text id="t4" x="67"  y="67" text-anchor="end" alignment-baseline="baseline"    style="font-family:Arial;font-size: 32;stroke:black;fill:black;">32'</text>
+  <text id="t5" x="0" y="0" style="stroke: black;font-family: Arial;font-size: 11;" text-anchor="middle" alignment-baseline="baseline">
+        <textPath id="t5path" xlink:href="#lowerhalf_k3a" startOffset="50%">a b c d e f g h i j k l m</textPath>
+  </text>
+</g>
+
+<path id="lowerhalf_k3b" d="M-100,0 a100,100 0 0,0 200,00" />
+<g id="k3b">
+  <circle id="c1" cx="0" cy="0" r="100" stroke="gray" stroke-width="1" stroke-dasharray="5,5" d="M5 20 l215 0"  fill="none" />
+  <text id="t1" x="0"  y="-75" text-anchor="middle" alignment-baseline="hanging"  style="font-family:Arial;font-size: 72;stroke:black;fill:black;">32</text>
+  <text id="t2" x="0"  y="0"   text-anchor="middle" alignment-baseline="baseline" style="font-family:Arial;font-size: 24;stroke:black;fill:black;">mm</text>
+  <text id="t3" x="-67" y="67" text-anchor="start" alignment-baseline="baseline"  style="font-family:Arial;font-size: 32;stroke:black;fill:black;">162x</text>
+  <text id="t4" x="67"  y="67" text-anchor="end" alignment-baseline="baseline"    style="font-family:Arial;font-size: 32;stroke:black;fill:black;">32'</text>
+  <text id="t5" x="0" y="0" style="stroke: black;font-family: Arial;font-size: 11;" text-anchor="middle" alignment-baseline="baseline">
+        <textPath id="t5path" xlink:href="#lowerhalf_k3b" startOffset="50%">a b c d e f g h i j k l m</textPath>
+  </text>
+</g>
+
+<path id="lowerhalf_k4a" d="M-100,0 a100,100 0 0,0 200,00" />
+<g id="k4a">
+  <circle id="c1" cx="0" cy="0" r="100" stroke="gray" stroke-width="1" stroke-dasharray="5,5" d="M5 20 l215 0"  fill="none" />
+  <text id="t1" x="0"  y="-75" text-anchor="middle" alignment-baseline="hanging"  style="font-family:Arial;font-size: 72;stroke:black;fill:black;">32</text>
+  <text id="t2" x="0"  y="0"   text-anchor="middle" alignment-baseline="baseline" style="font-family:Arial;font-size: 24;stroke:black;fill:black;">mm</text>
+  <text id="t3" x="-67" y="67" text-anchor="start" alignment-baseline="baseline"  style="font-family:Arial;font-size: 32;stroke:black;fill:black;">162x</text>
+  <text id="t4" x="67"  y="67" text-anchor="end" alignment-baseline="baseline"    style="font-family:Arial;font-size: 32;stroke:black;fill:black;">32'</text>
+  <text id="t5" x="0" y="0" style="stroke: black;font-family: Arial;font-size: 11;" text-anchor="middle" alignment-baseline="baseline">
+        <textPath id="t5path" xlink:href="#lowerhalf_k4a" startOffset="50%">a b c d e f g h i j k l m</textPath>
+  </text>
+</g>
+
+<path id="lowerhalf_k4b" d="M-100,0 a100,100 0 0,0 200,00" />
+<g id="k4b">
+  <circle id="c1" cx="0" cy="0" r="100" stroke="gray" stroke-width="1" stroke-dasharray="5,5" d="M5 20 l215 0"  fill="none" />
+  <text id="t1" x="0"  y="-75" text-anchor="middle" alignment-baseline="hanging"  style="font-family:Arial;font-size: 72;stroke:black;fill:black;">32</text>
+  <text id="t2" x="0"  y="0"   text-anchor="middle" alignment-baseline="baseline" style="font-family:Arial;font-size: 24;stroke:black;fill:black;">mm</text>
+  <text id="t3" x="-67" y="67" text-anchor="start" alignment-baseline="baseline"  style="font-family:Arial;font-size: 32;stroke:black;fill:black;">162x</text>
+  <text id="t4" x="67"  y="67" text-anchor="end" alignment-baseline="baseline"    style="font-family:Arial;font-size: 32;stroke:black;fill:black;">32'</text>
+  <text id="t5" x="0" y="0" style="stroke: black;font-family: Arial;font-size: 11;" text-anchor="middle" alignment-baseline="baseline">
+        <textPath id="t5path" xlink:href="#lowerhalf_k4b" startOffset="50%">a b c d e f g h i j k l m</textPath>
+  </text>
+</g>
+
+<path id="lowerhalf_k5a" d="M-100,0 a100,100 0 0,0 200,00" />
+<g id="k5a">
+  <circle id="c1" cx="0" cy="0" r="100" stroke="gray" stroke-width="1" stroke-dasharray="5,5" d="M5 20 l215 0"  fill="none" />
+  <text id="t1" x="0"  y="-75" text-anchor="middle" alignment-baseline="hanging"  style="font-family:Arial;font-size: 72;stroke:black;fill:black;">32</text>
+  <text id="t2" x="0"  y="0"   text-anchor="middle" alignment-baseline="baseline" style="font-family:Arial;font-size: 24;stroke:black;fill:black;">mm</text>
+  <text id="t3" x="-67" y="67" text-anchor="start" alignment-baseline="baseline"  style="font-family:Arial;font-size: 32;stroke:black;fill:black;">162x</text>
+  <text id="t4" x="67"  y="67" text-anchor="end" alignment-baseline="baseline"    style="font-family:Arial;font-size: 32;stroke:black;fill:black;">32'</text>
+  <text id="t5" x="0" y="0" style="stroke: black;font-family: Arial;font-size: 11;" text-anchor="middle" alignment-baseline="baseline">
+        <textPath id="t5path" xlink:href="#lowerhalf_k5a" startOffset="50%">a b c d e f g h i j k l m</textPath>
+  </text>
+</g>
+
+<path id="lowerhalf_k5b" d="M-100,0 a100,100 0 0,0 200,00" />
+<g id="k5b">
+  <circle id="c1" cx="0" cy="0" r="100" stroke="gray" stroke-width="1" stroke-dasharray="5,5" d="M5 20 l215 0"  fill="none" />
+  <text id="t1" x="0"  y="-75" text-anchor="middle" alignment-baseline="hanging"  style="font-family:Arial;font-size: 72;stroke:black;fill:black;">32</text>
+  <text id="t2" x="0"  y="0"   text-anchor="middle" alignment-baseline="baseline" style="font-family:Arial;font-size: 24;stroke:black;fill:black;">mm</text>
+  <text id="t3" x="-67" y="67" text-anchor="start" alignment-baseline="baseline"  style="font-family:Arial;font-size: 32;stroke:black;fill:black;">162x</text>
+  <text id="t4" x="67"  y="67" text-anchor="end" alignment-baseline="baseline"    style="font-family:Arial;font-size: 32;stroke:black;fill:black;">32'</text>
+  <text id="t5" x="0" y="0" style="stroke: black;font-family: Arial;font-size: 11;" text-anchor="middle" alignment-baseline="baseline">
+        <textPath id="t5path" xlink:href="#lowerhalf_k5b" startOffset="50%">a b c d e f g h i j k l m</textPath>
+  </text>
+</g>
+
+<path id="lowerhalf_k6a" d="M-100,0 a100,100 0 0,0 200,00" />
+<g id="k6a">
+  <circle id="c1" cx="0" cy="0" r="100" stroke="gray" stroke-width="1" stroke-dasharray="5,5" d="M5 20 l215 0"  fill="none" />
+  <text id="t1" x="0"  y="-75" text-anchor="middle" alignment-baseline="hanging"  style="font-family:Arial;font-size: 72;stroke:black;fill:black;">32</text>
+  <text id="t2" x="0"  y="0"   text-anchor="middle" alignment-baseline="baseline" style="font-family:Arial;font-size: 24;stroke:black;fill:black;">mm</text>
+  <text id="t3" x="-67" y="67" text-anchor="start" alignment-baseline="baseline"  style="font-family:Arial;font-size: 32;stroke:black;fill:black;">162x</text>
+  <text id="t4" x="67"  y="67" text-anchor="end" alignment-baseline="baseline"    style="font-family:Arial;font-size: 32;stroke:black;fill:black;">32'</text>
+  <text id="t5" x="0" y="0" style="stroke: black;font-family: Arial;font-size: 11;" text-anchor="middle" alignment-baseline="baseline">
+        <textPath id="t5path" xlink:href="#lowerhalf_k6a" startOffset="50%">a b c d e f g h i j k l m</textPath>
+  </text>
+</g>
+
+<path id="lowerhalf_k6b" d="M-100,0 a100,100 0 0,0 200,00" />
+<g id="k6b">
+  <circle id="c1" cx="0" cy="0" r="100" stroke="gray" stroke-width="1" stroke-dasharray="5,5" d="M5 20 l215 0"  fill="none" />
+  <text id="t1" x="0"  y="-75" text-anchor="middle" alignment-baseline="hanging"  style="font-family:Arial;font-size: 72;stroke:black;fill:black;">32</text>
+  <text id="t2" x="0"  y="0"   text-anchor="middle" alignment-baseline="baseline" style="font-family:Arial;font-size: 24;stroke:black;fill:black;">mm</text>
+  <text id="t3" x="-67" y="67" text-anchor="start" alignment-baseline="baseline"  style="font-family:Arial;font-size: 32;stroke:black;fill:black;">162x</text>
+  <text id="t4" x="67"  y="67" text-anchor="end" alignment-baseline="baseline"    style="font-family:Arial;font-size: 32;stroke:black;fill:black;">32'</text>
+  <text id="t5" x="0" y="0" style="stroke: black;font-family: Arial;font-size: 11;" text-anchor="middle" alignment-baseline="baseline">
+        <textPath id="t5path" xlink:href="#lowerhalf_k6b" startOffset="50%">a b c d e f g h i j k l m</textPath>
+  </text>
+</g>
+
+<path id="lowerhalf_k7a" d="M-100,0 a100,100 0 0,0 200,00" />
+<g id="k7a">
+  <circle id="c1" cx="0" cy="0" r="100" stroke="gray" stroke-width="1" stroke-dasharray="5,5" d="M5 20 l215 0"  fill="none" />
+  <text id="t1" x="0"  y="-75" text-anchor="middle" alignment-baseline="hanging"  style="font-family:Arial;font-size: 72;stroke:black;fill:black;">32</text>
+  <text id="t2" x="0"  y="0"   text-anchor="middle" alignment-baseline="baseline" style="font-family:Arial;font-size: 24;stroke:black;fill:black;">mm</text>
+  <text id="t3" x="-67" y="67" text-anchor="start" alignment-baseline="baseline"  style="font-family:Arial;font-size: 32;stroke:black;fill:black;">162x</text>
+  <text id="t4" x="67"  y="67" text-anchor="end" alignment-baseline="baseline"    style="font-family:Arial;font-size: 32;stroke:black;fill:black;">32'</text>
+  <text id="t5" x="0" y="0" style="stroke: black;font-family: Arial;font-size: 11;" text-anchor="middle" alignment-baseline="baseline">
+        <textPath id="t5path" xlink:href="#lowerhalf_k7a" startOffset="50%">a b c d e f g h i j k l m</textPath>
+  </text>
+</g>
+
+<path id="lowerhalf_k7b" d="M-100,0 a100,100 0 0,0 200,00" />
+<g id="k7b">
+  <circle id="c1" cx="0" cy="0" r="100" stroke="gray" stroke-width="1" stroke-dasharray="5,5" d="M5 20 l215 0"  fill="none" />
+  <text id="t1" x="0"  y="-75" text-anchor="middle" alignment-baseline="hanging"  style="font-family:Arial;font-size: 72;stroke:black;fill:black;">32</text>
+  <text id="t2" x="0"  y="0"   text-anchor="middle" alignment-baseline="baseline" style="font-family:Arial;font-size: 24;stroke:black;fill:black;">mm</text>
+  <text id="t3" x="-67" y="67" text-anchor="start" alignment-baseline="baseline"  style="font-family:Arial;font-size: 32;stroke:black;fill:black;">162x</text>
+  <text id="t4" x="67"  y="67" text-anchor="end" alignment-baseline="baseline"    style="font-family:Arial;font-size: 32;stroke:black;fill:black;">32'</text>
+  <text id="t5" x="0" y="0" style="stroke: black;font-family: Arial;font-size: 11;" text-anchor="middle" alignment-baseline="baseline">
+        <textPath id="t5path" xlink:href="#lowerhalf_k7b" startOffset="50%">a b c d e f g h i j k l m</textPath>
+  </text>
+</g>
+
+<path id="lowerhalf_k8a" d="M-100,0 a100,100 0 0,0 200,00" />
+<g id="k8a">
+  <circle id="c1" cx="0" cy="0" r="100" stroke="gray" stroke-width="1" stroke-dasharray="5,5" d="M5 20 l215 0"  fill="none" />
+  <text id="t1" x="0"  y="-75" text-anchor="middle" alignment-baseline="hanging"  style="font-family:Arial;font-size: 72;stroke:black;fill:black;">32</text>
+  <text id="t2" x="0"  y="0"   text-anchor="middle" alignment-baseline="baseline" style="font-family:Arial;font-size: 24;stroke:black;fill:black;">mm</text>
+  <text id="t3" x="-67" y="67" text-anchor="start" alignment-baseline="baseline"  style="font-family:Arial;font-size: 32;stroke:black;fill:black;">162x</text>
+  <text id="t4" x="67"  y="67" text-anchor="end" alignment-baseline="baseline"    style="font-family:Arial;font-size: 32;stroke:black;fill:black;">32'</text>
+  <text id="t5" x="0" y="0" style="stroke: black;font-family: Arial;font-size: 11;" text-anchor="middle" alignment-baseline="baseline">
+        <textPath id="t5path" xlink:href="#lowerhalf_k8a" startOffset="50%">a b c d e f g h i j k l m</textPath>
+  </text>
+</g>
+
+<path id="lowerhalf_k8b" d="M-100,0 a100,100 0 0,0 200,00" />
+<g id="k8b">
+  <circle id="c1" cx="0" cy="0" r="100" stroke="gray" stroke-width="1" stroke-dasharray="5,5" d="M5 20 l215 0"  fill="none" />
+  <text id="t1" x="0"  y="-75" text-anchor="middle" alignment-baseline="hanging"  style="font-family:Arial;font-size: 72;stroke:black;fill:black;">32</text>
+  <text id="t2" x="0"  y="0"   text-anchor="middle" alignment-baseline="baseline" style="font-family:Arial;font-size: 24;stroke:black;fill:black;">mm</text>
+  <text id="t3" x="-67" y="67" text-anchor="start" alignment-baseline="baseline"  style="font-family:Arial;font-size: 32;stroke:black;fill:black;">162x</text>
+  <text id="t4" x="67"  y="67" text-anchor="end" alignment-baseline="baseline"    style="font-family:Arial;font-size: 32;stroke:black;fill:black;">32'</text>
+  <text id="t5" x="0" y="0" style="stroke: black;font-family: Arial;font-size: 11;" text-anchor="middle" alignment-baseline="baseline">
+        <textPath id="t5path" xlink:href="#lowerhalf_k8b" startOffset="50%">a b c d e f g h i j k l m</textPath>
+  </text>
+</g>
+
+
+</defs>
+
+
+<rect x="0" y="0" width="100%" height="100%" fill="pink"></rect>
+<!--text x="960"  y="80"  style="font-family: Times New Roman;font-size: 70;stroke:white;fill:orange;">Title</text-->
+  <use id="e1a" transform="translate(400, 400)  scale(7.5,7.5)" xlink:href="#k1a"></use><!-- asi 53mm -->
+  <use id="e1b" transform="translate(1100,400) scale(7.5,7.5)" xlink:href="#k1b"></use>
+
+  <use id="e2a" transform="translate(1900, 400)  scale(7.5,7.5)" xlink:href="#k2a"></use><!-- asi 53mm -->
+  <use id="e2b" transform="translate(2600, 400) scale(7.5,7.5)" xlink:href="#k2b"></use>
+
+  <use id="e3a" transform="translate(400, 1200)  scale(7.5,7.5)" xlink:href="#k3a"></use><!-- asi 53mm -->
+  <use id="e3b" transform="translate(1100,1200) scale(7.5,7.5)" xlink:href="#k3b"></use>
+
+  <use id="e4a" transform="translate(1900,1200)  scale(7.5,7.5)" xlink:href="#k4a"></use><!-- asi 53mm -->
+  <use id="e4b" transform="translate(2600,1200) scale(7.5,7.5)" xlink:href="#k4b"></use>
+
+  <use id="e5a" transform="translate(400, 2000)  scale(7.5,7.5)" xlink:href="#k5a"></use><!-- asi 53mm -->
+  <use id="e5b" transform="translate(1100,2000) scale(7.5,7.5)" xlink:href="#k5b"></use>
+
+  <use id="e6a" transform="translate(1900, 2000)  scale(7.5,7.5)" xlink:href="#k6a"></use><!-- asi 53mm -->
+  <use id="e6b" transform="translate(2600,2000) scale(7.5,7.5)" xlink:href="#k6b"></use>
+
+  <use id="e7a" transform="translate(400, 2800)  scale(7.5,7.5)" xlink:href="#k7a"></use><!-- asi 53mm -->
+  <use id="e7b" transform="translate(1100,2800) scale(7.5,7.5)" xlink:href="#k7b"></use>
+
+  <use id="e8a" transform="translate(1900,2800)  scale(7.5,7.5)" xlink:href="#k8a"></use><!-- asi 53mm -->
+  <use id="e8b" transform="translate(2600,2800) scale(7.5,7.5)" xlink:href="#k8b"></use>
+
+</svg>
