@@ -26,6 +26,7 @@ type MapStyle struct {
 	RadiusOuter           float64
 	RadiusDeclinationZero float64
 	Latitude              float64
+	ConstLineWidth        float64
 	Colors                MapColors
 }
 
@@ -38,6 +39,7 @@ var MapColorStyle = MapStyle{
 	RadiusOuter:           150.0,
 	RadiusDeclinationZero: 100.0,
 	Latitude:              +44.0,
+	ConstLineWidth:        0.25,
 	Colors:                MapColors{ConstLine: "red", OuterCircle: "#ffeee6"},
 }
 
@@ -337,7 +339,7 @@ func plotOuterCircle() string {
 
 func plotConstellations() string {
 	s := "      <g id=\"plotConstellations\">\n"
-	form1 := "        <path d=\"%s\" stroke=\"red\" stroke-width=\"0.25\" fill=\"none\" />\n"
+	form1 := "        <path d=\"%s\" stroke=\"%s\" stroke-width=\"%.2f\" fill=\"none\" />\n"
 	d := ""
 	for _, c := range SliceOfConstellations {
 		if c.NameLoc.De > -60.0 {
@@ -351,7 +353,7 @@ func plotConstellations() string {
 			}
 		}
 	}
-	s += fmt.Sprintf(form1, d)
+	s += fmt.Sprintf(form1, d, Map.Colors.ConstLine, Map.ConstLineWidth)
 	s += "      </g>\n"
 
 	return s
