@@ -171,14 +171,14 @@ func getSvgData(color bool) SvgDataType {
 func plotRaCross() string {
 	r2 := 154.0 //to refactor
 	w := 0.5
-	f1 := `
+	form1 := `
 	<g id="plotRaCross">	  
       <line x1="-%.1f" y1="0" x2="%.1f" y2="0" class="cross" />
 	  <line x1="0" y1="-%.1f" x2="0" y2="%.1f" class="cross" />
 	  <circle cx="0" cy="0" r="%.1f" stroke="black" stroke-width="%.1f" fill="none" />
 	</g>
 `
-	return fmt.Sprintf(f1, r2, r2, r2, r2, MapDecl0_radius, w)
+	return fmt.Sprintf(form1, r2, r2, r2, r2, MapDecl0_radius, w)
 }
 func cartesianXY(r, a float64) (float64, float64) {
 	x := -r * math.Sin(a)
@@ -190,7 +190,7 @@ func plotRaHourRoundScale() string {
 	r2 := MapOuter_radius + 5.0
 	r3 := MapOuter_radius + 12.0
 
-	f0 := `
+	form0 := `
 	<g id="plotRaHourScale">
 	  <circle cx="0" cy="0" r="150" stroke="black" stroke-width="0.5" fill="none" />
 	  <circle cx="0" cy="0" r="152" stroke="black" stroke-width="0.5" fill="none" />
@@ -198,14 +198,14 @@ func plotRaHourRoundScale() string {
 	</g>
 `
 	s := "\n"
-	f1 := "      <line x1=\"%.1f\" y1=\"%.1f\" x2=\"%.1f\" y2=\"%.1f\" class=\"cross\" />\n"
-	f2 := ` 
+	form1 := "      <line x1=\"%.1f\" y1=\"%.1f\" x2=\"%.1f\" y2=\"%.1f\" class=\"cross\" />\n"
+	form2 := ` 
 	 <path id="relB" d="M0,0 m-{{.Bx}},{{.By}} a{{.R1}},{{.R1}} 0 0,0  {{.Bx2}},0 " style="fill:none;fill-opacity: 1;stroke:yellow;stroke-width: 10.5"/>
 	 <text dy="{{.Dy2}}" dx="{{.Dx2}}" textLength="{{.Blen}}"  class="font1 downFont">
 	     <textPath xlink:href="#relB">{{.BottomText}}</textPath>
      </text>
 `
-	f2 = `      <path id="raHour%d" d="M%.1f,%.1f A162.0,162.0 0 0,0  %.1f,%.1f " style="fill:none;fill-opacity: 1;stroke:green;stroke-width: 0.7"/>
+	form2 = `      <path id="raHour%d" d="M%.1f,%.1f A162.0,162.0 0 0,0  %.1f,%.1f " style="fill:none;fill-opacity: 1;stroke:green;stroke-width: 0.7"/>
       <text alignment-baseline="baseline" text-anchor="start" class="font1 downFont">
 	    <textPath xlink:href="#raHour%d">%d</textPath>
       </text>
@@ -216,11 +216,11 @@ func plotRaHourRoundScale() string {
 		a := float64(ra*15) * math.Pi / 180.0
 		x1, y1 := cartesianXY(r1, a)
 		x2, y2 := cartesianXY(r2, a)
-		s += fmt.Sprintf(f1, x1, y1, x2, y2) // concentric hour short line
+		s += fmt.Sprintf(form1, x1, y1, x2, y2) // concentric hour short line
 
 		x1, y1 = cartesianXY(r1, a+2.0*aQuaterHour)
 		x2, y2 = cartesianXY(r2-0.9, a+2.0*aQuaterHour)
-		s += fmt.Sprintf(f1, x1, y1, x2, y2) // concentric hour and half short line
+		s += fmt.Sprintf(form1, x1, y1, x2, y2) // concentric hour and half short line
 
 		//improvement needed: to center an hour digit to middle of the arc
 		ah := 0.3 * aQuaterHour
@@ -229,12 +229,12 @@ func plotRaHourRoundScale() string {
 		}
 		x1, y1 = cartesianXY(r3, a-ah)
 		x2, y2 = cartesianXY(r3, a+ah)
-		s += fmt.Sprintf(f2, ra, x2, y2, x1, y1, ra, ra) // circle arch for an hour number text
+		s += fmt.Sprintf(form2, ra, x2, y2, x1, y1, ra, ra) // circle arch for an hour number text
 	}
-	return fmt.Sprintf(f0, s)
+	return fmt.Sprintf(form0, s)
 }
 func circleArchText(id, text string, r, a, deltaA float64) string {
-	f1 := `      <path id="raHour%s" d="M%.1f,%.1f A%.1f,%.1f 0 0,0  %.1f,%.1f " style="fill:none;fill-opacity: 1;stroke:pink;stroke-width: 0.7"/>
+	form1 := `      <path id="raHour%s" d="M%.1f,%.1f A%.1f,%.1f 0 0,0  %.1f,%.1f " style="fill:none;fill-opacity: 1;stroke:pink;stroke-width: 0.7"/>
       <text class="font1 downFont">
 	    <textPath xlink:href="#raHour%s" text-anchor="start">%s</textPath>
       </text>
@@ -243,14 +243,14 @@ func circleArchText(id, text string, r, a, deltaA float64) string {
 	s := ""
 	x1, y1 := cartesianXY(r, a)
 	x2, y2 := cartesianXY(r, a+deltaA)
-	s += fmt.Sprintf(f1, id, x2, y2, r, r, x1, y1, id, text) // circle arch for an hour number text
+	s += fmt.Sprintf(form1, id, x2, y2, r, r, x1, y1, id, text) // circle arch for an hour number text
 	return s
 }
 func plotDateRoundScale() string {
 	s := "      <g id=\"plotDateRoundScale\">\n"
 	r1 := 172.0
-	f1 := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"black\" stroke-width=\"0.09\" fill=\"%s\" />\n"
-	f1 = "<line x1=\"%.1f\" y1=\"%.1f\" x2=\"%.1f\" y2=\"%.1f\" class=\"cross\" />\n"
+	form1 := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"black\" stroke-width=\"0.09\" fill=\"%s\" />\n"
+	form1 = "<line x1=\"%.1f\" y1=\"%.1f\" x2=\"%.1f\" y2=\"%.1f\" class=\"cross\" />\n"
 	aDelta := 2.0 * math.Pi / 365.0
 	date := time.Date(2000, time.March, 21, 0, 0, 0, 0, time.UTC)
 	for d := 0; d < 365; d++ {
@@ -269,7 +269,7 @@ func plotDateRoundScale() string {
 		}
 		//s += fmt.Sprintf(f1, x1, y1, r, "black")
 		x2, y2 := cartesianXY(r1-r, a)
-		s += fmt.Sprintf(f1, x1, y1, x2, y2) // concentric day(1,5,10) short line
+		s += fmt.Sprintf(form1, x1, y1, x2, y2) // concentric day(1,5,10) short line
 		date = date.Add(24 * time.Hour)
 	}
 	s += "      </g>\n"
@@ -293,14 +293,14 @@ func eqToCartesianXY(RA, De float64, r float64) (float64, float64) {
 func plotStars() string {
 	s := "      <g id=\"plotStars\">\n"
 
-	f1 := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"white\" stroke-width=\"0.05\" fill=\"%s\" />\n"
+	form1 := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"white\" stroke-width=\"0.05\" fill=\"%s\" />\n"
 	lowestDeclination := -45.0
 	sort.SliceStable(SliceOfStars, func(i, j int) bool { return SliceOfStars[i].Mag < SliceOfStars[j].Mag })
 	for _, star := range SliceOfStars {
 		if star.Mag < magMin && star.De > lowestDeclination {
 			x, y := eqToCartesianXY(star.RA, star.De, MapDecl0_radius)
 			rMag := magToRadius(star.Mag)
-			s += fmt.Sprintf(f1, x, y, rMag, "blue")
+			s += fmt.Sprintf(form1, x, y, rMag, "blue")
 		}
 	}
 	s += "      </g>\n"
@@ -311,15 +311,15 @@ func plotOuterCircle() string {
 	r2 := MapOuter_radius + 20.0 //170
 	w := 40.0
 	s := "      <g id=\"plotOuterCircle\">\n"
-	f1 := "        <circle cx=\"0\" cy=\"0\" r=\"%.1f\" stroke=\"#ffeee6\" stroke-width=\"%.1f\" fill=\"none\" />\n"
-	s += fmt.Sprintf(f1, r2, w)
+	form1 := "        <circle cx=\"0\" cy=\"0\" r=\"%.1f\" stroke=\"#ffeee6\" stroke-width=\"%.1f\" fill=\"none\" />\n"
+	s += fmt.Sprintf(form1, r2, w)
 	s += "      </g>\n"
 	return s
 }
 
 func plotConstellations() string {
 	s := "      <g id=\"plotConstellations\">\n"
-	f1 := "        <path d=\"%s\" stroke=\"red\" stroke-width=\"0.25\" fill=\"none\" />\n"
+	form1 := "        <path d=\"%s\" stroke=\"red\" stroke-width=\"0.25\" fill=\"none\" />\n"
 	d := ""
 	for _, c := range SliceOfConstellations {
 		if c.NameLoc.De > -60.0 {
@@ -333,14 +333,14 @@ func plotConstellations() string {
 			}
 		}
 	}
-	s += fmt.Sprintf(f1, d)
+	s += fmt.Sprintf(form1, d)
 	s += "      </g>\n"
 
 	return s
 }
 func plotEcliptic() string {
 	s := "      <g id=\"plotEcliptic\">\n"
-	f1 := "        <path d=\"%s\" stroke=\"orange\" stroke-width=\"0.25\" fill=\"none\" />\n"
+	form1 := "        <path d=\"%s\" stroke=\"orange\" stroke-width=\"0.25\" fill=\"none\" />\n"
 	toRad := math.Pi / 180.0
 	toDeg := 180.0 / math.Pi
 	x, y := eqToCartesianXY(0.0, 0.0, MapDecl0_radius)
@@ -350,7 +350,7 @@ func plotEcliptic() string {
 		x, y := eqToCartesianXY(ra*toDeg, de*toDeg, MapDecl0_radius)
 		d += fmt.Sprintf("%.1f,%.1f ", x, y)
 	}
-	s += fmt.Sprintf(f1, d)
+	s += fmt.Sprintf(form1, d)
 	s += "      </g>\n"
 
 	return s
@@ -358,7 +358,7 @@ func plotEcliptic() string {
 
 func plotHorizon() string {
 	s := "      <g id=\"plotHorizon\">\n"
-	f1 := "        <path d=\"%s\" stroke=\"green\" stroke-width=\"0.25\" fill=\"none\" />\n"
+	form1 := "        <path d=\"%s\" stroke=\"green\" stroke-width=\"0.25\" fill=\"none\" />\n"
 	toRad := math.Pi / 180.0
 	toDeg := 180.0 / math.Pi
 	hR := 0.0
@@ -372,7 +372,7 @@ func plotHorizon() string {
 		x, y = eqToCartesianXY(t*toDeg, de*toDeg, MapDecl0_radius)
 		d += fmt.Sprintf("%.1f,%.1f ", x, y)
 	}
-	s += fmt.Sprintf(f1, d)
+	s += fmt.Sprintf(form1, d)
 	s += "      </g>\n"
 
 	return s
