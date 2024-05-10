@@ -35,6 +35,9 @@ type MapStyle struct {
 	RadiusOuter           float64
 	RadiusDeclinationZero float64
 	RAwidth               float64
+	RAhour_length         float64
+	RAhalfHour_length     float64
+	RAciphersRadius       float64
 	Latitude              float64
 	Axis                  float64
 	AxisWidth             float64
@@ -132,7 +135,10 @@ func createMapStyle(r, lat float64, c MapColors) MapStyle {
 	m.RadiusDeclinationZero = 90.0 * r / (90.0 + lat)
 	m.Axis = r * 1.025 //154
 	m.AxisWidth = r * 0.0025
-	m.RAwidth = r * 0.013 // ~ 2
+	m.RAwidth = r * 0.013           // ~ 2
+	m.RAhour_length = r * 0.033     // 5
+	m.RAhalfHour_length = r * 0.027 // 4.1
+	m.RAciphersRadius = r * 1.08    //162
 	m.ConstLineWidth = r * 0.002
 	return m
 }
@@ -233,10 +239,11 @@ func plotRaCross() string {
 }
 
 func plotRaHourRoundScale() string {
-	r1 := Map.RadiusOuter               //150
-	r2 := Map.RadiusOuter + Map.RAwidth //152
-	r3 := Map.RadiusOuter * 1.033333    //155
-	r4 := Map.RadiusOuter * 1.08        //162
+	r1 := Map.RadiusOuter                         //150
+	r2 := Map.RadiusOuter + Map.RAwidth           //152
+	r3 := Map.RadiusOuter + Map.RAhour_length     //155
+	r4 := Map.RadiusOuter + Map.RAhalfHour_length //154
+	//	r5 := Map.RadiusOuter * 1.08                  //162
 
 	form0 := `
 	<g id="plotRaHourScale">
@@ -261,7 +268,7 @@ func plotRaHourRoundScale() string {
 		s += fmt.Sprintf(form1, x1, y1, x2, y2) // concentric hour short line
 
 		x1, y1 = cartesianXY(r1, a+2.0*aQuaterHour)
-		x2, y2 = cartesianXY(r3-0.9, a+2.0*aQuaterHour)
+		x2, y2 = cartesianXY(r4, a+2.0*aQuaterHour)
 		s += fmt.Sprintf(form1, x1, y1, x2, y2) // concentric hour and half short line
 
 		//improvement needed: to center an hour digit to middle of the arc
@@ -269,8 +276,8 @@ func plotRaHourRoundScale() string {
 		if ra > 9 {
 			ah *= 2.0
 		}
-		x1, y1 = cartesianXY(r4, a-ah)
-		x2, y2 = cartesianXY(r4, a+ah)
+		x1, y1 = cartesianXY(Map.RAciphersRadius, a-ah)
+		x2, y2 = cartesianXY(Map.RAciphersRadius, a+ah)
 		s += fmt.Sprintf(form2, ra, x2, y2, x1, y1, ra, ra) // circle arch for an hour number text
 	}
 	return fmt.Sprintf(form0, r1, r2, s)
