@@ -22,10 +22,16 @@ type MapColors struct {
 	ConstLine   string
 	OuterCircle string
 }
+
+var MapColorsRed = MapColors{ConstLine: "red", OuterCircle: "#ffeee6"}
+var MapColorsOrange = MapColors{ConstLine: "orange", OuterCircle: "#f2e1e9"}
+
 type MapStyle struct {
 	RadiusOuter           float64
 	RadiusDeclinationZero float64
 	Latitude              float64
+	Axis                  float64
+	AxisWidth             float64
 	ConstLineWidth        float64
 	Colors                MapColors
 }
@@ -35,15 +41,8 @@ var magBrightest = -1.5 // Sirius
 var magMin = 5.0
 var SliceOfConstellations []ConstellationCoordPoints
 
-var MapColorStyle = MapStyle{
-	RadiusOuter:           150.0,
-	RadiusDeclinationZero: 100.0,
-	Latitude:              +44.0,
-	ConstLineWidth:        0.25,
-	Colors:                MapColors{ConstLine: "red", OuterCircle: "#ffeee6"},
-}
-
-var Map MapStyle = MapColorStyle
+// var Map MapStyle = MapColorStyle
+var Map MapStyle = createMapStyle(200.0, 44.0, MapColorsRed)
 
 type EqCoords struct {
 	RA float64 `json:"RA"`
@@ -117,6 +116,19 @@ var (
 	TopText    string
 	BottomText string
 )
+
+// MapStyle.RadiusOuter is
+func createMapStyle(r, lat float64, c MapColors) MapStyle {
+	var m MapStyle
+	m.RadiusOuter = r
+	m.Latitude = lat
+	m.Colors = c
+	m.RadiusDeclinationZero = 90.0 * r / (90.0 + lat)
+	m.Axis = r * 1.025 //154
+	m.AxisWidth = r * 0.0025
+	m.ConstLineWidth = r * 0.002
+	return m
+}
 
 /*
 obliquity = 23.43929111 - 46.8150"t - 0.00059"t^2 + 0.001813*t^3
@@ -195,15 +207,14 @@ func cartesianXY(r, a float64) (float64, float64) {
 }
 
 func eqToCartesianXY(RA, De float64, r float64) (float64, float64) {
-	//r0 := 100.0
 	a := RA * math.Pi / 180.0
 	r1 := r * (1.0 - De/90.0)
 	return cartesianXY(r1, a)
 }
 
 func plotRaCross() string {
-	r2 := Map.RadiusOuter * 1.025 //154
-	w := Map.RadiusOuter * 0.00333
+	r2 := Map.Axis //154
+	w := Map.AxisWidth
 	form1 := `
 	<g id="plotRaCross">	  
       <line x1="-%.1f" y1="0" x2="%.1f" y2="0" class="cross" />
