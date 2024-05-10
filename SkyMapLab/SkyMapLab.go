@@ -1,3 +1,8 @@
+/*
+https://www.astroleague.org/caldwell-program-object-list/
+https://www.astroleague.org/messier-program-list/
+*/
+
 package SkyMapLab
 
 import (
@@ -29,6 +34,7 @@ var MapColorsOrange = MapColors{ConstLine: "orange", OuterCircle: "#f2e1e9"}
 type MapStyle struct {
 	RadiusOuter           float64
 	RadiusDeclinationZero float64
+	RAwidth               float64
 	Latitude              float64
 	Axis                  float64
 	AxisWidth             float64
@@ -126,6 +132,7 @@ func createMapStyle(r, lat float64, c MapColors) MapStyle {
 	m.RadiusDeclinationZero = 90.0 * r / (90.0 + lat)
 	m.Axis = r * 1.025 //154
 	m.AxisWidth = r * 0.0025
+	m.RAwidth = r * 0.013 // ~ 2
 	m.ConstLineWidth = r * 0.002
 	return m
 }
@@ -226,10 +233,10 @@ func plotRaCross() string {
 }
 
 func plotRaHourRoundScale() string {
-	r1 := Map.RadiusOuter             //150
-	r2 := Map.RadiusOuter * 1.0133333 //152
-	r3 := Map.RadiusOuter * 1.033333  //155
-	r4 := Map.RadiusOuter * 1.08      //162
+	r1 := Map.RadiusOuter               //150
+	r2 := Map.RadiusOuter + Map.RAwidth //152
+	r3 := Map.RadiusOuter * 1.033333    //155
+	r4 := Map.RadiusOuter * 1.08        //162
 
 	form0 := `
 	<g id="plotRaHourScale">
