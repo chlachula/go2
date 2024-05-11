@@ -429,7 +429,7 @@ func plotEcliptic() string {
 }
 
 func plotHorizon() string {
-	s := "      <g id=\"plotHorizon\">\n"
+	s := "      <g id=\"plotHorizon\" transform=\"rotate(180)\" >\n"
 	form1 := "        <path d=\"%s\" stroke=\"green\" stroke-width=\"0.25\" fill=\"none\" />\n"
 	toRad := math.Pi / 180.0
 	toDeg := 180.0 / math.Pi
