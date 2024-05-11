@@ -50,6 +50,7 @@ type MapStyle struct {
 var SliceOfStars []StarRecord
 var magBrightest = -1.5 // Sirius
 var magMin = 5.0
+var monthArcR = 27.0 / 31.0 * math.Pi / 6.0
 var SliceOfConstellations []ConstellationCoordPoints
 
 // var Map MapStyle = MapColorStyle
@@ -208,7 +209,7 @@ func getSvgData(color bool) SvgDataType {
 	data := SvgDataType{
 		TopColor:    "green",
 		BottomColor: "red",
-		FontSize:    8,
+		FontSize:    8.0 / 150.0 * Map.RadiusOuter,
 	}
 	if !color {
 		data.TopColor = "black"
@@ -232,14 +233,14 @@ func eqToCartesianXY(RA, De float64, r float64) (float64, float64) {
 func plotRaCross() string {
 	r2 := Map.Axis //154
 	w := Map.AxisWidth
-	form1 := `
+	formCross := `
 	<g id="plotRaCross">	  
       <line x1="-%.1f" y1="0" x2="%.1f" y2="0" class="cross" />
 	  <line x1="0" y1="-%.1f" x2="0" y2="%.1f" class="cross" />
 	  <circle cx="0" cy="0" r="%.1f" stroke="black" stroke-width="%.1f" fill="none" />
 	</g>
 `
-	return fmt.Sprintf(form1, r2, r2, r2, r2, Map.RadiusDeclinationZero, w)
+	return fmt.Sprintf(formCross, r2, r2, r2, r2, Map.RadiusDeclinationZero, w)
 }
 
 func plotRaHourRoundScale() string {
@@ -287,6 +288,18 @@ func plotRaHourRoundScale() string {
 	}
 	return fmt.Sprintf(form0, r1, r2, s)
 }
+
+/*
+.font1 {
+
+		font-size: {{.FontSize}}px;
+		font-family: Franklin Gothic, sans-serif;
+		font-weight: 90;
+		letter-spacing: 2px;
+	 }	 .downFont {
+		fill: {{.BottomColor}};
+	 }
+*/
 func circleArchText(id, text string, r, a, deltaA float64) string {
 	form1 := `      <path id="raHour%s" d="M%.1f,%.1f A%.1f,%.1f 0 0,0  %.1f,%.1f " style="fill:none;fill-opacity: 1;stroke:pink;stroke-width: 0.7"/>
       <text class="font1 downFont">
@@ -324,7 +337,7 @@ func plotDateRoundScale() string {
 		if date.Day() == 1 {
 			//r = 5.5
 			bar = r1 * 0.031978 //5.5
-			s += circleArchText("MONTH_"+date.Format("Jan"), date.Format("January"), Map.MonthsRadius, a, 27.0/31.0*math.Pi/6.0)
+			s += circleArchText("MONTH_"+date.Format("Jan"), date.Format("January"), Map.MonthsRadius, a, monthArcR)
 		}
 		//s += fmt.Sprintf(f1, x1, y1, r, "black")
 		x2, y2 := cartesianXY(r1-bar, a)
