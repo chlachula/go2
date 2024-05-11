@@ -258,7 +258,7 @@ func plotRaHourRoundScale() string {
 `
 	s := "\n"
 	form1 := "      <line x1=\"%.1f\" y1=\"%.1f\" x2=\"%.1f\" y2=\"%.1f\" class=\"cross\" />\n"
-	form2 := `      <path id="raHour%d" d="M%.1f,%.1f A162.0,162.0 0 0,0  %.1f,%.1f " style="fill:none;fill-opacity: 1;stroke:green;stroke-width: 0.7"/>
+	form2 := `      <path id="raHour%d" d="M%.1f,%.1f A%.1f,%.1f 0 0,0  %.1f,%.1f " style="fill:none;fill-opacity: 1;stroke:green;stroke-width: 0.7"/>
       <text alignment-baseline="baseline" text-anchor="start" class="font1 downFont">
 	    <textPath xlink:href="#raHour%d">%d</textPath>
       </text>
@@ -282,7 +282,8 @@ func plotRaHourRoundScale() string {
 		}
 		x1, y1 = cartesianXY(Map.RAciphersRadius, a-ah)
 		x2, y2 = cartesianXY(Map.RAciphersRadius, a+ah)
-		s += fmt.Sprintf(form2, ra, x2, y2, x1, y1, ra, ra) // circle arch for an hour number text
+		r := Map.RAciphersRadius
+		s += fmt.Sprintf(form2, ra, x2, y2, r, r, x1, y1, ra, ra) // circle arch for an hour number text
 	}
 	return fmt.Sprintf(form0, r1, r2, s)
 }
