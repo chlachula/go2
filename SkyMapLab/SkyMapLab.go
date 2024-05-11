@@ -96,7 +96,7 @@ const (
 	 }
 	 .cross {
 		stroke:black;
-		stroke-width:0.25
+		stroke-width: {{.CrossStrokeWidth}};
 		fill:none
 	 }
     </style>
@@ -119,9 +119,10 @@ const (
 )
 
 type SvgDataType = struct {
-	FontSize    float64
-	TopColor    string
-	BottomColor string
+	FontSize         float64
+	TopColor         string
+	BottomColor      string
+	CrossStrokeWidth float64
 }
 
 var (
@@ -206,10 +207,12 @@ func SetVariables(top, bottom string) {
 }
 
 func getSvgData(color bool) SvgDataType {
+	factor := Map.RadiusOuter / 150.0
 	data := SvgDataType{
-		TopColor:    "green",
-		BottomColor: "red",
-		FontSize:    8.0 / 150.0 * Map.RadiusOuter,
+		TopColor:         "green",
+		BottomColor:      "red",
+		FontSize:         8.0 * factor,
+		CrossStrokeWidth: 0.25 * factor,
 	}
 	if !color {
 		data.TopColor = "black"
@@ -259,7 +262,8 @@ func plotRaHourRoundScale() string {
 `
 	s := "\n"
 	form1 := "      <line x1=\"%.1f\" y1=\"%.1f\" x2=\"%.1f\" y2=\"%.1f\" class=\"cross\" />\n"
-	form2 := `      <path id="raHour%d" d="M%.1f,%.1f A%.1f,%.1f 0 0,0  %.1f,%.1f " style="fill:none;fill-opacity: 1;stroke:green;stroke-width: 0.7"/>
+	strokeWidth := 0.3 / 150.0 * Map.RadiusOuter
+	form2 := `      <path id="raHour%d" d="M%.1f,%.1f A%.1f,%.1f 0 0,0  %.1f,%.1f " style="fill:none;fill-opacity: 1;stroke:green;stroke-width: %.1f"/>
       <text alignment-baseline="baseline" text-anchor="start" class="font1 downFont">
 	    <textPath xlink:href="#raHour%d">%d</textPath>
       </text>
@@ -284,7 +288,7 @@ func plotRaHourRoundScale() string {
 		x1, y1 = cartesianXY(Map.RAciphersRadius, a-ah)
 		x2, y2 = cartesianXY(Map.RAciphersRadius, a+ah)
 		r := Map.RAciphersRadius
-		s += fmt.Sprintf(form2, ra, x2, y2, r, r, x1, y1, ra, ra) // circle arch for an hour number text
+		s += fmt.Sprintf(form2, ra, x2, y2, r, r, x1, y1, strokeWidth, ra, ra) // circle arch for an hour number text
 	}
 	return fmt.Sprintf(form0, r1, r2, s)
 }
