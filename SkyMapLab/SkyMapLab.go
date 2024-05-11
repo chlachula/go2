@@ -42,6 +42,8 @@ type MapStyle struct {
 	Axis                  float64
 	AxisWidth             float64
 	ConstLineWidth        float64
+	DateRadius            float64
+	MonthsRadius          float64
 	Colors                MapColors
 }
 
@@ -51,7 +53,7 @@ var magMin = 5.0
 var SliceOfConstellations []ConstellationCoordPoints
 
 // var Map MapStyle = MapColorStyle
-var Map MapStyle = createMapStyle(200.0, 44.0, MapColorsRed)
+var Map MapStyle = createMapStyle(100.0, 44.0, MapColorsRed)
 
 type EqCoords struct {
 	RA float64 `json:"RA"`
@@ -140,6 +142,8 @@ func createMapStyle(r, lat float64, c MapColors) MapStyle {
 	m.RAhalfHour_length = r * 0.027 // 4.1
 	m.RAciphersRadius = r * 1.08    //162
 	m.ConstLineWidth = r * 0.002
+	m.DateRadius = r * 1.147   // 172.0
+	m.MonthsRadius = r * 1.212 // 182
 	return m
 }
 
@@ -297,7 +301,8 @@ func circleArchText(id, text string, r, a, deltaA float64) string {
 }
 func plotDateRoundScale() string {
 	s := "      <g id=\"plotDateRoundScale\">\n"
-	r1 := Map.RadiusOuter * 1.147 // 172.0
+	//r1 := Map.RadiusOuter * 1.147 // 172.0
+	r1 := Map.DateRadius //172
 	form1 := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"black\" stroke-width=\"0.09\" fill=\"%s\" />\n"
 	form1 = "<line x1=\"%.1f\" y1=\"%.1f\" x2=\"%.1f\" y2=\"%.1f\" class=\"cross\" />\n"
 	aDelta := 2.0 * math.Pi / 365.0
@@ -305,19 +310,23 @@ func plotDateRoundScale() string {
 	for d := 0; d < 365; d++ {
 		a := float64(d) * aDelta
 		x1, y1 := cartesianXY(r1, a)
-		r := 0.7
+		//r := 0.7
+		bar := r1 * 0.004067 //0.7
 		if date.Day()%5 == 0 {
-			r = 1.5
+			//r = 1.5
+			bar = r1 * 0.008721 //1.5
 		}
 		if date.Day()%10 == 0 {
-			r = 4.0
+			//r = 4.0
+			bar = r1 * 0.023256 //4
 		}
 		if date.Day() == 1 {
-			r = 5.5
-			s += circleArchText("MONTH_"+date.Format("Jan"), date.Format("January"), r1+10.0, a, 27.0/31.0*math.Pi/6.0)
+			//r = 5.5
+			bar = r1 * 0.031978 //5.5
+			s += circleArchText("MONTH_"+date.Format("Jan"), date.Format("January"), Map.MonthsRadius, a, 27.0/31.0*math.Pi/6.0)
 		}
 		//s += fmt.Sprintf(f1, x1, y1, r, "black")
-		x2, y2 := cartesianXY(r1-r, a)
+		x2, y2 := cartesianXY(r1-bar, a)
 		s += fmt.Sprintf(form1, x1, y1, x2, y2) // concentric day(1,5,10) short line
 		date = date.Add(24 * time.Hour)
 	}
