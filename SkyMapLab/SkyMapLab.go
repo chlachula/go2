@@ -32,6 +32,7 @@ var MapColorsRed = MapColors{ConstLine: "red", OuterCircle: "#ffeee6"}
 var MapColorsOrange = MapColors{ConstLine: "orange", OuterCircle: "#f2e1e9"}
 
 type MapStyle struct {
+	NorthMap              bool
 	RadiusOuter           float64
 	RadiusDeclinationZero float64
 	RAwidth               float64
@@ -39,6 +40,8 @@ type MapStyle struct {
 	RAhalfHour_length     float64
 	RAciphersRadius       float64
 	Latitude              float64
+	LowestStarDecl        float64
+	LowestConstDecl       float64
 	Axis                  float64
 	AxisWidth             float64
 	ConstLineWidth        float64
@@ -53,8 +56,7 @@ var magMin = 5.0
 var monthArcR = 27.0 / 31.0 * math.Pi / 6.0
 var SliceOfConstellations []ConstellationCoordPoints
 
-// var Map MapStyle = MapColorStyle
-var Map MapStyle = createMapStyle(100.0, 44.0, MapColorsRed)
+var Map MapStyle
 
 type EqCoords struct {
 	RA float64 `json:"RA"`
@@ -131,12 +133,15 @@ var (
 )
 
 // MapStyle.RadiusOuter is
-func createMapStyle(r, lat float64, c MapColors) MapStyle {
+func SetMapStyle(r, lat float64, c MapColors) {
 	var m MapStyle
+	m.NorthMap = false
+	if lat > 0.0 {
+		m.NorthMap = true
+	}
 	m.RadiusOuter = r
 	m.Latitude = lat
 	m.Colors = c
-	m.RadiusDeclinationZero = 90.0 * r / (90.0 + lat)
 	m.Axis = r * 1.025 //154
 	m.AxisWidth = r * 0.0025
 	m.RAwidth = r * 0.013           // ~ 2
@@ -146,7 +151,16 @@ func createMapStyle(r, lat float64, c MapColors) MapStyle {
 	m.ConstLineWidth = r * 0.002
 	m.DateRadius = r * 1.147   // 172.0
 	m.MonthsRadius = r * 1.212 // 182
-	return m
+
+	m.RadiusDeclinationZero = 90.0 * r / (90.0 - lat)
+	m.LowestConstDecl = 60.0      //Southern sky map
+	m.LowestStarDecl = lat + 90.0 //Southern sky map
+	if m.NorthMap {
+		m.RadiusDeclinationZero = 90.0 * r / (90.0 + lat)
+		m.LowestConstDecl *= -1.0     // Northern sky map
+		m.LowestStarDecl = lat - 90.0 // Northern sky map -45
+	}
+	Map = m
 }
 
 /*
@@ -227,9 +241,14 @@ func cartesianXY(r, a float64) (float64, float64) {
 	return x, y
 }
 
-func eqToCartesianXY(RA, De float64, r float64) (float64, float64) {
+func eqToCartesianXY(RA, De float64, r float64, northMap bool) (float64, float64) {
 	a := RA * math.Pi / 180.0
-	r1 := r * (1.0 - De/90.0)
+	var r1 float64
+	if northMap {
+		r1 = r * (1.0 - De/90.0)
+	} else {
+		r1 = r * (1.0 + De/90.0)
+	}
 	return cartesianXY(r1, a)
 }
 
@@ -362,15 +381,32 @@ func magToRadius(mag float64) float64 {
 	rMag := r0 + r1*(magMin-mag)/magRange
 	return rMag
 }
+func constellationCanBeVisible(m MapStyle, c ConstellationCoordPoints) bool {
+	if m.NorthMap && c.NameLoc.De > m.LowestConstDecl {
+		return true
+	}
+	if !m.NorthMap && c.NameLoc.De < m.LowestConstDecl {
+		return true
+	}
+	return false
+}
+func starCanBeVisible(m MapStyle, star StarRecord) bool {
+	if m.NorthMap && star.De > m.LowestStarDecl {
+		return true
+	}
+	if !m.NorthMap && star.De < m.LowestStarDecl {
+		return true
+	}
+	return false
+}
 func plotStars() string {
 	s := "      <g id=\"plotStars\">\n"
 
 	form1 := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"white\" stroke-width=\"0.05\" fill=\"%s\" />\n"
-	lowestDeclination := -45.0
 	sort.SliceStable(SliceOfStars, func(i, j int) bool { return SliceOfStars[i].Mag < SliceOfStars[j].Mag })
 	for _, star := range SliceOfStars {
-		if star.Mag < magMin && star.De > lowestDeclination {
-			x, y := eqToCartesianXY(star.RA, star.De, Map.RadiusDeclinationZero)
+		if star.Mag < magMin && starCanBeVisible(Map, star) {
+			x, y := eqToCartesianXY(star.RA, star.De, Map.RadiusDeclinationZero, Map.NorthMap)
 			rMag := magToRadius(star.Mag)
 			s += fmt.Sprintf(form1, x, y, rMag, "blue")
 		}
@@ -394,12 +430,12 @@ func plotConstellations() string {
 	form1 := "        <path d=\"%s\" stroke=\"%s\" stroke-width=\"%.2f\" fill=\"none\" />\n"
 	d := ""
 	for _, c := range SliceOfConstellations {
-		if c.NameLoc.De > -60.0 {
+		if constellationCanBeVisible(Map, c) {
 			for _, line := range c.Lines {
-				x, y := eqToCartesianXY(line[0].RA, line[0].De, Map.RadiusDeclinationZero)
+				x, y := eqToCartesianXY(line[0].RA, line[0].De, Map.RadiusDeclinationZero, Map.NorthMap)
 				d += fmt.Sprintf("M%.1f,%.1f ", x, y)
 				for i := 1; i < len(line); i++ {
-					x, y = eqToCartesianXY(line[i].RA, line[i].De, Map.RadiusDeclinationZero)
+					x, y = eqToCartesianXY(line[i].RA, line[i].De, Map.RadiusDeclinationZero, Map.NorthMap)
 					d += fmt.Sprintf("L%.1f,%.1f ", x, y)
 				}
 			}
@@ -415,11 +451,11 @@ func plotEcliptic() string {
 	form1 := "        <path d=\"%s\" stroke=\"orange\" stroke-width=\"0.25\" fill=\"none\" />\n"
 	toRad := math.Pi / 180.0
 	toDeg := 180.0 / math.Pi
-	x, y := eqToCartesianXY(0.0, 0.0, Map.RadiusDeclinationZero)
+	x, y := eqToCartesianXY(0.0, 0.0, Map.RadiusDeclinationZero, Map.NorthMap)
 	d := fmt.Sprintf("M%.1f,%.1f L", x, y)
 	for la := 1.0; la < 360.1; la = la + 1.0 {
 		ra, de := EclipticalToEquatorial(la*toRad, 0.0)
-		x, y := eqToCartesianXY(ra*toDeg, de*toDeg, Map.RadiusDeclinationZero)
+		x, y := eqToCartesianXY(ra*toDeg, de*toDeg, Map.RadiusDeclinationZero, Map.NorthMap)
 		d += fmt.Sprintf("%.1f,%.1f ", x, y)
 	}
 	s += fmt.Sprintf(form1, d)
@@ -437,11 +473,11 @@ func plotHorizon() string {
 	fi := Map.Latitude
 	fiR := fi * toRad
 	t, de := AzimutalToEquatoreal_I(0.0, hR, fiR)
-	x, y := eqToCartesianXY(t*toDeg, de*toDeg, Map.RadiusDeclinationZero)
+	x, y := eqToCartesianXY(t*toDeg, de*toDeg, Map.RadiusDeclinationZero, Map.NorthMap)
 	d := fmt.Sprintf("M%.1f,%.1f L", x, y)
 	for az := 1.0; az < 360.1; az = az + 1.0 {
 		t, de = AzimutalToEquatoreal_I(az*toRad, hR, fiR)
-		x, y = eqToCartesianXY(t*toDeg, de*toDeg, Map.RadiusDeclinationZero)
+		x, y = eqToCartesianXY(t*toDeg, de*toDeg, Map.RadiusDeclinationZero, Map.NorthMap)
 		d += fmt.Sprintf("%.1f,%.1f ", x, y)
 	}
 	s += fmt.Sprintf(form1, d)
