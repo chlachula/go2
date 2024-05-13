@@ -47,12 +47,16 @@ type MapStyle struct {
 	ConstLineWidth        float64
 	DateRadius            float64
 	MonthsRadius          float64
+	MagMin                float64
+	MagBrightest          float64
+	MagMinName            float64
 	Colors                MapColors
 }
 
 var SliceOfStars []StarRecord
-var magBrightest = -1.5 // Sirius
-var magMin = 5.0
+
+// var magBrightest = -1.5 // Sirius
+// var magMin = 5.0
 var monthArcR = 27.0 / 31.0 * math.Pi / 6.0
 var SliceOfConstellations []ConstellationCoordPoints
 
@@ -151,6 +155,9 @@ func SetMapStyle(r, lat float64, c MapColors) {
 	m.ConstLineWidth = r * 0.002
 	m.DateRadius = r * 1.147   // 172.0
 	m.MonthsRadius = r * 1.212 // 182
+	m.MagBrightest = -1.5      // Sirius
+	m.MagMin = 5.0
+	m.MagMinName = 1.0
 
 	m.RadiusDeclinationZero = 90.0 * r / (90.0 - lat)
 	m.LowestConstDecl = 60.0      //Southern sky map
@@ -374,11 +381,11 @@ func plotDateRoundScale() string {
 func magToRadius(mag float64) float64 {
 	r0 := Map.RadiusOuter / 500.0 // 0.3
 	r1 := Map.RadiusOuter / 58.0  //2.6
-	if mag < magBrightest {
-		mag = magBrightest
+	if mag < Map.MagBrightest {
+		mag = Map.MagBrightest
 	}
-	magRange := magMin - magBrightest
-	rMag := r0 + r1*(magMin-mag)/magRange
+	magRange := Map.MagMin - Map.MagBrightest
+	rMag := r0 + r1*(Map.MagMin-mag)/magRange
 	return rMag
 }
 func constellationCanBeVisible(m MapStyle, c ConstellationCoordPoints) bool {
@@ -405,7 +412,23 @@ func plotStars() string {
 	form1 := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"white\" stroke-width=\"0.05\" fill=\"%s\" />\n"
 	sort.SliceStable(SliceOfStars, func(i, j int) bool { return SliceOfStars[i].Mag < SliceOfStars[j].Mag })
 	for _, star := range SliceOfStars {
-		if star.Mag < magMin && starCanBeVisible(Map, star) {
+		if star.Mag < Map.MagMin && starCanBeVisible(Map, star) {
+			x, y := eqToCartesianXY(star.RA, star.De, Map.RadiusDeclinationZero, Map.NorthMap)
+			rMag := magToRadius(star.Mag)
+			s += fmt.Sprintf(form1, x, y, rMag, "blue")
+		}
+	}
+	s += "      </g>\n"
+
+	return s
+}
+func plotStarNames() string {
+	s := "      <g id=\"plotStarNames\">\n"
+
+	form1 := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"white\" stroke-width=\"0.05\" fill=\"%s\" />\n"
+	sort.SliceStable(SliceOfStars, func(i, j int) bool { return SliceOfStars[i].Mag < SliceOfStars[j].Mag })
+	for _, star := range SliceOfStars {
+		if star.Mag < Map.MagMin && starCanBeVisible(Map, star) {
 			x, y := eqToCartesianXY(star.RA, star.De, Map.RadiusDeclinationZero, Map.NorthMap)
 			rMag := magToRadius(star.Mag)
 			s += fmt.Sprintf(form1, x, y, rMag, "blue")
