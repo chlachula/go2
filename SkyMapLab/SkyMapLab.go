@@ -330,8 +330,8 @@ func plotRaHourRoundScale() string {
 		fill: {{.BottomColor}};
 	 }
 */
-func circleArchText(id, text string, r, a, deltaA float64) string {
-	form1 := `      <path id="raHour%s" d="M%.1f,%.1f A%.1f,%.1f 0 0,0  %.1f,%.1f " style="fill:none;fill-opacity: 1;stroke:pink;stroke-width: 0.7"/>
+func circleArchText(id, text string, r, a, deltaA float64, strokeColor string) string {
+	form1 := `      <path id="raHour%s" d="M%.1f,%.1f A%.1f,%.1f 0 0,0  %.1f,%.1f " style="fill:none;fill-opacity: 1;stroke:%s;stroke-width: 0.7"/>
       <text class="font1 downFont">
 	    <textPath xlink:href="#raHour%s" text-anchor="start">%s</textPath>
       </text>
@@ -340,7 +340,7 @@ func circleArchText(id, text string, r, a, deltaA float64) string {
 	s := ""
 	x1, y1 := cartesianXY(r, a)
 	x2, y2 := cartesianXY(r, a+deltaA)
-	s += fmt.Sprintf(form1, id, x2, y2, r, r, x1, y1, id, text) // circle arch for an hour number text
+	s += fmt.Sprintf(form1, id, x2, y2, r, r, x1, y1, strokeColor, id, text) // circle arch for an hour number text
 	return s
 }
 func plotDateRoundScale() string {
@@ -367,7 +367,7 @@ func plotDateRoundScale() string {
 		if date.Day() == 1 {
 			//r = 5.5
 			bar = r1 * 0.031978 //5.5
-			s += circleArchText("MONTH_"+date.Format("Jan"), date.Format("January"), Map.MonthsRadius, a, monthArcR)
+			s += circleArchText("MONTH_"+date.Format("Jan"), date.Format("January"), Map.MonthsRadius, a, monthArcR, "yellow")
 		}
 		//s += fmt.Sprintf(f1, x1, y1, r, "black")
 		x2, y2 := cartesianXY(r1-bar, a)
