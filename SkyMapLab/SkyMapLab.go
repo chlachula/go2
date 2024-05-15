@@ -110,15 +110,16 @@ const (
  </defs> 
 
   <g id="draw_plots">
-   <use xlink:href="#plotConstellations" />
-   <use xlink:href="#plotOuterCircle" />
-   <use xlink:href="#plotEcliptic" />
-   <use xlink:href="#plotHorizon" />
-   <use xlink:href="#plotStars" />
-   <use xlink:href="#plotDateRoundScale" />
-   <use xlink:href="#plotRaHourScale" />
-   <use xlink:href="#plotRaCross" />
-   </g>
+    <use xlink:href="#plotConstellations" />
+    <use xlink:href="#plotConstellationsNames" />
+    <use xlink:href="#plotOuterCircle" />
+    <use xlink:href="#plotEcliptic" />
+    <use xlink:href="#plotHorizon" />
+    <use xlink:href="#plotStars" />
+    <use xlink:href="#plotDateRoundScale" />
+    <use xlink:href="#plotRaHourScale" />
+    <use xlink:href="#plotRaCross" />
+  </g>
 
 </svg>
 `
@@ -465,6 +466,18 @@ func plotConstellations() string {
 
 	return s
 }
+func plotConstellationsNames() string {
+	s := "      <g id=\"plotConstellationNames\">\n"
+	for _, c := range SliceOfConstellations {
+		if constellationCanBeVisible(Map, c) {
+			cId := fmt.Sprintf("const_%s_%.1f_%.1f", c.Abbr, c.NameLoc.RA, +c.NameLoc.De)
+			s += circleArchText(cId, c.Abbr, declinationToRadius(c.NameLoc.De), c.NameLoc.RA, 0.19, "#d5ff80")
+		}
+	}
+	s += "      </g>\n"
+
+	return s
+}
 func plotEcliptic() string {
 	s := "      <g id=\"plotEcliptic\">\n"
 	form1 := "        <path d=\"%s\" stroke=\"orange\" stroke-width=\"0.25\" fill=\"none\" />\n"
@@ -575,6 +588,7 @@ func HandlerImageSkymapColor(w http.ResponseWriter, r *http.Request) {
 	defs += plotRaHourRoundScale()
 	defs += plotDateRoundScale()
 	defs += plotConstellations()
+	defs += plotConstellationsNames()
 	defs += plotOuterCircle()
 	defs += plotEcliptic()
 	defs += plotHorizon()
