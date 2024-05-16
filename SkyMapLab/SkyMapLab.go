@@ -111,7 +111,7 @@ const (
 
   <g id="draw_plots">
     <use xlink:href="#plotConstellations" />
-    <use xlink:href="#plotConstellationsNames" />
+    <use xlink:href="#plotConstellationNames" />
     <use xlink:href="#plotOuterCircle" />
     <use xlink:href="#plotEcliptic" />
     <use xlink:href="#plotHorizon" />
@@ -324,10 +324,10 @@ func plotRaHourRoundScale() string {
 }
 
 func circleArchText(id, text string, r, a, deltaA float64, strokeColor string) string {
-	form1 := `      <path id="raHour%s" d="M%.1f,%.1f A%.1f,%.1f 0 0,0  %.1f,%.1f " style="fill:none;fill-opacity: 1;stroke:%s;stroke-width: 0.7"/>
-      <text class="font1 downFont">
-	    <textPath xlink:href="#raHour%s" text-anchor="start">%s</textPath>
-      </text>
+	form1 := `       <path id="%s" d="M%.1f,%.1f A%.1f,%.1f 0 0,0  %.1f,%.1f " style="fill:none;fill-opacity: 1;stroke:%s;stroke-width: 0.7"/>
+       <text class="font1 downFont">
+	     <textPath xlink:href="#%s" text-anchor="start">%s</textPath>
+       </text>
 
 `
 	s := ""
@@ -442,7 +442,6 @@ func plotOuterCircle() string {
 }
 
 func plotConstellations() string {
-	constNames := ""
 	s := "      <g id=\"plotConstellations\">\n"
 	form1 := "        <path d=\"%s\" stroke=\"%s\" stroke-width=\"%.2f\" fill=\"none\" />\n"
 	d := ""
@@ -456,21 +455,18 @@ func plotConstellations() string {
 					d += fmt.Sprintf("L%.1f,%.1f ", x, y)
 				}
 			}
-			cId := fmt.Sprintf("const_%s_%.1f_%.1f", c.Abbr, c.NameLoc.RA, +c.NameLoc.De)
-			constNames += circleArchText(cId, c.Abbr, declinationToRadius(c.NameLoc.De), c.NameLoc.RA, 0.19, "#d5ff80")
 		}
 	}
 	s += fmt.Sprintf(form1, d, Map.Colors.ConstLine, Map.ConstLineWidth)
-	s += constNames
 	s += "      </g>\n"
 
 	return s
 }
-func plotConstellationsNames() string {
+func plotConstellationNames() string {
 	s := "      <g id=\"plotConstellationNames\">\n"
 	for _, c := range SliceOfConstellations {
 		if constellationCanBeVisible(Map, c) {
-			cId := fmt.Sprintf("const_%s_%.1f_%.1f", c.Abbr, c.NameLoc.RA, +c.NameLoc.De)
+			cId := fmt.Sprintf("CONST_%s", c.Abbr)
 			s += circleArchText(cId, c.Abbr, declinationToRadius(c.NameLoc.De), c.NameLoc.RA, 0.19, "#d5ff80")
 		}
 	}
@@ -588,7 +584,7 @@ func HandlerImageSkymapColor(w http.ResponseWriter, r *http.Request) {
 	defs += plotRaHourRoundScale()
 	defs += plotDateRoundScale()
 	defs += plotConstellations()
-	defs += plotConstellationsNames()
+	defs += plotConstellationNames()
 	defs += plotOuterCircle()
 	defs += plotEcliptic()
 	defs += plotHorizon()
