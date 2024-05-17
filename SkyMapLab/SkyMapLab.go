@@ -336,6 +336,28 @@ func circleArchText(id, text string, r, a, deltaA float64, strokeColor string, f
 	s += fmt.Sprintf(form1, id, x2, y2, r, r, x1, y1, strokeColor, fontSize, fillColor, id, text) // circle arch for an hour number text
 	return s
 }
+func tangetDirective(a float64) float64 {
+	k := math.Cos(a)
+	return k
+}
+func tangentText(id, text string, r, a, length float64, strokeColor string, fillColor string, fontSize float64) string {
+	form1 := `       <path id="%s" d="M%.1f,%.1f l%.1f,%.1f " style="fill:none;fill-opacity: 1;stroke:%s;stroke-width: 0.7"/>
+       <text font-size="%.1f" font-family="Franklin Gothic, sans-serif" fill="%s" >
+	     <textPath xlink:href="#%s" text-anchor="start">%s</textPath>
+       </text>
+
+`
+	s := ""
+	x1, y1 := cartesianXY(r, a)
+	k := tangetDirective(a)
+	dx := k * length
+	dy := math.Sqrt(length*length - dx*dx)
+	if a > math.Pi {
+		dy = -dy
+	}
+	s += fmt.Sprintf(form1, id, x1, y1, dx, dy, strokeColor, fontSize, fillColor, id, text) // circle arch for an hour number text
+	return s
+}
 func plotDateRoundScale() string {
 	s := "      <g id=\"plotDateRoundScale\">\n"
 	//r1 := Map.RadiusOuter * 1.147 // 172.0
@@ -467,7 +489,8 @@ func plotConstellationNames() string {
 	for _, c := range SliceOfConstellations {
 		if constellationCanBeVisible(Map, c) {
 			cId := fmt.Sprintf("CONST_%s", c.Abbr)
-			s += circleArchText(cId, c.Abbr, declinationToRadius(c.NameLoc.De), c.NameLoc.RA, 0.19, "#d5ff80", "green", Map.RadiusOuter*0.035)
+			raR := c.NameLoc.RA * math.Pi / 180.0
+			s += tangentText(cId, c.Abbr, declinationToRadius(c.NameLoc.De), raR, Map.RadiusOuter*0.09*2, "none", "green", Map.RadiusOuter*0.035) // #d5ff80
 		}
 	}
 	s += "      </g>\n"
