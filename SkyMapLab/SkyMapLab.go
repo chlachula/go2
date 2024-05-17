@@ -323,9 +323,9 @@ func plotRaHourRoundScale() string {
 	return fmt.Sprintf(form0, r1, r2, s)
 }
 
-func circleArchText(id, text string, r, a, deltaA float64, strokeColor string) string {
+func circleArchText(id, text string, r, a, deltaA float64, strokeColor string, fillColor string, fontSize float64) string {
 	form1 := `       <path id="%s" d="M%.1f,%.1f A%.1f,%.1f 0 0,0  %.1f,%.1f " style="fill:none;fill-opacity: 1;stroke:%s;stroke-width: 0.7"/>
-       <text class="font1 downFont">
+       <text font-size="%.1f" font-family="Franklin Gothic, sans-serif" fill="%s" >
 	     <textPath xlink:href="#%s" text-anchor="start">%s</textPath>
        </text>
 
@@ -333,7 +333,7 @@ func circleArchText(id, text string, r, a, deltaA float64, strokeColor string) s
 	s := ""
 	x1, y1 := cartesianXY(r, a)
 	x2, y2 := cartesianXY(r, a+deltaA)
-	s += fmt.Sprintf(form1, id, x2, y2, r, r, x1, y1, strokeColor, id, text) // circle arch for an hour number text
+	s += fmt.Sprintf(form1, id, x2, y2, r, r, x1, y1, strokeColor, fontSize, fillColor, id, text) // circle arch for an hour number text
 	return s
 }
 func plotDateRoundScale() string {
@@ -360,7 +360,7 @@ func plotDateRoundScale() string {
 		if date.Day() == 1 {
 			//r = 5.5
 			bar = r1 * 0.031978 //5.5
-			s += circleArchText("MONTH_"+date.Format("Jan"), date.Format("January"), Map.MonthsRadius, a, monthArcR, "yellow")
+			s += circleArchText("MONTH_"+date.Format("Jan"), date.Format("January"), Map.MonthsRadius, a, monthArcR, "yellow", "red", Map.RadiusOuter*0.06)
 		}
 		//s += fmt.Sprintf(f1, x1, y1, r, "black")
 		x2, y2 := cartesianXY(r1-bar, a)
@@ -467,7 +467,7 @@ func plotConstellationNames() string {
 	for _, c := range SliceOfConstellations {
 		if constellationCanBeVisible(Map, c) {
 			cId := fmt.Sprintf("CONST_%s", c.Abbr)
-			s += circleArchText(cId, c.Abbr, declinationToRadius(c.NameLoc.De), c.NameLoc.RA, 0.19, "#d5ff80")
+			s += circleArchText(cId, c.Abbr, declinationToRadius(c.NameLoc.De), c.NameLoc.RA, 0.19, "#d5ff80", "green", Map.RadiusOuter*0.035)
 		}
 	}
 	s += "      </g>\n"
