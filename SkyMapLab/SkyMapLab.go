@@ -359,11 +359,10 @@ func tangentText(id, text string, r, a, length float64, strokeColor string, fill
 	return s
 }
 func plotDateRoundScale() string {
-	s := "      <g id=\"plotDateRoundScale\">\n"
+	s := "     <g id=\"plotDateRoundScale\">\n"
 	//r1 := Map.RadiusOuter * 1.147 // 172.0
 	r1 := Map.DateRadius //172
-	form1 := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"black\" stroke-width=\"0.09\" fill=\"%s\" />\n"
-	form1 = "<line x1=\"%.1f\" y1=\"%.1f\" x2=\"%.1f\" y2=\"%.1f\" class=\"cross\" />\n"
+	form1 := "       <line x1=\"%.1f\" y1=\"%.1f\" x2=\"%.1f\" y2=\"%.1f\" class=\"cross\" />\n"
 	aDelta := 2.0 * math.Pi / 365.0
 	date := time.Date(2000, time.March, 21, 0, 0, 0, 0, time.UTC)
 	for d := 0; d < 365; d++ {
@@ -490,7 +489,7 @@ func plotConstellationNames() string {
 		if constellationCanBeVisible(Map, c) {
 			cId := fmt.Sprintf("CONST_%s", c.Abbr)
 			raR := c.NameLoc.RA * math.Pi / 180.0
-			s += tangentText(cId, c.Abbr, declinationToRadius(c.NameLoc.De), raR, Map.RadiusOuter*0.09*2, "none", "green", Map.RadiusOuter*0.035) // #d5ff80
+			s += tangentText(cId, c.Abbr, declinationToRadius(c.NameLoc.De), raR, Map.RadiusOuter*0.06, "none", "green", Map.RadiusOuter*0.035) // #d5ff80
 		}
 	}
 	s += "      </g>\n"
