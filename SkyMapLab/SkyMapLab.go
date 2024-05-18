@@ -162,11 +162,11 @@ func SetMapStyle(r, lat float64, c MapColors) {
 	m.MagMin = 5.0
 	m.MagMinName = 1.0
 
-	m.RadiusDeclinationZero = 90.0 * r / (90.0 - lat)
+	m.RadiusDeclinationZero = 90.0 * r / (180.0 + lat)
 	m.LowestConstDecl = 60.0      //Southern sky map
 	m.LowestStarDecl = lat + 90.0 //Southern sky map
 	if m.NorthMap {
-		m.RadiusDeclinationZero = 90.0 * r / (90.0 + lat)
+		m.RadiusDeclinationZero = 90.0 * r / (180.0 - lat)
 		m.LowestConstDecl *= -1.0     // Northern sky map
 		m.LowestStarDecl = lat - 90.0 // Northern sky map -45
 	}
@@ -646,7 +646,7 @@ func HandlerSkyMapGeneral(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "<h1>error %s</h1>", err.Error())
 		}
 	}
-	w.WriteHeader(http.StatusOK)
+	//w.WriteHeader(http.StatusOK)
 }
 func HandlerImageSkymapColor(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "image/svg+xml")
