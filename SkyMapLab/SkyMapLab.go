@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"sort"
+	"strconv"
 	"strings"
 	"text/template"
 	"time"
@@ -29,6 +30,7 @@ type MapColors struct {
 }
 
 var MapColorsRed = MapColors{ConstLine: "red", OuterCircle: "#ffeee6"}
+var MapBlackAndWhite = MapColors{ConstLine: "black", OuterCircle: "silver"}
 var MapColorsOrange = MapColors{ConstLine: "orange", OuterCircle: "#f2e1e9"}
 
 type MapStyle struct {
@@ -599,6 +601,52 @@ func HandlerSkyMapLab(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "<h1>SkyMap Lab</h1>")
 	fmt.Fprint(w, "<h1>SkyMap <a href=\"/img/svg-skymap-color\">Color</a></h1>")
 	fmt.Fprint(w, "<h1>SkyMap <a href=\"/img/svg-skymap-bw\">Black and White</a></h1>")
+	fmt.Fprint(w, `<table>
+	<tr><td></td><td>N</td><td>S</td></tr>
+	<tr><td>color</td><td><a href="/img/svg/skymap/co/n44">+44</a></td><td><a href="/img/svg/skymap/co/s44">-44</a></td></tr>
+	<tr><td>b&amp;w</td><td><a href="/img/svg/skymap/bw/n44">+44</a></td><td><a href="/img/svg/skymap/bw/s44">-44</a></td></tr>
+	</table>`)
+	/* /img/svg/skymap/{colorId}/{northSouthId} */
+}
+func getLatitude(str string) float64 {
+	sign := 1
+	if strings.HasPrefix(str, "s") || strings.HasPrefix(str, "S") {
+		sign = -1
+	}
+	if f, err := strconv.ParseFloat(str[1:], 64); err != nil {
+		return 50.0
+	} else {
+		return float64(sign) * f
+	}
+}
+func HandlerSkyMapGeneral(w http.ResponseWriter, r *http.Request) {
+	colorId := r.PathValue("colorId")
+	lat := getLatitude(r.PathValue("latId"))
+	if strings.HasPrefix(colorId, "co") {
+		SetMapStyle(150.0, lat, MapColorsRed)
+	} else {
+		SetMapStyle(150.0, lat, MapBlackAndWhite)
+	}
+
+	w.Header().Set("Content-Type", "image/svg+xml")
+	defs := plotRaCross()
+	defs += plotRaHourRoundScale()
+	defs += plotDateRoundScale()
+	defs += plotConstellations()
+	defs += plotConstellationNames()
+	defs += plotOuterCircle()
+	defs += plotEcliptic()
+	defs += plotHorizon()
+	defs += plotStars()
+
+	svgTemplate2 := fmt.Sprintf(svgTemplate1, defs)
+	if t, err := template.New("SkyMap").Parse(svgTemplate2); err == nil {
+		data := getSvgData(strings.HasPrefix(colorId, "co"))
+		if err = t.Execute(w, data); err != nil {
+			fmt.Fprintf(w, "<h1>error %s</h1>", err.Error())
+		}
+	}
+	w.WriteHeader(http.StatusOK)
 }
 func HandlerImageSkymapColor(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "image/svg+xml")
