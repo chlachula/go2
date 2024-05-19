@@ -81,8 +81,16 @@ const (
 	htmlEnd      = "\n<br/></body></html>"
 	svgTemplate1 = `
 <svg xmlns="http://www.w3.org/2000/svg" 
-    xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-250 -250 500 500" background="lightblue">
-    <title>Sky Map - color</title>
+    xmlns:xlink="http://www.w3.org/1999/xlink" 
+	width="215.9mm" height="279.4mm" viewBox="-250 -250 500 500" 
+	style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd;background:beige">
+	<!-- 
+	xml:space="preserve" 
+	width="1650mm" height="810mm" 
+	letter 215.9 by 279.4 mm
+	version="1.1" 
+	bluish #010630 -->
+    <title>Sky Map Lab</title>
  <defs>
     <style>
 	 .font1 { 
