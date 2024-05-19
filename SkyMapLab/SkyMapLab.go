@@ -82,14 +82,8 @@ const (
 	svgTemplate1 = `
 <svg xmlns="http://www.w3.org/2000/svg" 
     xmlns:xlink="http://www.w3.org/1999/xlink" 
-	width="215.9mm" height="279.4mm" viewBox="-250 -250 500 500" 
+	width="215.9mm" height="279.4mm" viewBox="-250 -323.5 500 647" 
 	style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd;background:beige">
-	<!-- 
-	xml:space="preserve" 
-	width="1650mm" height="810mm" 
-	letter 215.9 by 279.4 mm
-	version="1.1" 
-	bluish #010630 -->
     <title>Sky Map Lab</title>
  <defs>
     <style>
@@ -118,7 +112,8 @@ const (
     </style>
   %s
  </defs> 
-
+  <rect width="500" height="647" x="-250" y="-323.5" stroke="blue" stroke-width="1" fill="azure" />
+  <text x="-244" y="-313" fill="blue" font-size="8">Letter 8.5 by 11 inches (215.9 by 279.4 mm)</text>
   <g id="draw_plots">
     <use xlink:href="#plotConstellations" />
     <use xlink:href="#plotConstellationNames" />
@@ -463,8 +458,8 @@ func plotStarNames() string {
 	return s
 }
 func plotOuterCircle() string {
-	r2 := Map.RadiusOuter * 1.133333333333  //170
-	w := Map.RadiusOuter * 0.26666666666666 //40
+	r2 := Map.RadiusOuter * 1.12 //170
+	w := Map.RadiusOuter * 0.23  //40
 	s := "      <g id=\"plotOuterCircle\">\n"
 	form1 := "        <circle cx=\"0\" cy=\"0\" r=\"%.1f\" stroke-width=\"%.1f\" stroke=\"%s\" fill=\"none\" />\n"
 	s += fmt.Sprintf(form1, r2, w, Map.Colors.OuterCircle)
@@ -631,9 +626,9 @@ func HandlerSkyMapGeneral(w http.ResponseWriter, r *http.Request) {
 	colorId := r.PathValue("colorId")
 	lat := getLatitude(r.PathValue("latId"))
 	if strings.HasPrefix(colorId, "co") {
-		SetMapStyle(150.0, lat, MapColorsRed)
+		SetMapStyle(200.0, lat, MapColorsRed)
 	} else {
-		SetMapStyle(150.0, lat, MapBlackAndWhite)
+		SetMapStyle(200.0, lat, MapBlackAndWhite)
 	}
 
 	w.Header().Set("Content-Type", "image/svg+xml")
