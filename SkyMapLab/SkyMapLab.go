@@ -35,7 +35,8 @@ var MapColorsOrange = MapColors{ConstLine: "orange", OuterCircle: "#f2e1e9"}
 
 type MapStyle struct {
 	NorthMap              bool
-	RadiusOuter           float64
+	Radius                float64
+	Rlat                  float64
 	RadiusDeclinationZero float64
 	RAwidth               float64
 	RAhour_length         float64
@@ -142,14 +143,13 @@ var (
 	BottomText string
 )
 
-// MapStyle.RadiusOuter is
-func SetMapStyle(r, lat float64, c MapColors) {
+func SetMapStyle0(r, lat float64, c MapColors) {
 	var m MapStyle
 	m.NorthMap = false
 	if lat > 0.0 {
 		m.NorthMap = true
 	}
-	m.RadiusOuter = r
+	m.Rlat = r
 	m.Latitude = lat
 	m.Colors = c
 	m.Axis = r * 1.025 //154
@@ -170,6 +170,42 @@ func SetMapStyle(r, lat float64, c MapColors) {
 	m.LowestStarDecl = lat + 90.0 //Southern sky map
 	if m.NorthMap {
 		m.RadiusDeclinationZero = 90.0 * r / (180.0 - lat)
+		m.LowestConstDecl *= -1.0     // Northern sky map
+		m.LowestStarDecl = lat - 90.0 // Northern sky map -45
+	}
+	Map = m
+}
+
+func SetMapStyle(r, lat float64, c MapColors) {
+	var m MapStyle
+	m.NorthMap = false
+	if lat > 0.0 {
+		m.NorthMap = true
+	}
+	//	r2 := Map.Rlat * 1.12 //170
+	//	w := Map.Rlat * 0.23  //40 1.12+0.23/2=1.235
+
+	m.Rlat = r / 1.235
+	m.Latitude = lat
+	m.Colors = c
+	m.Axis = m.Rlat * 1.025 //154
+	m.AxisWidth = m.Rlat * 0.0025
+	m.RAwidth = m.Rlat * 0.013           // ~ 2
+	m.RAhour_length = m.Rlat * 0.033     // 5
+	m.RAhalfHour_length = m.Rlat * 0.027 // 4.1
+	m.RAciphersRadius = m.Rlat * 1.08    //162
+	m.ConstLineWidth = m.Rlat * 0.002
+	m.DateRadius = m.Rlat * 1.147   // 172.0
+	m.MonthsRadius = m.Rlat * 1.212 // 182
+	m.MagBrightest = -1.5           // Sirius
+	m.MagMin = 5.0
+	m.MagMinName = 1.0
+
+	m.RadiusDeclinationZero = 90.0 * m.Rlat / (180.0 + lat)
+	m.LowestConstDecl = 60.0      //Southern sky map
+	m.LowestStarDecl = lat + 90.0 //Southern sky map
+	if m.NorthMap {
+		m.RadiusDeclinationZero = 90.0 * m.Rlat / (180.0 - lat)
 		m.LowestConstDecl *= -1.0     // Northern sky map
 		m.LowestStarDecl = lat - 90.0 // Northern sky map -45
 	}
@@ -234,7 +270,7 @@ func SetVariables(top, bottom string) {
 }
 
 func getSvgData(color bool) SvgDataType {
-	factor := Map.RadiusOuter / 150.0
+	factor := Map.Rlat / 150.0
 	data := SvgDataType{
 		TopColor:         "green",
 		BottomColor:      "red",
@@ -282,11 +318,11 @@ func plotRaCross() string {
 }
 
 func plotRaHourRoundScale() string {
-	r1 := Map.RadiusOuter                         //150
-	r2 := Map.RadiusOuter + Map.RAwidth           //152
-	r3 := Map.RadiusOuter + Map.RAhour_length     //155
-	r4 := Map.RadiusOuter + Map.RAhalfHour_length //154
-	//	r5 := Map.RadiusOuter * 1.08                  //162
+	r1 := Map.Rlat                         //150
+	r2 := Map.Rlat + Map.RAwidth           //152
+	r3 := Map.Rlat + Map.RAhour_length     //155
+	r4 := Map.Rlat + Map.RAhalfHour_length //154
+	//	r5 := Map.Rlat * 1.08                  //162
 
 	form0 := `
 	<g id="plotRaHourScale">
@@ -297,7 +333,7 @@ func plotRaHourRoundScale() string {
 `
 	s := "\n"
 	form1 := "      <line x1=\"%.1f\" y1=\"%.1f\" x2=\"%.1f\" y2=\"%.1f\" class=\"cross\" />\n"
-	strokeWidth := 0.3 / 150.0 * Map.RadiusOuter
+	strokeWidth := 0.3 / 150.0 * Map.Rlat
 	form2 := `      <path id="raHour%d" d="M%.1f,%.1f A%.1f,%.1f 0 0,0  %.1f,%.1f " style="fill:none;fill-opacity: 1;stroke:green;stroke-width: %.1f"/>
       <text alignment-baseline="baseline" text-anchor="start" class="font1 downFont">
 	    <textPath xlink:href="#raHour%d">%d</textPath>
@@ -365,7 +401,7 @@ func tangentText(id, text string, r, a, length float64, strokeColor string, fill
 }
 func plotDateRoundScale() string {
 	s := "     <g id=\"plotDateRoundScale\">\n"
-	//r1 := Map.RadiusOuter * 1.147 // 172.0
+	//r1 := Map.Rlat * 1.147 // 172.0
 	r1 := Map.DateRadius //172
 	form1 := "       <line x1=\"%.1f\" y1=\"%.1f\" x2=\"%.1f\" y2=\"%.1f\" class=\"cross\" />\n"
 	aDelta := 2.0 * math.Pi / 365.0
@@ -386,7 +422,7 @@ func plotDateRoundScale() string {
 		if date.Day() == 1 {
 			//r = 5.5
 			bar = r1 * 0.031978 //5.5
-			s += circleArchText("MONTH_"+date.Format("Jan"), date.Format("January"), Map.MonthsRadius, a, monthArcR, "yellow", "red", Map.RadiusOuter*0.06)
+			s += circleArchText("MONTH_"+date.Format("Jan"), date.Format("January"), Map.MonthsRadius, a, monthArcR, "yellow", "red", Map.Rlat*0.06)
 		}
 		//s += fmt.Sprintf(f1, x1, y1, r, "black")
 		x2, y2 := cartesianXY(r1-bar, a)
@@ -398,8 +434,8 @@ func plotDateRoundScale() string {
 	return s
 }
 func magToRadius(mag float64) float64 {
-	r0 := Map.RadiusOuter / 500.0 // 0.3
-	r1 := Map.RadiusOuter / 58.0  //2.6
+	r0 := Map.Rlat / 500.0 // 0.3
+	r1 := Map.Rlat / 58.0  //2.6
 	if mag < Map.MagBrightest {
 		mag = Map.MagBrightest
 	}
@@ -458,8 +494,8 @@ func plotStarNames() string {
 	return s
 }
 func plotOuterCircle() string {
-	r2 := Map.RadiusOuter * 1.12 //170
-	w := Map.RadiusOuter * 0.23  //40
+	r2 := Map.Rlat * 1.12 //170
+	w := Map.Rlat * 0.23  //40
 	s := "      <g id=\"plotOuterCircle\">\n"
 	form1 := "        <circle cx=\"0\" cy=\"0\" r=\"%.1f\" stroke-width=\"%.1f\" stroke=\"%s\" fill=\"none\" />\n"
 	s += fmt.Sprintf(form1, r2, w, Map.Colors.OuterCircle)
@@ -494,7 +530,7 @@ func plotConstellationNames() string {
 		if constellationCanBeVisible(Map, c) {
 			cId := fmt.Sprintf("CONST_%s", c.Abbr)
 			raR := c.NameLoc.RA * math.Pi / 180.0
-			s += tangentText(cId, c.Abbr, declinationToRadius(c.NameLoc.De), raR, Map.RadiusOuter*0.06, "none", "green", Map.RadiusOuter*0.035) // #d5ff80
+			s += tangentText(cId, c.Abbr, declinationToRadius(c.NameLoc.De), raR, Map.Rlat*0.06, "none", "green", Map.Rlat*0.035) // #d5ff80
 		}
 	}
 	s += "      </g>\n"
@@ -626,9 +662,9 @@ func HandlerSkyMapGeneral(w http.ResponseWriter, r *http.Request) {
 	colorId := r.PathValue("colorId")
 	lat := getLatitude(r.PathValue("latId"))
 	if strings.HasPrefix(colorId, "co") {
-		SetMapStyle(200.0, lat, MapColorsRed)
+		SetMapStyle(249.0, lat, MapColorsRed)
 	} else {
-		SetMapStyle(200.0, lat, MapBlackAndWhite)
+		SetMapStyle(249.0, lat, MapBlackAndWhite)
 	}
 
 	w.Header().Set("Content-Type", "image/svg+xml")
