@@ -83,7 +83,7 @@ const (
 	svgTemplate1 = `
 <svg xmlns="http://www.w3.org/2000/svg" 
     xmlns:xlink="http://www.w3.org/1999/xlink" 
-	width="215.9mm" height="279.4mm" viewBox="-250 -323.5 500 647" 
+	width="{{.WidthMM}}mm" height="{{.HeightMM}}mm" viewBox="-250 -{{.HeightHalf}} 500 {{.Height}}" 
 	style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd;background:beige">
     <title>Sky Map Lab</title>
  <defs>
@@ -113,8 +113,8 @@ const (
     </style>
   %s
  </defs> 
-  <rect width="500" height="647" x="-250" y="-323.5" stroke="blue" stroke-width="1" fill="azure" />
-  <text x="-244" y="-313" fill="blue" font-size="8">Letter 8.5 by 11 inches (215.9 by 279.4 mm)</text>
+  <rect width="500" height="{{.Height}}" x="-250" y="-{{.HeightHalf}}" stroke="blue" stroke-width="1" fill="azure" />
+  <text x="-244" y="-{{.HeightHalf}}" fill="blue" font-size="8"><tspan dy="10">{{.PaperName}} ({{.WidthMM}}mm by {{.HeightMM}}mm)</tspan></text>
   <g id="draw_plots">
     <use xlink:href="#plotConstellations" />
     <use xlink:href="#plotConstellationNames" />
@@ -136,6 +136,11 @@ type SvgDataType = struct {
 	TopColor         string
 	BottomColor      string
 	CrossStrokeWidth float64
+	PaperName        string
+	WidthMM          float64
+	HeightMM         float64
+	Height           float64
+	HeightHalf       float64
 }
 
 var (
@@ -237,12 +242,32 @@ func SetVariables(top, bottom string) {
 }
 
 func getSvgData(color bool) SvgDataType {
+	type paperType = struct {
+		Name     string
+		WidthMM  float64
+		HeightMM float64
+		Height   float64
+	}
+	var papers = []paperType{
+		{Name: "A4", WidthMM: 210.0, HeightMM: 297.0},
+		{Name: "A3", WidthMM: 297.0, HeightMM: 420.0},
+		{Name: "Letter 8.5\"x11\"", WidthMM: 215.9, HeightMM: 279.4},
+		{Name: "Legal 8.5\"x14\"", WidthMM: 215.9, HeightMM: 355.6},
+		{Name: "Ledger 11\"x17\"", WidthMM: 279.4, HeightMM: 431.8},
+	}
 	factor := Map.Rlat / 150.0
+
+	i := 4
 	data := SvgDataType{
 		TopColor:         "green",
 		BottomColor:      "red",
 		FontSize:         8.0 * factor,
 		CrossStrokeWidth: 0.25 * factor,
+		PaperName:        papers[i].Name,
+		WidthMM:          papers[i].WidthMM,
+		HeightMM:         papers[i].HeightMM,
+		Height:           500.0 * papers[i].HeightMM / papers[i].WidthMM,
+		HeightHalf:       250.0 * papers[i].HeightMM / papers[i].WidthMM,
 	}
 	if !color {
 		data.TopColor = "black"
