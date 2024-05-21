@@ -629,15 +629,14 @@ func HandlerHome(w http.ResponseWriter, r *http.Request) {
 func HandlerSkyMapLab(w http.ResponseWriter, r *http.Request) {
 	//writeHtmlHeadAndMenu(w, "/svg-roundlogo-color", "Color")
 
-	fmt.Fprint(w, "<h1>SkyMap Lab</h1>")
-	fmt.Fprint(w, "<h1>SkyMap <a href=\"/img/svg-skymap-color\">Color</a></h1>")
-	fmt.Fprint(w, "<h1>SkyMap <a href=\"/img/svg-skymap-bw\">Black and White</a></h1>")
-	fmt.Fprint(w, `<table>
+	fmt.Fprint(w, "<html><head><title>SkyMap</title></head>\n")
+	fmt.Fprint(w, "<body style=\"text-align: center;\">\n")
+	fmt.Fprint(w, "<h1>SkyMap Lab</h1>\n")
+	fmt.Fprint(w, `<table border="1" style="margin: 0px auto;">
 	<tr><td></td><td>N</td><td>S</td></tr>
 	<tr><td>color</td><td><a href="/img/svg/skymap/co/n44">+44</a></td><td><a href="/img/svg/skymap/co/s44">-44</a></td></tr>
 	<tr><td>b&amp;w</td><td><a href="/img/svg/skymap/bw/n44">+44</a></td><td><a href="/img/svg/skymap/bw/s44">-44</a></td></tr>
 	</table>`)
-	/* /img/svg/skymap/{colorId}/{northSouthId} */
 }
 func getLatitude(str string) float64 {
 	sign := 1
@@ -679,6 +678,8 @@ func HandlerSkyMapGeneral(w http.ResponseWriter, r *http.Request) {
 	}
 	//w.WriteHeader(http.StatusOK)
 }
+
+/*
 func HandlerImageSkymapColor(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "image/svg+xml")
 	defs := plotRaCross()
@@ -715,3 +716,4 @@ func HandlerImageSkymapBW(w http.ResponseWriter, r *http.Request) {
 	// Send the response
 	//w.WriteHeader(http.StatusOK)
 }
+*/
