@@ -155,9 +155,9 @@ func HandlerHome(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, `<div class="container70percentFlex">
 	<div>
 	  <p>
-	  <img src="/img/svg-roundlogo-color" width="150" />
-	  <img src="/img/svg-roundlogo-bw" width="150" />
-	  <img src="/img/svg-smartphone" width="150" />
+	  <img src="/img/svg/roundlogo-color" width="150" />
+	  <img src="/img/svg/roundlogo-bw" width="150" />
+	  <img src="/img/svg/smartphone" width="150" />
 	  </p>
 
 	 <a name="about"></a><h2>About</h2>
