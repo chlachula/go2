@@ -3,6 +3,7 @@ package svgImagesJs
 import (
 	"fmt"
 	"net/http"
+	"os"
 )
 
 var Atext string = "text sample"
@@ -27,6 +28,7 @@ func HandlerHtmlJsSvgPages(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "<body style=\"text-align: center;\">\n")
 	fmt.Fprint(w, "<h1>HTML javascript SVG pages</h1>\n")
 	fmt.Fprint(w, "<h1><a href=\"/eyepieceLabels\">Eyepiece Labels</a></h1>\n")
+	fmt.Fprint(w, "<h1><a href=\"/eyepieceLabels2\">Eyepiece Labels 2</a></h1>\n")
 
 	fmt.Fprint(w, "</body></html>\n")
 
@@ -40,4 +42,17 @@ func HandlerEyepieceLabels(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprint(w, "</body></html>\n")
 
+}
+func HandlerEyepieceLabels2(w http.ResponseWriter, r *http.Request) {
+	str := LoadTextFile("eyepieceLabels.svg")
+	fmt.Fprint(w, str)
+
+}
+func LoadTextFile(filename string) string {
+	bytes, err := os.ReadFile(filename) //Read entire file content. No need to close
+	if err != nil {
+		fmt.Println(err.Error())
+		return ""
+	}
+	return string(bytes)
 }
