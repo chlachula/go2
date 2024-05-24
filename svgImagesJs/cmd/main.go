@@ -40,6 +40,7 @@ func main() {
 				http.HandleFunc("/", a.HandlerHome)
 				http.HandleFunc("/htmlSvgImagesJs", a.HandlerHtmlJsSvgPages)
 				http.HandleFunc("/eyepieceLabels", a.HandlerEyepieceLabels)
+				http.HandleFunc("/eyepieceLabels2", a.HandlerEyepieceLabels2)
 				what := "HTML+javascript SVG "
 				print("Serving " + what + "at " + colonPort + ". CTRL+C to stop.")
 				http.ListenAndServe(colonPort, nil)
