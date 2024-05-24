@@ -2,9 +2,9 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 
 <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" 
-	width="297.4mm" height="215.9mm" version="1.1"
+	width="215.9mm" height="279.4mm" version="1.1"
 	style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd;background:#010630"
-	viewBox="0 0 3000 5000"
+	viewBox="0 0 3000 3882.353"
 	xmlns:xlink="http://www.w3.org/1999/xlink"
         onload="initiation();">
 <!-- letter 215.9 by 279.4 mm https://css-tricks.com/scale-svg/-->
@@ -281,7 +281,16 @@
   </text>
 </g>
 
-
+<g id="ruler20cm">
+ <path d="M0,0 h200 m-200,0 
+ v10 m100,-10 v10 m100,-10 v10 
+ m-190,-10 
+ v4 m10,-4 v4 m10,-4 v4 m10,-4 v4 m10,-4 v6 m10,-6 
+ v4 m10,-4 v4 m10,-4 v4 m10,-4 v4 m20,-4
+ v4 m10,-4 v4 m10,-4 v4 m10,-4 v4 m10,-4 v6 m10,-6 
+ v4 m10,-4 v4 m10,-4 v4 m10,-4 v4 m20,-4
+ " stroke="black" stroke-width="0.15mm" fill="none" />
+</g>
 </defs>
 
 
@@ -310,5 +319,7 @@
 
   <use id="e8a" transform="translate(1900,2800)  scale(7.5,7.5)" xlink:href="#k8a"></use><!-- asi 53mm -->
   <use id="e8b" transform="translate(2600,2800) scale(7.5,7.5)" xlink:href="#k8b"></use>
+
+  <use id="r20" transform="translate(100,3700) scale(13.5,-13.5)" xlink:href="#ruler20cm"></use>
 
 </svg>
