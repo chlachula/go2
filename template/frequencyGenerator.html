@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Frequency Generator</title>
+</head>
+<body style="text-align:center">
+<a href="https://developer.chrome.com/blog/autoplay/#webaudio">https://developer.chrome.com/blog/autoplay/#webaudio</a>
+<br/>
+    <input type="number" id="initialFrequency" value="100">
+    <input type="number" id="frequencyIncrement" value="100">
+    <input type="number" id="incrementTime" value="500">
+    <br/>
+    <br/>
+    <button onclick="playSound()">Play Sound</button>
+    <button onclick="stopSound()">Stop Sound</button>
+    <span id="finalFrequency">Final Frequency: </span>
+    <script>  
+//        window.onload = function() {}
+           const audioCtx = new AudioContext();
+           const oscillator = audioCtx.createOscillator();
+           oscillator.type = "sine"; // Choose your desired waveform
+           let currentFrequency = -1
+        
+        function playSound() {
+            currentFrequency = intValue("initialFrequency")
+            let frequencyIncrement = intValue("frequencyIncrement")
+            let incrementTime = intValue("incrementTime")
+            console.log("playSound init values:","currentFrequency =", currentFrequency, "frequencyIncrement =", frequencyIncrement, "incrementTime =", incrementTime)
+            
+            let started = false
+            intervalId = setInterval(() => {
+                currentFrequency += frequencyIncrement;
+                oscillator.frequency.value = currentFrequency;
+                if (!started) {
+                   oscillator.start(audioCtx.currentTime);
+                }
+                started = true
+            }, incrementTime);
+        }
+
+        function stopSound() {
+            oscillator.stop(audioCtx.currentTime);
+            clearInterval(intervalId); // Stop interval
+            document.getElementById("finalFrequency").textContent = `Final Frequency: ${currentFrequency} Hz`;
+        }
+
+        function intValue(id){
+           let str = document.getElementById(id).value; 
+           let i = parseInt(str)
+           console.log("intValue(",id,") = ", i)
+           return i
+        }
+        
+        let intervalId; // To store the interval for clarity
+
+        oscillator.connect(audioCtx.destination);
+
+    </script>
+</body>
+</html>
