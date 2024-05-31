@@ -616,7 +616,7 @@ func HandlerHome(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, `<html>
  <head>
  <meta http-equiv="refresh" content="0; url=/SkyMapLab">
- 	  <title>redirect to SkyMapLab</title>
+ 	  <title>Redirect to SkyMapLab</title>
  </head>
  <body>
   <h1>Click to: <a href="/SkyMapLab">SkyMapLab</a></h1>
@@ -678,42 +678,3 @@ func HandlerSkyMapGeneral(w http.ResponseWriter, r *http.Request) {
 	}
 	//w.WriteHeader(http.StatusOK)
 }
-
-/*
-func HandlerImageSkymapColor(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "image/svg+xml")
-	defs := plotRaCross()
-	defs += plotRaHourRoundScale()
-	defs += plotDateRoundScale()
-	defs += plotConstellations()
-	defs += plotConstellationNames()
-	defs += plotOuterCircle()
-	defs += plotEcliptic()
-	defs += plotHorizon()
-	defs += plotStars()
-
-	svgTemplate2 := fmt.Sprintf(svgTemplate1, defs)
-	if t, err := template.New("SkyMap").Parse(svgTemplate2); err == nil {
-		data := getSvgData(false)
-		if err = t.Execute(w, data); err != nil {
-			fmt.Fprintf(w, "<h1>error %s</h1>", err.Error())
-		}
-	}
-	// Send the response
-	//w.WriteHeader(http.StatusOK)
-}
-func HandlerImageSkymapBW(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "image/svg+xml")
-
-	// Optional: Set additional headers if needed
-	// w.Header().Set("Last-Modified", "...")
-	if t, err := template.New("SvgRoundLogoBlackWhite").Parse(svgTemplate1); err == nil {
-		data := getSvgData(false)
-		if err = t.Execute(w, data); err != nil {
-			fmt.Fprintf(w, "<h1>error %s</h1>", err.Error())
-		}
-	}
-	// Send the response
-	//w.WriteHeader(http.StatusOK)
-}
-*/
