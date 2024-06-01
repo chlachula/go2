@@ -615,7 +615,7 @@ func HandlerHome(w http.ResponseWriter, r *http.Request) {
 	//writeHtmlHeadAndMenu(w, "/", "Home")
 	fmt.Fprint(w, `<html>
  <head>
- <meta http-equiv="refresh" content="0; url=/SkyMapLab">
+      <meta http-equiv="refresh" content="0; url=/SkyMapLab">
  	  <title>Redirect to SkyMapLab</title>
  </head>
  <body>
