@@ -49,6 +49,7 @@ type MapStyle struct {
 	AxisWidth             float64
 	ConstLineWidth        float64
 	DateRadius            float64
+	DateNRadius           float64
 	MonthsRadius          float64
 	MagMin                float64
 	MagBrightest          float64
@@ -61,6 +62,7 @@ var SliceOfStars []StarRecord
 // var magBrightest = -1.5 // Sirius
 // var magMin = 5.0
 var monthArcR = 27.0 / 31.0 * math.Pi / 6.0
+var dayNArcR = 2. * 2. * math.Pi / 365.25
 var SliceOfConstellations []ConstellationCoordPoints
 
 var Map MapStyle
@@ -168,6 +170,7 @@ func SetMapStyle(r, lat float64, c MapColors) {
 	m.RAciphersRadius = r * 0.87449392712550607287449392712551
 	m.ConstLineWidth = r * 0.00161943319838056680161943319838
 	m.DateRadius = r * 0.92874493927125506072874493927126
+	m.DateNRadius = r * 0.945
 	m.MonthsRadius = r * 0.98137651821862348178137651821862
 	m.MagBrightest = -1.5 // Sirius
 	m.MagMin = 5.0
@@ -412,6 +415,7 @@ func plotDateRoundScale() string {
 			bar = r1 * 0.023256 //4
 		}
 		if date.Day() == 1 {
+			s += circleArchText("DAY_"+date.Format("Jan02"), date.Format("2"), Map.DateNRadius, a, dayNArcR, "pink", "black", Map.Rlat*0.025)
 			//r = 5.5
 			bar = r1 * 0.031978 //5.5
 			s += circleArchText("MONTH_"+date.Format("Jan"), date.Format("January"), Map.MonthsRadius, a, monthArcR, "yellow", "red", Map.Rlat*0.06)
