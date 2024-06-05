@@ -1,6 +1,8 @@
 /*
 https://www.astroleague.org/caldwell-program-object-list/
 https://www.astroleague.org/messier-program-list/
+
+How long is my SVG <text> element? https://www.balisage.net/Proceedings/vol26/html/Birnbaum01/BalisageVol26-Birnbaum01.html
 */
 
 package SkyMapLab
@@ -407,10 +409,12 @@ func plotDateRoundScale() string {
 		//r := 0.7
 		bar := r1 * 0.004067 //0.7
 		if date.Day()%5 == 0 {
+			s += circleArchText("DAY_"+date.Format("Jan02"), date.Format("2"), Map.DateNRadius, a, dayNArcR, "pink", "black", Map.Rlat*0.025)
 			//r = 1.5
 			bar = r1 * 0.008721 //1.5
 		}
 		if date.Day()%10 == 0 {
+			s += circleArchText("DAY_"+date.Format("Jan02"), date.Format("2"), Map.DateNRadius, a, dayNArcR, "pink", "black", Map.Rlat*0.025)
 			//r = 4.0
 			bar = r1 * 0.023256 //4
 		}
