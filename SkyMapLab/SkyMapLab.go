@@ -63,10 +63,11 @@ var SliceOfStars []StarRecord
 
 // var magBrightest = -1.5 // Sirius
 // var magMin = 5.0
-var monthArcR = 27.0 / 31.0 * math.Pi / 6.0
-var dayNArcR = 2. * 2. * math.Pi / 365.25
-var SliceOfConstellations []ConstellationCoordPoints
+const dayArcR = 2.0 * math.Pi / 365.25
+const twoDaysArcR = 2. * dayArcR
+const monthArcR = 27.0 / 31.0 * math.Pi / 6.0
 
+var SliceOfConstellations []ConstellationCoordPoints
 var Map MapStyle
 
 type EqCoords struct {
@@ -360,6 +361,16 @@ func plotRaHourRoundScale() string {
 	}
 	return fmt.Sprintf(form0, r1, r2, s)
 }
+func circleDayN(date time.Time, a float64) string {
+	n := date.Format("2")
+	a1 := a - twoDaysArcR + twoDaysArcR*0.18*float64(len(n))
+	return circleArchText("DAY_"+date.Format("Jan02"), n, Map.DateNRadius, a1, twoDaysArcR, "none", "black", Map.Rlat*0.025)
+}
+func circleMonthN(date time.Time, a float64) string {
+	n := date.Format("January")
+	a1 := a - 1.3*dayArcR*float64(len(n))
+	return circleArchText("MONTH_"+date.Format("Jan"), n, Map.MonthsRadius, a1, monthArcR, "none", "red", Map.Rlat*0.06)
+}
 
 func circleArchText(id, text string, r, a, deltaA float64, strokeColor string, fillColor string, fontSize float64) string {
 	form1 := `       <path id="%s" d="M%.1f,%.1f A%.1f,%.1f 0 0,0  %.1f,%.1f " style="fill:none;fill-opacity: 1;stroke:%s;stroke-width: 0.7"/>
@@ -408,22 +419,21 @@ func plotDateRoundScale() string {
 		x1, y1 := cartesianXY(r1, a)
 		//r := 0.7
 		bar := r1 * 0.004067 //0.7
-		if date.Day()%5 == 0 {
-			s += circleArchText("DAY_"+date.Format("Jan02"), date.Format("2"), Map.DateNRadius, a, dayNArcR, "pink", "black", Map.Rlat*0.025)
-			//r = 1.5
-			bar = r1 * 0.008721 //1.5
-		}
-		if date.Day()%10 == 0 {
-			s += circleArchText("DAY_"+date.Format("Jan02"), date.Format("2"), Map.DateNRadius, a, dayNArcR, "pink", "black", Map.Rlat*0.025)
-			//r = 4.0
-			bar = r1 * 0.023256 //4
-		}
 		if date.Day() == 1 {
-			s += circleArchText("DAY_"+date.Format("Jan02"), date.Format("2"), Map.DateNRadius, a, dayNArcR, "pink", "black", Map.Rlat*0.025)
-			//r = 5.5
+			//			s += circleArchText("MONTH_"+date.Format("Jan"), date.Format("January"), Map.MonthsRadius, a, monthArcR, "yellow", "red", Map.Rlat*0.06)
+			s += circleMonthN(date, a)
+			s += circleDayN(date, a)
 			bar = r1 * 0.031978 //5.5
-			s += circleArchText("MONTH_"+date.Format("Jan"), date.Format("January"), Map.MonthsRadius, a, monthArcR, "yellow", "red", Map.Rlat*0.06)
+		} else if date.Day()%5 == 0 {
+			if date.Day()%10 == 0 {
+				s += circleDayN(date, a)
+				bar = r1 * 0.023256 //4
+			} else {
+				s += circleDayN(date, a)
+				bar = r1 * 0.008721 //1.5
+			}
 		}
+
 		//s += fmt.Sprintf(f1, x1, y1, r, "black")
 		x2, y2 := cartesianXY(r1-bar, a)
 		s += fmt.Sprintf(form1, x1, y1, x2, y2) // concentric day(1,5,10) short line
