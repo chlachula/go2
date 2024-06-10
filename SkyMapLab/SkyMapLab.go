@@ -130,6 +130,7 @@ const (
     <use xlink:href="#plotDateRoundScale" />
     <use xlink:href="#plotRaHourScale" />
     <use xlink:href="#plotRaCross" />
+    <use xlink:href="#plotAxisDeclinations" />
   </g>
 
 </svg>
@@ -314,7 +315,32 @@ func plotRaCross() string {
 `
 	return fmt.Sprintf(formCross, r2, r2, r2, r2, Map.RadiusDeclinationZero, w)
 }
+func plotAxisDeclinations() string {
+	stepDegs := 30.0
+	a := 90.0 - stepDegs
+	dx := 3.5
+	dy := Map.RadiusDeclinationZero / 90.0 * stepDegs
+	text := ""
+	path := fmt.Sprintf("\n   <path id=\"AxisDeclMarks\" d=\"M%.1f,0 ", dx)
+	for ; a > -44.0; a = a - stepDegs {
+		//exclude marks for zero declination
+		if math.Abs(a) < 1.0 {
+			path += fmt.Sprintf("m0,%.1f ", dy)
+		} else {
+			path += fmt.Sprintf("m%.1f,%.1f h%.1f ", -2.*dx, dy, 2.*dx)
+		}
+	}
+	path += "\" style=\"fill:none;stroke:black;stroke-width: 0.432\" />\n"
+	path += text
+	paths := "      <g id=\"plotAxisDeclinations\" >\n"
+	paths += "         <use xlink:href=\"#AxisDeclMarks\" />\n"
+	paths += "         <use xlink:href=\"#AxisDeclMarks\"  transform=\"rotate(090)\" />\n"
+	paths += "         <use xlink:href=\"#AxisDeclMarks\"  transform=\"rotate(180)\" />\n"
+	paths += "         <use xlink:href=\"#AxisDeclMarks\"  transform=\"rotate(270)\" />\n"
+	paths += "      </g>\n"
 
+	return path + paths
+}
 func plotRaHourRoundScale() string {
 	r1 := Map.Rlat                         //150
 	r2 := Map.Rlat + Map.RAwidth           //152
@@ -678,6 +704,7 @@ func HandlerSkyMapGeneral(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "image/svg+xml")
 	defs := plotRaCross()
+	defs += plotAxisDeclinations()
 	defs += plotRaHourRoundScale()
 	defs += plotDateRoundScale()
 	defs += plotConstellations()
