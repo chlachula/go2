@@ -321,7 +321,7 @@ func plotAxisDeclinations() string {
 	dx := 3.5
 	dy := Map.RadiusDeclinationZero / 90.0 * stepDegs
 	y := dy
-	g := "\n   <g id=\"AxisDeclMarks\">"
+	g := "\n    <g id=\"AxisDeclMarks\">"
 	texts := ""
 	path := fmt.Sprintf("\n       <path d=\"M%.1f,0 ", dx)
 	for ; a > -44.0; a = a - stepDegs {
@@ -331,18 +331,18 @@ func plotAxisDeclinations() string {
 		} else {
 			path += fmt.Sprintf("m%.1f,%.1f h%.1f ", -2.*dx, dy, 2.*dx)
 		}
-		texts += fmt.Sprintf("  		<text x=\"%.1f\" y=\"%.1f\">%.0f</text>\n", dx, y, a)
+		texts += fmt.Sprintf("  	   <text x=\"%.1f\" y=\"%.1f\" font-size=\"%.1f\" font-family=\"Franklin Gothic, sans-serif\" fill=\"black\" >%.0f°</text>\n", 0.25*dx, y-0.25*dx, 5.0, a)
 		y += dy
 	}
 	path += "\" style=\"fill:none;stroke:black;stroke-width: 0.432\" />\n"
-	g += path + texts + "   </g>\n"
+	g += path + texts + "    </g>\n"
 
-	paths := "      <g id=\"plotAxisDeclinations\" >\n"
-	paths += "         <use xlink:href=\"#AxisDeclMarks\" />\n"
-	paths += "         <use xlink:href=\"#AxisDeclMarks\"  transform=\"rotate(090)\" />\n"
-	paths += "         <use xlink:href=\"#AxisDeclMarks\"  transform=\"rotate(180)\" />\n"
-	paths += "         <use xlink:href=\"#AxisDeclMarks\"  transform=\"rotate(270)\" />\n"
-	paths += "      </g>\n"
+	paths := "    <g id=\"plotAxisDeclinations\" >\n"
+	paths += "        <use xlink:href=\"#AxisDeclMarks\" />\n"
+	paths += "        <use xlink:href=\"#AxisDeclMarks\"  transform=\"rotate(090)\" />\n"
+	paths += "        <use xlink:href=\"#AxisDeclMarks\"  transform=\"rotate(180)\" />\n"
+	paths += "        <use xlink:href=\"#AxisDeclMarks\"  transform=\"rotate(270)\" />\n"
+	paths += "    </g>\n"
 
 	return g + paths
 }
