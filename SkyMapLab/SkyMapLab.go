@@ -105,6 +105,10 @@ const (
 	 .downFont { 
 		fill: {{.BottomColor}};
 	 }
+	 .fontAxis{
+		font-size: {{.FontSizeAxis}}px;
+		font-family: Franklin Gothic, sans-serif;
+	 }
 	 .board {
 		stroke:orange;
 		stroke-width:0.5
@@ -139,6 +143,7 @@ const (
 
 type SvgDataType = struct {
 	FontSize         float64
+	FontSizeAxis     float64
 	TopColor         string
 	BottomColor      string
 	CrossStrokeWidth float64
@@ -269,6 +274,7 @@ func getSvgData(color bool) SvgDataType {
 		TopColor:         "green",
 		BottomColor:      "red",
 		FontSize:         8.0 * factor,
+		FontSizeAxis:     4.0 * factor,
 		CrossStrokeWidth: 0.25 * factor,
 		PaperName:        papers[i].Name,
 		WidthMM:          papers[i].WidthMM,
@@ -331,7 +337,7 @@ func plotAxisDeclinations() string {
 		} else {
 			path += fmt.Sprintf("m%.1f,%.1f h%.1f ", -2.*dx, dy, 2.*dx)
 		}
-		texts += fmt.Sprintf("  	   <text x=\"%.1f\" y=\"%.1f\" font-size=\"%.1f\" font-family=\"Franklin Gothic, sans-serif\" fill=\"black\" >%.0f°</text>\n", 0.25*dx, y-0.25*dx, 5.0, a)
+		texts += fmt.Sprintf("  	   <text x=\"%.1f\" y=\"%.1f\" class=\"fontAxis\" >%.0f°</text>\n", 0.25*dx, y-0.25*dx, a)
 		y += dy
 	}
 	path += "\" style=\"fill:none;stroke:black;stroke-width: 0.432\" />\n"
