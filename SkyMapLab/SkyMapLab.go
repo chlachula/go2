@@ -361,8 +361,9 @@ func plotRaHourRoundScale() string {
 
 	form0 := `
 	<g id="plotRaHourScale">
-	  <circle cx="0" cy="0" r="%.1f" stroke="black" stroke-width="0.5" fill="none" />
-	  <circle cx="0" cy="0" r="%.1f" stroke="black" stroke-width="0.5" fill="none" />
+	<circle cx="0" cy="0" r="%.1f" stroke="white" stroke-width="%.1f" fill="none" />
+	<circle cx="0" cy="0" r="%.1f" stroke="black" stroke-width="0.5" fill="none" />
+	<circle cx="0" cy="0" r="%.1f" stroke="black" stroke-width="0.5" fill="none" />
 	  %s
 	</g>
 `
@@ -396,7 +397,9 @@ func plotRaHourRoundScale() string {
 		r := Map.RAciphersRadius
 		s += fmt.Sprintf(form2, ra, x2, y2, r, r, x1, y1, strokeWidth, ra, ra) // circle arch for an hour number text
 	}
-	return fmt.Sprintf(form0, r1, r2, s)
+	r0 := 0.5 * (r1 + r2)
+	w0 := 0.5 * (r2 - r1)
+	return fmt.Sprintf(form0, r0, w0, r1, r2, s)
 }
 func circleDayN(date time.Time, a float64) string {
 	n := date.Format("2")
