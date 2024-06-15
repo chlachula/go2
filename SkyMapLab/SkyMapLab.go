@@ -88,7 +88,7 @@ const (
 	svgTemplate1 = `
 <svg xmlns="http://www.w3.org/2000/svg" 
     xmlns:xlink="http://www.w3.org/1999/xlink" 
-	width="{{.WidthMM}}mm" height="{{.HeightMM}}mm" viewBox="-250 -{{.HeightHalf}} 500 {{.Height}}" 
+	width="{{.WidthMM}}mm" height="{{.HeightMM}}mm" viewBox="{{.VBminX}} -{{.HeightHalf}} {{.VBwidth}} {{.Height}}" 
 	style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd;background:beige">
     <title>Sky Map Lab</title>
  <defs>
@@ -152,6 +152,10 @@ type SvgDataType = struct {
 	HeightMM         float64
 	Height           float64
 	HeightHalf       float64
+	VBminX           float64
+	VBminY           float64
+	VBwidth          float64
+	VBheight         float64
 }
 
 var (
@@ -279,6 +283,8 @@ func getSvgData(color bool) SvgDataType {
 		PaperName:        papers[i].Name,
 		WidthMM:          papers[i].WidthMM,
 		HeightMM:         papers[i].HeightMM,
+		VBminX:           -250.0,
+		VBwidth:          500.0,
 		Height:           500.0 * papers[i].HeightMM / papers[i].WidthMM,
 		HeightHalf:       250.0 * papers[i].HeightMM / papers[i].WidthMM,
 	}
