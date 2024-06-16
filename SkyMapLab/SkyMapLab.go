@@ -83,12 +83,27 @@ type ConstellationCoordPoints struct {
 	Lines   []EqPoints
 }
 
+type paperType = struct {
+	Name     string
+	WidthMM  float64
+	HeightMM float64
+	Height   float64
+}
+
+var papers = []paperType{
+	{Name: "A4", WidthMM: 210.0, HeightMM: 297.0},
+	{Name: "A3", WidthMM: 297.0, HeightMM: 420.0},
+	{Name: "Letter 8.5\"x11\"", WidthMM: 215.9, HeightMM: 279.4},
+	{Name: "Legal 8.5\"x14\"", WidthMM: 215.9, HeightMM: 355.6},
+	{Name: "Ledger 11\"x17\"", WidthMM: 279.4, HeightMM: 431.8},
+}
+
 const (
 	htmlEnd      = "\n<br/></body></html>"
 	svgTemplate1 = `
 <svg xmlns="http://www.w3.org/2000/svg" 
     xmlns:xlink="http://www.w3.org/1999/xlink" 
-	width="{{.WidthMM}}mm" height="{{.HeightMM}}mm" viewBox="{{.VBminX}} -{{.HeightHalf}} {{.VBwidth}} {{.Height}}" 
+	width="{{.WidthMM}}mm" height="{{.HeightMM}}mm" viewBox="{{.VBminX}} {{.VBminY}} {{.VBwidth}} {{.VBheight}}" 
 	style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd;background:beige">
     <title>Sky Map Lab</title>
  <defs>
@@ -256,24 +271,32 @@ func SetVariables(top, bottom string) {
 	BottomText = bottom
 	fmt.Printf("TOP:    %s\nBOTTOM: %s\n", TopText, BottomText)
 }
-
-func getSvgData(color bool) SvgDataType {
-	type paperType = struct {
-		Name     string
-		WidthMM  float64
-		HeightMM float64
-		Height   float64
+func viewBox(w float64, h float64, rows, colums, rIndex, cIndex int) (float64, float64, float64, float64) {
+	minX, minY := -0.5*w, -0.5*h
+	width, height := w, h
+	dw, dh := w, h
+	if rows != 0 || colums != 0 {
+		if rows != 0 {
+			dh /= float64(rows)
+		}
+		if colums != 0 {
+			dw /= float64(colums)
+		}
 	}
-	var papers = []paperType{
-		{Name: "A4", WidthMM: 210.0, HeightMM: 297.0},
-		{Name: "A3", WidthMM: 297.0, HeightMM: 420.0},
-		{Name: "Letter 8.5\"x11\"", WidthMM: 215.9, HeightMM: 279.4},
-		{Name: "Legal 8.5\"x14\"", WidthMM: 215.9, HeightMM: 355.6},
-		{Name: "Ledger 11\"x17\"", WidthMM: 279.4, HeightMM: 431.8},
-	}
+	minX += float64(cIndex) * dw
+	minY += float64(rIndex) * dh
+	width = dw
+	height = dh
+	return minX, minY, width, height
+}
+func getSvgData(color bool, i int64) SvgDataType {
 	factor := Map.Rlat / 150.0
 
-	i := 4
+	width := 500.0
+	height := width * papers[i].HeightMM / papers[i].WidthMM
+	rowsNumber, columnsNumber := 0, 0
+	rowIndex, columnIndex := 0, 0
+	vMinX, vMinY, vWidth, vHeight := viewBox(width, height, rowsNumber, columnsNumber, rowIndex, columnIndex)
 	data := SvgDataType{
 		TopColor:         "green",
 		BottomColor:      "red",
@@ -283,10 +306,12 @@ func getSvgData(color bool) SvgDataType {
 		PaperName:        papers[i].Name,
 		WidthMM:          papers[i].WidthMM,
 		HeightMM:         papers[i].HeightMM,
-		VBminX:           -250.0,
-		VBwidth:          500.0,
-		Height:           500.0 * papers[i].HeightMM / papers[i].WidthMM,
-		HeightHalf:       250.0 * papers[i].HeightMM / papers[i].WidthMM,
+		Height:           height,
+		HeightHalf:       0.5 * height,
+		VBminX:           vMinX,
+		VBminY:           vMinY,
+		VBwidth:          vWidth,
+		VBheight:         vHeight,
 	}
 	if !color {
 		data.TopColor = "black"
@@ -698,8 +723,8 @@ func HandlerSkyMapLab(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "<h1>SkyMap Lab</h1>\n")
 	fmt.Fprint(w, `<table border="1" style="margin: 0px auto;">
 	<tr><td></td><td>N</td><td>S</td></tr>
-	<tr><td>color</td><td><a href="/img/svg/skymap/co/n44">+44</a></td><td><a href="/img/svg/skymap/co/s44">-44</a></td></tr>
-	<tr><td>b&amp;w</td><td><a href="/img/svg/skymap/bw/n44">+44</a></td><td><a href="/img/svg/skymap/bw/s44">-44</a></td></tr>
+	<tr><td>color</td><td><a href="/img/svg/skymap/co/n44/2">+44</a></td><td><a href="/img/svg/skymap/co/s44/2">-44</a></td></tr>
+	<tr><td>b&amp;w</td><td><a href="/img/svg/skymap/bw/n44/2">+44</a></td><td><a href="/img/svg/skymap/bw/s44/2">-44</a></td></tr>
 	</table>`)
 }
 func getLatitude(str string) float64 {
@@ -715,12 +740,14 @@ func getLatitude(str string) float64 {
 }
 func HandlerSkyMapGeneral(w http.ResponseWriter, r *http.Request) {
 	colorId := r.PathValue("colorId")
+	colorfullMap := strings.HasPrefix(colorId, "co")
 	lat := getLatitude(r.PathValue("latId"))
-	if strings.HasPrefix(colorId, "co") {
+	if colorfullMap {
 		SetMapStyle(249.0, lat, MapColorsRed)
 	} else {
 		SetMapStyle(249.0, lat, MapBlackAndWhite)
 	}
+	paperId := r.PathValue("paperId")
 
 	w.Header().Set("Content-Type", "image/svg+xml")
 	defs := plotRaCross()
@@ -736,7 +763,12 @@ func HandlerSkyMapGeneral(w http.ResponseWriter, r *http.Request) {
 
 	svgTemplate2 := fmt.Sprintf(svgTemplate1, defs)
 	if t, err := template.New("SkyMap").Parse(svgTemplate2); err == nil {
-		data := getSvgData(strings.HasPrefix(colorId, "co"))
+		var paperIdInt int64
+		var err error
+		if paperIdInt, err = strconv.ParseInt(paperId, 10, 64); err != nil {
+			paperIdInt = 0
+		}
+		data := getSvgData(colorfullMap, paperIdInt)
 		if err = t.Execute(w, data); err != nil {
 			fmt.Fprintf(w, "<h1>error %s</h1>", err.Error())
 		}
