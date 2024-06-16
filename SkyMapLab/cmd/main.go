@@ -73,7 +73,7 @@ func main() {
 				a.LoadConstellations("data/SkyMap-constellations.json")
 				a.SetMapStyle(radius, lat, a.MapColorsRed)
 				http.HandleFunc("/", a.HandlerHome)
-				http.HandleFunc("/img/svg/skymap/{colorId}/{latId}", a.HandlerSkyMapGeneral)
+				http.HandleFunc("/img/svg/skymap/{colorId}/{latId}/{paperId}", a.HandlerSkyMapGeneral)
 				http.HandleFunc("/SkyMapLab", a.HandlerSkyMapLab)
 				print("Serving SVG page Listenning at " + colonPort + ". CTRL+C to stop.")
 				http.ListenAndServe(colonPort, nil)
