@@ -723,8 +723,8 @@ func HandlerSkyMapLab(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "<h1>SkyMap Lab</h1>\n")
 	fmt.Fprint(w, `<table border="1" style="margin: 0px auto;">
 	<tr><td></td><td>N</td><td>S</td></tr>
-	<tr><td>color</td><td><a href="/img/svg/skymap/co/n44/2">+44</a></td><td><a href="/img/svg/skymap/co/s44/2">-44</a></td></tr>
-	<tr><td>b&amp;w</td><td><a href="/img/svg/skymap/bw/n44/2">+44</a></td><td><a href="/img/svg/skymap/bw/s44/2">-44</a></td></tr>
+	<tr><td>color</td><td><a href="/img/svg/skymap/co/n44/2/x">+44</a></td><td><a href="/img/svg/skymap/co/s44/2/x">-44</a></td></tr>
+	<tr><td>b&amp;w</td><td><a href="/img/svg/skymap/bw/n44/2/x">+44</a></td><td><a href="/img/svg/skymap/bw/s44/2/x">-44</a></td></tr>
 	</table>`)
 }
 func getLatitude(str string) float64 {
@@ -748,6 +748,8 @@ func HandlerSkyMapGeneral(w http.ResponseWriter, r *http.Request) {
 		SetMapStyle(249.0, lat, MapBlackAndWhite)
 	}
 	paperId := r.PathValue("paperId")
+	partId := r.PathValue("partId")
+	_ = partId
 
 	w.Header().Set("Content-Type", "image/svg+xml")
 	defs := plotRaCross()
