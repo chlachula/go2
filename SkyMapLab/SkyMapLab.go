@@ -727,7 +727,7 @@ func HandlerSkyMapLab(w http.ResponseWriter, r *http.Request) {
 	<tr><td>b&amp;w</td><td><a href="/img/svg/skymap/bw/n44/2/x">+44</a></td><td><a href="/img/svg/skymap/bw/s44/2/x">-44</a></td></tr>
 	</table>
 	
-	<form>
+	<form action="javascript:alert('Hello there, I am being submitted');">
      <select name="hemisphere" id="hemisphere">
         <option value="s" >S</option>
         <option value="n" selected="selected">N</option>
