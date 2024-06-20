@@ -28,12 +28,15 @@ type StarRecord struct {
 
 type MapColors struct {
 	ConstLine   string
+	ConstName   string
 	OuterCircle string
+	Months      string
+	Star        string
 }
 
-var MapColorsRed = MapColors{ConstLine: "red", OuterCircle: "#ffeee6"}
-var MapBlackAndWhite = MapColors{ConstLine: "black", OuterCircle: "silver"}
-var MapColorsOrange = MapColors{ConstLine: "orange", OuterCircle: "#f2e1e9"}
+var MapColorsRed = MapColors{ConstLine: "red", OuterCircle: "#ffeee6", Months: "red", ConstName: "green", Star: "blue"}
+var MapBlackAndWhite = MapColors{ConstLine: "black", OuterCircle: "silver", Months: "black", ConstName: "black", Star: "black"}
+var MapColorsOrange = MapColors{ConstLine: "orange", OuterCircle: "#f2e1e9", Months: "orange", ConstName: "green", Star: "darkblue"}
 
 type MapStyle struct {
 	NorthMap              bool
@@ -440,7 +443,7 @@ func circleDayN(date time.Time, a float64) string {
 func circleMonthN(date time.Time, a float64) string {
 	n := date.Format("January")
 	a1 := a - 1.3*dayArcR*float64(len(n))
-	return circleArchText("MONTH_"+date.Format("Jan"), n, Map.MonthsRadius, a1, monthArcR, "none", "red", Map.Rlat*0.06)
+	return circleArchText("MONTH_"+date.Format("Jan"), n, Map.MonthsRadius, a1, monthArcR, "none", Map.Colors.Months, Map.Rlat*0.06)
 }
 
 func circleArchText(id, text string, r, a, deltaA float64, strokeColor string, fillColor string, fontSize float64) string {
@@ -551,7 +554,7 @@ func plotStars() string {
 		if star.Mag < Map.MagMin && starCanBeVisible(Map, star) {
 			x, y := eqToCartesianXY(star.RA, star.De)
 			rMag := magToRadius(star.Mag)
-			s += fmt.Sprintf(form1, x, y, rMag, "blue")
+			s += fmt.Sprintf(form1, x, y, rMag, Map.Colors.Star)
 		}
 	}
 	s += "      </g>\n"
@@ -611,7 +614,7 @@ func plotConstellationNames() string {
 		if constellationCanBeVisible(Map, c) {
 			cId := fmt.Sprintf("CONST_%s", c.Abbr)
 			raR := c.NameLoc.RA * math.Pi / 180.0
-			s += tangentText(cId, c.Abbr, declinationToRadius(c.NameLoc.De), raR, Map.Rlat*0.06, "none", "green", Map.Rlat*0.035) // #d5ff80
+			s += tangentText(cId, c.Abbr, declinationToRadius(c.NameLoc.De), raR, Map.Rlat*0.06, "none", Map.Colors.ConstName, Map.Rlat*0.035) // #d5ff80
 		}
 	}
 	s += "      </g>\n"
