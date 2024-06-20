@@ -32,11 +32,13 @@ type MapColors struct {
 	OuterCircle string
 	Months      string
 	Star        string
+	Ecliptic    string
+	Horizon     string
 }
 
-var MapColorsRed = MapColors{ConstLine: "red", OuterCircle: "#ffeee6", Months: "red", ConstName: "green", Star: "blue"}
-var MapBlackAndWhite = MapColors{ConstLine: "black", OuterCircle: "silver", Months: "black", ConstName: "black", Star: "black"}
-var MapColorsOrange = MapColors{ConstLine: "orange", OuterCircle: "#f2e1e9", Months: "orange", ConstName: "green", Star: "darkblue"}
+var MapColorsRed = MapColors{ConstLine: "red", OuterCircle: "#ffeee6", Months: "red", ConstName: "green", Star: "blue", Ecliptic: "orange", Horizon: "green"}
+var MapBlackAndWhite = MapColors{ConstLine: "black", OuterCircle: "silver", Months: "black", ConstName: "black", Star: "black", Ecliptic: "black", Horizon: "black"}
+var MapColorsOrange = MapColors{ConstLine: "orange", OuterCircle: "#f2e1e9", Months: "orange", ConstName: "green", Star: "darkblue", Ecliptic: "yellow", Horizon: "darkgreen"}
 
 type MapStyle struct {
 	NorthMap              bool
@@ -623,7 +625,7 @@ func plotConstellationNames() string {
 }
 func plotEcliptic() string {
 	s := "      <g id=\"plotEcliptic\">\n"
-	form1 := "        <path d=\"%s\" stroke=\"orange\" stroke-width=\"0.25\" fill=\"none\" />\n"
+	form1 := "        <path d=\"%s\" stroke=\"%s\" stroke-width=\"0.25\" fill=\"none\" />\n"
 	toRad := math.Pi / 180.0
 	toDeg := 180.0 / math.Pi
 	x, y := eqToCartesianXY(0.0, 0.0)
@@ -633,7 +635,7 @@ func plotEcliptic() string {
 		x, y := eqToCartesianXY(ra*toDeg, de*toDeg)
 		d += fmt.Sprintf("%.1f,%.1f ", x, y)
 	}
-	s += fmt.Sprintf(form1, d)
+	s += fmt.Sprintf(form1, d, Map.Colors.Ecliptic)
 	s += "      </g>\n"
 
 	return s
@@ -641,7 +643,7 @@ func plotEcliptic() string {
 
 func plotHorizon() string {
 	s := "      <g id=\"plotHorizon\" transform=\"rotate(180)\" >\n"
-	form1 := "        <path d=\"%s\" stroke=\"green\" stroke-width=\"0.25\" fill=\"none\" />\n"
+	form1 := "        <path d=\"%s\" stroke=\"%s\" stroke-width=\"0.25\" fill=\"none\" />\n"
 	toRad := math.Pi / 180.0
 	toDeg := 180.0 / math.Pi
 	hR := 0.0
@@ -655,7 +657,7 @@ func plotHorizon() string {
 		x, y = eqToCartesianXY(t*toDeg, de*toDeg)
 		d += fmt.Sprintf("%.1f,%.1f ", x, y)
 	}
-	s += fmt.Sprintf(form1, d)
+	s += fmt.Sprintf(form1, d, Map.Colors.Horizon)
 	s += "      </g>\n"
 
 	return s
