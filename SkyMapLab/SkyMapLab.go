@@ -723,7 +723,16 @@ func HandlerHome(w http.ResponseWriter, r *http.Request) {
 func HandlerSkyMapLab(w http.ResponseWriter, r *http.Request) {
 	//writeHtmlHeadAndMenu(w, "/svg-roundlogo-color", "Color")
 
-	fmt.Fprint(w, "<html><head><title>SkyMap</title></head>\n")
+	fmt.Fprint(w, `<html>
+  <head>
+    <title>SkyMap</title>
+	<script>
+	  function openSkyMap(thisOne){
+		alert('Hello from SkyMap submit!');
+	  }
+	</script>	
+  </head>
+	 `)
 	fmt.Fprint(w, "<body style=\"text-align: center;\">\n")
 	fmt.Fprint(w, "<h1>SkyMap Lab</h1>\n")
 	fmt.Fprint(w, `<table border="1" style="margin: 0px auto;">
@@ -732,7 +741,8 @@ func HandlerSkyMapLab(w http.ResponseWriter, r *http.Request) {
 	<tr><td>b&amp;w</td><td><a href="/img/svg/skymap/bw/n44/2/x">+44</a></td><td><a href="/img/svg/skymap/bw/s44/2/x">-44</a></td></tr>
 	</table>
 	
-	<form action="javascript:alert('Hello there, I am being submitted');">
+	<!--form action="javascript:alert('Hello there, I am being submitted');"-->
+	<form action="javascript:;" onsubmit=" openSkyMap( this ) ">  
      <select name="hemisphere" id="hemisphere">
         <option value="s" >S</option>
         <option value="n" selected="selected">N</option>
