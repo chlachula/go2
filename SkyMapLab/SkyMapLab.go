@@ -727,21 +727,30 @@ func HandlerSkyMapLab(w http.ResponseWriter, r *http.Request) {
   <head>
     <title>SkyMap</title>
 	<script>
-	  function openSkyMap(thisOne){
-		alert('Hello from SkyMap submit!');
+	  function openSkyMap(f){
+		// f == this form
+		// http://localhost:8080/img/svg/skymap/co/n44/2/x
+		let u = '/img/svg/skymap/';
+		u +=  f.color_style.value + '/'
+		u +=  f.hemisphere.value + f.latitude.value + '/'
+		u +=  f.paper.value + '/'
+		u +=  'x'
+		
+		alert('Hello from SkyMap submit! u='+u);
+		
+		//window.location.href = u; // in the same tab
+
+		const anchor = document.createElement("a");
+		anchor.href = u;
+		anchor.target = "_blank"; // Open in a new tab
+		anchor.click();
 	  }
 	</script>	
   </head>
 	 `)
 	fmt.Fprint(w, "<body style=\"text-align: center;\">\n")
-	fmt.Fprint(w, "<h1>SkyMap Lab</h1>\n")
-	fmt.Fprint(w, `<table border="1" style="margin: 0px auto;">
-	<tr><td></td><td>N</td><td>S</td></tr>
-	<tr><td>color</td><td><a href="/img/svg/skymap/co/n44/2/x">+44</a></td><td><a href="/img/svg/skymap/co/s44/2/x">-44</a></td></tr>
-	<tr><td>b&amp;w</td><td><a href="/img/svg/skymap/bw/n44/2/x">+44</a></td><td><a href="/img/svg/skymap/bw/s44/2/x">-44</a></td></tr>
-	</table>
-	
-	<!--form action="javascript:alert('Hello there, I am being submitted');"-->
+	fmt.Fprint(w, "<h1>SkyMap Lab select page</h1>\n")
+	fmt.Fprint(w, `	
 	<form action="javascript:;" onsubmit=" openSkyMap( this ) ">  
      <select name="hemisphere" id="hemisphere">
         <option value="s" >S</option>
@@ -750,15 +759,15 @@ func HandlerSkyMapLab(w http.ResponseWriter, r *http.Request) {
 
      <label for="latitude">Latitude:</label>
      <input type="number" id="latitude" name="latitude" value="44" step="1"  min="0" max="90" size="2">
-	 <br/>
+	 
 	 
 	 <label for="color">Color:</label>
 	 <input type="radio" id="co" name="color_style" value="co" checked="checked">
 	 <label for="bw">Black &amp; White</label>
-	 <br/>
+	 
 	 
 	 <input type="radio" id="bw" name="color_style" value="bw">
-     <br/>
+     
  
      <select name="paper" id="paper">
         <option value="0" >A4</option>
@@ -768,18 +777,20 @@ func HandlerSkyMapLab(w http.ResponseWriter, r *http.Request) {
         <option value="4" >Ledger 11x17</option>
      </select>
 	 <br/>
-	 <!-- 
-	      https://github.com/kpawlik/svg2pdf/
-		  https://pkg.go.dev/github.com/nicholasblaskey/svg-rasterizer#section-readme
-	      https://helpx.adobe.com/acrobat/kb/print-posters-banners-acrobat-reader.html
-	      Poster: TileScale, OverLap 0.005 in, Cut marks
-	      Orientation: Portrate Landscape 
-		-->
 	 <br/>
 	 <input type="reset" value="RESET">
 	 <input type="submit" value="SUBMIT">
 
-    </form>`)
+    </form>
+	<!-- 
+	https://github.com/kpawlik/svg2pdf/
+	https://pkg.go.dev/github.com/nicholasblaskey/svg-rasterizer#section-readme
+	https://helpx.adobe.com/acrobat/kb/print-posters-banners-acrobat-reader.html
+	Poster: TileScale, OverLap 0.005 in, Cut marks
+	Orientation: Portrate Landscape 
+  -->
+
+	`)
 }
 func getLatitude(str string) float64 {
 	sign := 1
