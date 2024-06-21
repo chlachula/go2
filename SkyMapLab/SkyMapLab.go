@@ -736,8 +736,7 @@ func HandlerSkyMapLab(w http.ResponseWriter, r *http.Request) {
 		u +=  f.paper.value + '/'
 		u +=  'x'
 		
-		alert('Hello from SkyMap submit! u='+u);
-		
+		//alert('Hello from SkyMap submit! url='+u);		
 		//window.location.href = u; // in the same tab
 
 		const anchor = document.createElement("a");
