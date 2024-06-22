@@ -62,6 +62,7 @@ type MapStyle struct {
 	MagBrightest          float64
 	MagMinName            float64
 	Colors                MapColors
+	DashedEcliptic        bool
 }
 
 var SliceOfStars []StarRecord
@@ -324,6 +325,12 @@ func getSvgData(color bool, i int64) SvgDataType {
 	}
 	return data
 }
+
+/*
+https://go.dev/play/p/u2437C2rRFG
+Special characters needing encoding are: ':', '/', '?', '#', '[', ']', '@', '!', '$', '&', "'", '(', ')', '*', '+', ',', ';', '=', as well as '%' itself.
+URL special characters not needing percent coding: 34"  45-  46.  60<  62>  92\  94^  95_  96`  123{  124|  125}  126~
+*/
 
 func cartesianXY(r, a float64) (float64, float64) {
 	x := -r * math.Sin(a)
@@ -624,16 +631,32 @@ func plotConstellationNames() string {
 	return s
 }
 func plotEcliptic() string {
+	dashed := Map.DashedEcliptic
 	s := "      <g id=\"plotEcliptic\">\n"
 	form1 := "        <path d=\"%s\" stroke=\"%s\" stroke-width=\"0.25\" fill=\"none\" />\n"
 	toRad := math.Pi / 180.0
 	toDeg := 180.0 / math.Pi
 	x, y := eqToCartesianXY(0.0, 0.0)
-	d := fmt.Sprintf("M%.1f,%.1f L", x, y)
+	d := fmt.Sprintf("M%.1f,%.1f ", x, y)
+	formContinual := "%.1f,%.1f "
+	form0 := formContinual
+	L := true
+	c := ""
+	if !dashed {
+		d += "L"
+	}
 	for la := 1.0; la < 360.1; la = la + 1.0 {
 		ra, de := EclipticalToEquatorial(la*toRad, 0.0)
 		x, y := eqToCartesianXY(ra*toDeg, de*toDeg)
-		d += fmt.Sprintf("%.1f,%.1f ", x, y)
+		if dashed {
+			if L {
+				c = "M"
+			} else {
+				c = "L"
+			}
+			L = !L
+		}
+		d += fmt.Sprintf(c+form0, x, y)
 	}
 	s += fmt.Sprintf(form1, d, Map.Colors.Ecliptic)
 	s += "      </g>\n"
