@@ -63,6 +63,7 @@ type MapStyle struct {
 	MagMinName            float64
 	Colors                MapColors
 	DashedEcliptic        bool
+	DashedHorizon         bool
 }
 
 var SliceOfStars []StarRecord
@@ -75,6 +76,8 @@ const monthArcR = 27.0 / 31.0 * math.Pi / 6.0
 
 var SliceOfConstellations []ConstellationCoordPoints
 var Map MapStyle
+
+type greatCircleToEq func(float64, float64) (float64, float64)
 
 type EqCoords struct {
 	RA float64 `json:"RA"`
@@ -634,23 +637,27 @@ func plotConstellationNames() string {
 
 	return s
 }
-func plotEcliptic() string {
-	dashed := Map.DashedEcliptic
-	s := "      <g id=\"plotEcliptic\">\n"
+
+// great circle or orthodrome is the circular intersection of a sphere and a plane passing through the sphere's center point
+func plotGreatCircle(g string, color string, dashed bool, fixAngle float64, convertToEq greatCircleToEq) string {
+	//	s := "      <g id=\"plotEcliptic\">\n"
+	s := g
 	form1 := "        <path d=\"%s\" stroke=\"%s\" stroke-width=\"0.25\" fill=\"none\" />\n"
 	toRad := math.Pi / 180.0
 	toDeg := 180.0 / math.Pi
-	x, y := eqToCartesianXY(0.0, 0.0)
+	fixAngleR := fixAngle * toRad
+	ra, de := convertToEq(0.0, fixAngleR)
+	x, y := eqToCartesianXY(ra*toDeg, de*toDeg)
 	d := fmt.Sprintf("M%.1f,%.1f ", x, y)
 	formContinual := "%.1f,%.1f "
 	form0 := formContinual
-	L := true
+	L := false
 	c := ""
 	if !dashed {
 		d += "L"
 	}
 	for la := 1.0; la < 360.1; la = la + 1.0 {
-		ra, de := EclipticalToEquatorial(la*toRad, 0.0)
+		ra, de := convertToEq(la*toRad, fixAngleR)
 		x, y := eqToCartesianXY(ra*toDeg, de*toDeg)
 		if dashed {
 			if L {
@@ -662,31 +669,21 @@ func plotEcliptic() string {
 		}
 		d += fmt.Sprintf(c+form0, x, y)
 	}
-	s += fmt.Sprintf(form1, d, Map.Colors.Ecliptic)
+	s += fmt.Sprintf(form1, d, color)
 	s += "      </g>\n"
 
 	return s
 }
+func plotEcliptic() string {
+	g := "      <g id=\"plotEcliptic\">\n"
+	eclipticLatitude := 0.0
+	return plotGreatCircle(g, Map.Colors.Ecliptic, Map.DashedEcliptic, eclipticLatitude, EclipticalToEquatorial)
+}
 
 func plotHorizon() string {
-	s := "      <g id=\"plotHorizon\" transform=\"rotate(180)\" >\n"
-	form1 := "        <path d=\"%s\" stroke=\"%s\" stroke-width=\"0.25\" fill=\"none\" />\n"
-	toRad := math.Pi / 180.0
-	toDeg := 180.0 / math.Pi
-	fi := Map.Latitude
-	fiR := fi * toRad
-	t, de := AzimutOnHorizonToEquatoreal_I(0.0, fiR)
-	x, y := eqToCartesianXY(t*toDeg, de*toDeg)
-	d := fmt.Sprintf("M%.1f,%.1f L", x, y)
-	for az := 1.0; az < 360.1; az = az + 1.0 {
-		t, de := AzimutOnHorizonToEquatoreal_I(az*toRad, fiR)
-		x, y = eqToCartesianXY(t*toDeg, de*toDeg)
-		d += fmt.Sprintf("%.1f,%.1f ", x, y)
-	}
-	s += fmt.Sprintf(form1, d, Map.Colors.Horizon)
-	s += "      </g>\n"
-
-	return s
+	g := "      <g id=\"plotHorizon\" transform=\"rotate(180)\" >\n"
+	geographicLatitude := Map.Latitude
+	return plotGreatCircle(g, Map.Colors.Horizon, Map.DashedHorizon, geographicLatitude, AzimutOnHorizonToEquatoreal_I)
 }
 
 func LoadECSV(filename string) ([][]string, error) {
