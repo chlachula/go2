@@ -639,13 +639,13 @@ func plotConstellationNames() string {
 }
 
 // great circle or orthodrome is the circular intersection of a sphere and a plane passing through the sphere's center point
-func plotGreatCircle(g string, color string, dashed bool, fixAngle float64, convertToEq greatCircleToEq) string {
+func plotGreatCircle(g string, color string, dashed bool, fixAngleDeg float64, convertToEq greatCircleToEq) string {
 	//	s := "      <g id=\"plotEcliptic\">\n"
 	s := g
 	form1 := "        <path d=\"%s\" stroke=\"%s\" stroke-width=\"0.25\" fill=\"none\" />\n"
 	toRad := math.Pi / 180.0
 	toDeg := 180.0 / math.Pi
-	fixAngleR := fixAngle * toRad
+	fixAngleR := fixAngleDeg * toRad
 	ra, de := convertToEq(0.0, fixAngleR)
 	x, y := eqToCartesianXY(ra*toDeg, de*toDeg)
 	d := fmt.Sprintf("M%.1f,%.1f ", x, y)
