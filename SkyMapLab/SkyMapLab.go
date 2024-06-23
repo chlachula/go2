@@ -252,6 +252,10 @@ func AzimutalToEquatoreal_I(A, h, fi float64) (float64, float64) {
 	return t, de
 }
 
+func AzimutOnHorizonToEquatoreal_I(A, fi float64) (float64, float64) {
+	return AzimutalToEquatoreal_I(A, 0.0, fi)
+}
+
 /*
 cos𝛿*cos𝛼 = cos𝛽*cos𝜆 => cos𝛿 = cos𝛽*cos𝜆 / cos𝛼
 cos𝛿*sin𝛼 = cos𝛽*sin𝜆*cos𝜀 − sin𝜀*sin𝛽 = sin𝛼/cos𝛼 * cos𝛽*cos𝜆 = tan𝛼*cos𝛽*cos𝜆
@@ -669,14 +673,13 @@ func plotHorizon() string {
 	form1 := "        <path d=\"%s\" stroke=\"%s\" stroke-width=\"0.25\" fill=\"none\" />\n"
 	toRad := math.Pi / 180.0
 	toDeg := 180.0 / math.Pi
-	hR := 0.0
 	fi := Map.Latitude
 	fiR := fi * toRad
-	t, de := AzimutalToEquatoreal_I(0.0, hR, fiR)
+	t, de := AzimutOnHorizonToEquatoreal_I(0.0, fiR)
 	x, y := eqToCartesianXY(t*toDeg, de*toDeg)
 	d := fmt.Sprintf("M%.1f,%.1f L", x, y)
 	for az := 1.0; az < 360.1; az = az + 1.0 {
-		t, de = AzimutalToEquatoreal_I(az*toRad, hR, fiR)
+		t, de := AzimutOnHorizonToEquatoreal_I(az*toRad, fiR)
 		x, y = eqToCartesianXY(t*toDeg, de*toDeg)
 		d += fmt.Sprintf("%.1f,%.1f ", x, y)
 	}
