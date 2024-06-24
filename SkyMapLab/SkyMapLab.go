@@ -36,6 +36,9 @@ type MapColors struct {
 	Horizon     string
 }
 
+var toRad = math.Pi / 180.0
+var toDeg = 180.0 / math.Pi
+
 var MapColorsRed = MapColors{ConstLine: "red", OuterCircle: "#ffeee6", Months: "red", ConstName: "green", Star: "blue", Ecliptic: "orange", Horizon: "green"}
 var MapBlackAndWhite = MapColors{ConstLine: "black", OuterCircle: "silver", Months: "black", ConstName: "black", Star: "black", Ecliptic: "black", Horizon: "black"}
 var MapColorsOrange = MapColors{ConstLine: "orange", OuterCircle: "#f2e1e9", Months: "orange", ConstName: "green", Star: "darkblue", Ecliptic: "yellow", Horizon: "darkgreen"}
@@ -643,8 +646,6 @@ func plotGreatCircle(g string, color string, dashed bool, fixAngleDeg float64, c
 	//	s := "      <g id=\"plotEcliptic\">\n"
 	s := g
 	form1 := "        <path d=\"%s\" stroke=\"%s\" stroke-width=\"0.25\" fill=\"none\" />\n"
-	toRad := math.Pi / 180.0
-	toDeg := 180.0 / math.Pi
 	fixAngleR := fixAngleDeg * toRad
 	ra, de := convertToEq(0.0, fixAngleR)
 	x, y := eqToCartesianXY(ra*toDeg, de*toDeg)
@@ -684,6 +685,41 @@ func plotHorizon() string {
 	g := "      <g id=\"plotHorizon\" transform=\"rotate(180)\" >\n"
 	geographicLatitude := Map.Latitude
 	return plotGreatCircle(g, Map.Colors.Horizon, Map.DashedHorizon, geographicLatitude, AzimutOnHorizonToEquatoreal_I)
+}
+
+func plotAlmucantarats(color string, dashed bool, fixAngleDeg float64, convertToEq greatCircleToEq) string {
+	s := "      <g id=\"plotAlmucantarats\"  transform=\"rotate(180)\" >\n"
+	form1 := "        <path d=\"%s\" stroke=\"%s\" stroke-width=\"0.25\" fill=\"none\" />\n"
+	fixAngleR := fixAngleDeg * toRad
+	//AzimutalToEquatoreal_I(A, 0.0, fi)
+	ra, de := convertToEq(0.0, fixAngleR)
+	x, y := eqToCartesianXY(ra*toDeg, de*toDeg)
+	d := fmt.Sprintf("M%.1f,%.1f ", x, y)
+	formContinual := "%.1f,%.1f "
+	form0 := formContinual
+	L := false
+	c := ""
+	if !dashed {
+		d += "L"
+	}
+	for la := 1.0; la < 360.1; la = la + 1.0 {
+		//AzimutalToEquatoreal_I(A, 0.0, fi)
+		ra, de := convertToEq(la*toRad, fixAngleR)
+		x, y := eqToCartesianXY(ra*toDeg, de*toDeg)
+		if dashed {
+			if L {
+				c = "M"
+			} else {
+				c = "L"
+			}
+			L = !L
+		}
+		d += fmt.Sprintf(c+form0, x, y)
+	}
+	s += fmt.Sprintf(form1, d, color)
+	s += "      </g>\n"
+
+	return s
 }
 
 func LoadECSV(filename string) ([][]string, error) {
