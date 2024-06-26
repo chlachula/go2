@@ -158,6 +158,7 @@ const (
     <use xlink:href="#plotEcliptic" />
     <use xlink:href="#plotHorizon" />
     <use xlink:href="#plotAlmucantarats" />
+    <use xlink:href="#plotMeridians" />	
     <use xlink:href="#plotStars" />
     <use xlink:href="#plotDateRoundScale" />
     <use xlink:href="#plotRaHourScale" />
@@ -729,6 +730,49 @@ func plotAlmucantarat(color string, dashed bool, fixAngleDeg float64, h float64)
 	return s
 }
 
+func plotMeridians() string {
+	s := "      <g id=\"plotMeridians\"  transform=\"rotate(180)\" >\n"
+	aInc := 10.0
+	for a := aInc; a < 360.1; a = a + aInc {
+		s += plotMeridian(Map.Colors.Horizon, Map.DashedHorizon, Map.Latitude, a)
+	}
+	s += "      </g>\n"
+	return s
+}
+
+func plotMeridian(color string, dashed bool, fixAngleDeg float64, a float64) string {
+	form1 := "        <path id=\"MerA%.f\" d=\"%s\" stroke=\"%s\" stroke-width=\"0.25\" fill=\"none\" />\n"
+	fixAngleR := fixAngleDeg * toRad
+	aR := a * toRad
+	ra, de := AzimutalToEquatoreal_I(aR, 0.0, fixAngleR)
+	x, y := eqToCartesianXY(ra*toDeg, de*toDeg)
+	d := fmt.Sprintf("M%.1f,%.1f ", x, y)
+	formContinual := "%.1f,%.1f "
+	form0 := formContinual
+	L := false
+	c := ""
+	if !dashed {
+		d += "L"
+	}
+	for h := 0.0; h < 90.1; h = h + 1.0 {
+		hR := h * toRad
+		ra, de := AzimutalToEquatoreal_I(aR, hR, fixAngleR)
+		x, y := eqToCartesianXY(ra*toDeg, de*toDeg)
+		if dashed {
+			if L {
+				c = "M"
+			} else {
+				c = "L"
+			}
+			L = !L
+		}
+		d += fmt.Sprintf(c+form0, x, y)
+	}
+	s := fmt.Sprintf(form1, a, d, color)
+
+	return s
+}
+
 func LoadECSV(filename string) ([][]string, error) {
 	rows := make([][]string, 0)
 	bytes, err := os.ReadFile(filename)
@@ -892,6 +936,7 @@ func HandlerSkyMapGeneral(w http.ResponseWriter, r *http.Request) {
 	defs += plotEcliptic()
 	defs += plotHorizon()
 	defs += plotAlmucantarats()
+	defs += plotMeridians()
 	defs += plotStars()
 
 	svgTemplate2 := fmt.Sprintf(svgTemplate1, defs)
