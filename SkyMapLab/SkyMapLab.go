@@ -690,7 +690,7 @@ func plotHorizon() string {
 
 func plotAlmucantarats() string {
 	s := "      <g id=\"plotAlmucantarats\"  transform=\"rotate(180)\" >\n"
-	hInc := 15.0
+	hInc := 10.0
 	for h := hInc; h < 90.0; h = h + hInc {
 		s += plotAlmucantarat(Map.Colors.Horizon, Map.DashedHorizon, Map.Latitude, h)
 	}
