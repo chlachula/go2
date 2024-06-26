@@ -754,7 +754,11 @@ func plotMeridian(color string, dashed bool, fixAngleDeg float64, a float64) str
 	if !dashed {
 		d += "L"
 	}
-	for h := 0.0; h < 90.1; h = h + 1.0 {
+	hMax := 80.1
+	if int(a)%90 == 0 {
+		hMax = 90.1
+	}
+	for h := 0.0; h < hMax; h = h + 1.0 {
 		hR := h * toRad
 		ra, de := AzimutalToEquatoreal_I(aR, hR, fixAngleR)
 		x, y := eqToCartesianXY(ra*toDeg, de*toDeg)
