@@ -157,6 +157,7 @@ const (
     <use xlink:href="#plotOuterCircle" />
     <use xlink:href="#plotEcliptic" />
     <use xlink:href="#plotHorizon" />
+    <use xlink:href="#plotAlmucantarats" />
     <use xlink:href="#plotStars" />
     <use xlink:href="#plotDateRoundScale" />
     <use xlink:href="#plotRaHourScale" />
@@ -687,12 +688,20 @@ func plotHorizon() string {
 	return plotGreatCircle(g, Map.Colors.Horizon, Map.DashedHorizon, geographicLatitude, AzimutOnHorizonToEquatoreal_I)
 }
 
-func plotAlmucantarats(color string, dashed bool, fixAngleDeg float64, convertToEq greatCircleToEq) string {
+func plotAlmucantarats() string {
 	s := "      <g id=\"plotAlmucantarats\"  transform=\"rotate(180)\" >\n"
+	hInc := 15.0
+	for h := hInc; h < 90.0; h = h + hInc {
+		s += plotAlmucantarat(Map.Colors.Horizon, Map.DashedHorizon, Map.Latitude, h)
+	}
+	s += "      </g>\n"
+	return s
+}
+func plotAlmucantarat(color string, dashed bool, fixAngleDeg float64, h float64) string {
 	form1 := "        <path d=\"%s\" stroke=\"%s\" stroke-width=\"0.25\" fill=\"none\" />\n"
 	fixAngleR := fixAngleDeg * toRad
-	//AzimutalToEquatoreal_I(A, 0.0, fi)
-	ra, de := convertToEq(0.0, fixAngleR)
+	hR := h * toRad
+	ra, de := AzimutalToEquatoreal_I(0.0, hR, fixAngleR)
 	x, y := eqToCartesianXY(ra*toDeg, de*toDeg)
 	d := fmt.Sprintf("M%.1f,%.1f ", x, y)
 	formContinual := "%.1f,%.1f "
@@ -702,9 +711,8 @@ func plotAlmucantarats(color string, dashed bool, fixAngleDeg float64, convertTo
 	if !dashed {
 		d += "L"
 	}
-	for la := 1.0; la < 360.1; la = la + 1.0 {
-		//AzimutalToEquatoreal_I(A, 0.0, fi)
-		ra, de := convertToEq(la*toRad, fixAngleR)
+	for a := 1.0; a < 360.1; a = a + 1.0 {
+		ra, de := AzimutalToEquatoreal_I(a*toRad, hR, fixAngleR)
 		x, y := eqToCartesianXY(ra*toDeg, de*toDeg)
 		if dashed {
 			if L {
@@ -716,8 +724,7 @@ func plotAlmucantarats(color string, dashed bool, fixAngleDeg float64, convertTo
 		}
 		d += fmt.Sprintf(c+form0, x, y)
 	}
-	s += fmt.Sprintf(form1, d, color)
-	s += "      </g>\n"
+	s := fmt.Sprintf(form1, d, color)
 
 	return s
 }
@@ -884,6 +891,7 @@ func HandlerSkyMapGeneral(w http.ResponseWriter, r *http.Request) {
 	defs += plotOuterCircle()
 	defs += plotEcliptic()
 	defs += plotHorizon()
+	defs += plotAlmucantarats()
 	defs += plotStars()
 
 	svgTemplate2 := fmt.Sprintf(svgTemplate1, defs)
