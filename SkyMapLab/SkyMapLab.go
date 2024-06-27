@@ -36,12 +36,15 @@ type MapColors struct {
 	Horizon     string
 }
 
-var toRad = math.Pi / 180.0
-var toDeg = 180.0 / math.Pi
+var (
+	toRad    = math.Pi / 180.0
+	toDeg    = 180.0 / math.Pi
+	𝜀Deg2025 = 23.436040
 
-var MapColorsRed = MapColors{ConstLine: "red", OuterCircle: "#ffeee6", Months: "red", ConstName: "green", Star: "blue", Ecliptic: "orange", Horizon: "green"}
-var MapBlackAndWhite = MapColors{ConstLine: "black", OuterCircle: "silver", Months: "black", ConstName: "black", Star: "black", Ecliptic: "black", Horizon: "black"}
-var MapColorsOrange = MapColors{ConstLine: "orange", OuterCircle: "#f2e1e9", Months: "orange", ConstName: "green", Star: "darkblue", Ecliptic: "yellow", Horizon: "darkgreen"}
+	MapColorsRed     = MapColors{ConstLine: "red", OuterCircle: "#ffeee6", Months: "red", ConstName: "green", Star: "blue", Ecliptic: "orange", Horizon: "green"}
+	MapBlackAndWhite = MapColors{ConstLine: "black", OuterCircle: "silver", Months: "black", ConstName: "black", Star: "black", Ecliptic: "black", Horizon: "black"}
+	MapColorsOrange  = MapColors{ConstLine: "orange", OuterCircle: "#f2e1e9", Months: "orange", ConstName: "green", Star: "darkblue", Ecliptic: "yellow", Horizon: "darkgreen"}
+)
 
 type MapStyle struct {
 	NorthMap              bool
@@ -272,7 +275,7 @@ cos𝛿*sin𝛼 = cos𝛽*sin𝜆*cos𝜀 − sin𝜀*sin𝛽 = sin𝛼/cos𝛼 
 sin𝛿 = sin𝛽*cos𝜀 + sin𝜀*cos𝛽*sin𝜆
 */
 func EclipticalToEquatorial(La, Be float64) (float64, float64) {
-	𝜀 := 23.436040 * math.Pi / 180.0 //for year 2025
+	𝜀 := 𝜀Deg2025 * toRad
 	sinRAcosDe := math.Cos(Be)*math.Sin(La)*math.Cos(𝜀) - math.Sin(𝜀)*math.Sin(Be)
 
 	RA := math.Atan2(sinRAcosDe, (math.Cos(Be) * math.Cos(La)))
@@ -689,7 +692,7 @@ func plotIsoLatitudeCircle(g string, color string, dashed bool, fixAngleDeg floa
 	form1 := "        <path d=\"%s\" stroke=\"%s\" stroke-width=\"0.25\" fill=\"none\" />\n"
 	fixAngleR := fixAngleDeg * toRad
 	latR := lat * toRad
-	ra, de := convertToEq(0.0, lat, fixAngleR)
+	ra, de := convertToEq(0.0, latR, fixAngleR)
 	x, y := eqToCartesianXY(ra*toDeg, de*toDeg)
 	d := fmt.Sprintf("M%.1f,%.1f ", x, y)
 	formContinual := "%.1f,%.1f "
@@ -773,7 +776,7 @@ func plotAlmucantarat(color string, dashed bool, fixAngleDeg float64, h float64)
 func plotPlatonYear() string {
 	g := "      <g id=\"plotPlatonYear\"  >\n"
 	//	s += plotAlmucantarat(Map.Colors.Horizon, Map.DashedHorizon, Map.Latitude, h)
-	s := plotIsoLatitudeCircle(g, Map.Colors.Ecliptic, Map.DashedEcliptic, 0.0, 66.5, EclipticalToEquatorial3)
+	s := plotIsoLatitudeCircle(g, Map.Colors.Ecliptic, Map.DashedEcliptic, 0.0, 90.0-𝜀Deg2025, EclipticalToEquatorial3)
 	return s
 }
 
