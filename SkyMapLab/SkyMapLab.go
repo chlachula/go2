@@ -81,6 +81,7 @@ var SliceOfConstellations []ConstellationCoordPoints
 var Map MapStyle
 
 type greatCircleToEq func(float64, float64) (float64, float64)
+type isoLatitudeCircleToEq func(float64, float64, float64) (float64, float64)
 
 type EqCoords struct {
 	RA float64 `json:"RA"`
@@ -156,6 +157,7 @@ const (
     <use xlink:href="#plotConstellationNames" />
     <use xlink:href="#plotOuterCircle" />
     <use xlink:href="#plotEcliptic" />
+    <use xlink:href="#plotPlatonYear" />
     <use xlink:href="#plotHorizon" />
     <use xlink:href="#plotAlmucantarats" />
     <use xlink:href="#plotMeridians" />	
@@ -282,6 +284,10 @@ func EclipticalToEquatorial(La, Be float64) (float64, float64) {
 	De := math.Asin(sinDe)
 
 	return RA, De
+}
+func EclipticalToEquatorial3(La, Be float64, none float64) (float64, float64) {
+	_ = none
+	return EclipticalToEquatorial(La, Be)
 }
 
 func SetVariables(top, bottom string) {
@@ -677,6 +683,40 @@ func plotGreatCircle(g string, color string, dashed bool, fixAngleDeg float64, c
 
 	return s
 }
+func plotIsoLatitudeCircle(g string, color string, dashed bool, fixAngleDeg float64, lat float64, convertToEq isoLatitudeCircleToEq) string {
+	//	s := "      <g id=\"plotEcliptic\">\n"
+	s := g
+	form1 := "        <path d=\"%s\" stroke=\"%s\" stroke-width=\"0.25\" fill=\"none\" />\n"
+	fixAngleR := fixAngleDeg * toRad
+	latR := lat * toRad
+	ra, de := convertToEq(0.0, lat, fixAngleR)
+	x, y := eqToCartesianXY(ra*toDeg, de*toDeg)
+	d := fmt.Sprintf("M%.1f,%.1f ", x, y)
+	formContinual := "%.1f,%.1f "
+	form0 := formContinual
+	L := false
+	c := ""
+	if !dashed {
+		d += "L"
+	}
+	for la := 1.0; la < 360.1; la = la + 1.0 {
+		ra, de := convertToEq(la*toRad, latR, fixAngleR)
+		x, y := eqToCartesianXY(ra*toDeg, de*toDeg)
+		if dashed {
+			if L {
+				c = "M"
+			} else {
+				c = "L"
+			}
+			L = !L
+		}
+		d += fmt.Sprintf(c+form0, x, y)
+	}
+	s += fmt.Sprintf(form1, d, color)
+	s += "      </g>\n"
+
+	return s
+}
 func plotEcliptic() string {
 	g := "      <g id=\"plotEcliptic\">\n"
 	eclipticLatitude := 0.0
@@ -727,6 +767,13 @@ func plotAlmucantarat(color string, dashed bool, fixAngleDeg float64, h float64)
 	}
 	s := fmt.Sprintf(form1, d, color)
 
+	return s
+}
+
+func plotPlatonYear() string {
+	g := "      <g id=\"plotPlatonYear\"  >\n"
+	//	s += plotAlmucantarat(Map.Colors.Horizon, Map.DashedHorizon, Map.Latitude, h)
+	s := plotIsoLatitudeCircle(g, Map.Colors.Ecliptic, Map.DashedEcliptic, 0.0, 66.5, EclipticalToEquatorial3)
 	return s
 }
 
@@ -941,6 +988,7 @@ func HandlerSkyMapGeneral(w http.ResponseWriter, r *http.Request) {
 	defs += plotHorizon()
 	defs += plotAlmucantarats()
 	defs += plotMeridians()
+	defs += plotPlatonYear()
 	defs += plotStars()
 
 	svgTemplate2 := fmt.Sprintf(svgTemplate1, defs)
