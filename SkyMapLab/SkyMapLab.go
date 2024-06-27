@@ -686,10 +686,10 @@ func plotGreatCircle(g string, color string, dashed bool, fixAngleDeg float64, c
 
 	return s
 }
-func plotIsoLatitudeCircle(g string, color string, dashed bool, fixAngleDeg float64, lat float64, convertToEq isoLatitudeCircleToEq) string {
+func plotIsoLatitudeCircle(g string, strokeColor string, dashed bool, fixAngleDeg float64, lat float64, convertToEq isoLatitudeCircleToEq) string {
 	//	s := "      <g id=\"plotEcliptic\">\n"
 	s := g
-	form1 := "        <path d=\"%s\" stroke=\"%s\" stroke-width=\"0.25\" fill=\"none\" />\n"
+	form1 := "        <path d=\"%s\" stroke=\"%s\" stroke-width=\"%.2f\" fill=\"none\" />\n"
 	fixAngleR := fixAngleDeg * toRad
 	latR := lat * toRad
 	ra, de := convertToEq(0.0, latR, fixAngleR)
@@ -715,7 +715,8 @@ func plotIsoLatitudeCircle(g string, color string, dashed bool, fixAngleDeg floa
 		}
 		d += fmt.Sprintf(c+form0, x, y)
 	}
-	s += fmt.Sprintf(form1, d, color)
+	strokeWidth := 0.25
+	s += fmt.Sprintf(form1, d, strokeColor, strokeWidth)
 	s += "      </g>\n"
 
 	return s
@@ -775,7 +776,6 @@ func plotAlmucantarat(color string, dashed bool, fixAngleDeg float64, h float64)
 
 func plotPlatonYear() string {
 	g := "      <g id=\"plotPlatonYear\"  >\n"
-	//	s += plotAlmucantarat(Map.Colors.Horizon, Map.DashedHorizon, Map.Latitude, h)
 	s := plotIsoLatitudeCircle(g, Map.Colors.Ecliptic, Map.DashedEcliptic, 0.0, 90.0-𝜀Deg2025, EclipticalToEquatorial3)
 	return s
 }
