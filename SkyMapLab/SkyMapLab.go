@@ -774,6 +774,7 @@ func plotAlmucantarat(color string, dashed bool, fixAngleDeg float64, h float64)
 	return s
 }
 
+// Platon ecliptic move 50" per year ~ 25920 years
 func plotPlatonYear() string {
 	g := "      <g id=\"plotPlatonYear\"  >\n"
 	s := plotIsoLatitudeCircle(g, Map.Colors.Ecliptic, Map.DashedEcliptic, 0.0, 90.0-𝜀Deg2025, EclipticalToEquatorial3)
