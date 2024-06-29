@@ -686,9 +686,10 @@ func plotGreatCircle(g string, color string, dashed bool, fixAngleDeg float64, c
 
 	return s
 }
-func plotIsoLatitudeCircle(g string, strokeColor string, dashed bool, fixAngleDeg float64, lat float64, convertToEq isoLatitudeCircleToEq) string {
+func plotIsoLatitudeCircle(strokeColor string, dashed bool, fixAngleDeg float64, lat float64, convertToEq isoLatitudeCircleToEq) string {
 	//	s := "      <g id=\"plotEcliptic\">\n"
-	s := g
+	//	s := g
+	s := ""
 	form1 := "        <path d=\"%s\" stroke=\"%s\" stroke-width=\"%.2f\" fill=\"none\" />\n"
 	fixAngleR := fixAngleDeg * toRad
 	latR := lat * toRad
@@ -717,7 +718,7 @@ func plotIsoLatitudeCircle(g string, strokeColor string, dashed bool, fixAngleDe
 	}
 	strokeWidth := 0.25
 	s += fmt.Sprintf(form1, d, strokeColor, strokeWidth)
-	s += "      </g>\n"
+	//	s += "      </g>\n"
 
 	return s
 }
@@ -742,6 +743,12 @@ func plotAlmucantarats() string {
 	s += "      </g>\n"
 	return s
 }
+
+/*
+	func plotAlmucantarat(){
+		return plotIsoLatitudeCircle()
+	}
+*/
 func plotAlmucantarat(color string, dashed bool, fixAngleDeg float64, h float64) string {
 	form1 := "        <path d=\"%s\" stroke=\"%s\" stroke-width=\"0.25\" fill=\"none\" />\n"
 	fixAngleR := fixAngleDeg * toRad
@@ -776,8 +783,9 @@ func plotAlmucantarat(color string, dashed bool, fixAngleDeg float64, h float64)
 
 // Platon ecliptic move 50" per year ~ 25920 years
 func plotPlatonYear() string {
-	g := "      <g id=\"plotPlatonYear\"  >\n"
-	s := plotIsoLatitudeCircle(g, Map.Colors.Ecliptic, Map.DashedEcliptic, 0.0, 90.0-𝜀Deg2025, EclipticalToEquatorial3)
+	s := "      <g id=\"plotPlatonYear\"  >\n"
+	s += plotIsoLatitudeCircle(Map.Colors.Ecliptic, Map.DashedEcliptic, 0.0, 90.0-𝜀Deg2025, EclipticalToEquatorial3)
+	s += "      </g>\n"
 	return s
 }
 
