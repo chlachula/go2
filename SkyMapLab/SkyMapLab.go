@@ -161,9 +161,11 @@ const (
     <use xlink:href="#plotOuterCircle" />
     <use xlink:href="#plotEcliptic" />
     <use xlink:href="#plotPlatonYear" />
-    <use xlink:href="#plotHorizon" />
-    <use xlink:href="#plotAlmucantarats" />
-    <use xlink:href="#plotMeridians" />	
+	<g transform="rotate(180)">
+      <use xlink:href="#plotHorizon" />
+      <use xlink:href="#plotAlmucantarats" />
+	  <use xlink:href="#plotMeridians" />	
+    </g>
     <use xlink:href="#plotStars" />
     <use xlink:href="#plotDateRoundScale" />
     <use xlink:href="#plotRaHourScale" />
@@ -729,16 +731,17 @@ func plotEcliptic() string {
 }
 
 func plotHorizon() string {
-	g := "      <g id=\"plotHorizon\" transform=\"rotate(180)\" >\n"
+	g := "      <g id=\"plotHorizon\" >\n"
 	geographicLatitude := Map.Latitude
 	return plotGreatCircle(g, Map.Colors.Horizon, Map.DashedHorizon, geographicLatitude, AzimutOnHorizonToEquatoreal_I)
 }
 
 func plotAlmucantarats() string {
-	s := "      <g id=\"plotAlmucantarats\"  transform=\"rotate(180)\" >\n"
+	s := "      <g id=\"plotAlmucantarats\" >\n"
 	hInc := 10.0
 	for h := hInc; h < 90.0; h = h + hInc {
-		s += plotAlmucantarat(Map.Colors.Horizon, Map.DashedHorizon, Map.Latitude, h)
+		//s += plotAlmucantarat(Map.Colors.Horizon, Map.DashedHorizon, Map.Latitude, h)
+		s += plotIsoLatitudeCircle(Map.Colors.Horizon, Map.DashedHorizon, Map.Latitude, h, AzimutalToEquatoreal_I) // plot Almucantarat
 	}
 	s += "      </g>\n"
 	return s
@@ -748,7 +751,7 @@ func plotAlmucantarats() string {
 	func plotAlmucantarat(){
 		return plotIsoLatitudeCircle()
 	}
-*/
+
 func plotAlmucantarat(color string, dashed bool, fixAngleDeg float64, h float64) string {
 	form1 := "        <path d=\"%s\" stroke=\"%s\" stroke-width=\"0.25\" fill=\"none\" />\n"
 	fixAngleR := fixAngleDeg * toRad
@@ -780,7 +783,7 @@ func plotAlmucantarat(color string, dashed bool, fixAngleDeg float64, h float64)
 
 	return s
 }
-
+*/
 // Platon ecliptic move 50" per year ~ 25920 years
 func plotPlatonYear() string {
 	s := "      <g id=\"plotPlatonYear\"  >\n"
@@ -790,7 +793,7 @@ func plotPlatonYear() string {
 }
 
 func plotMeridians() string {
-	s := "      <g id=\"plotMeridians\"  transform=\"rotate(180)\" >\n"
+	s := "      <g id=\"plotMeridians\">\n"
 	aInc := 10.0
 	for a := aInc; a < 360.1; a = a + aInc {
 		s += plotMeridian(Map.Colors.Horizon, Map.DashedHorizon, Map.Latitude, a)
