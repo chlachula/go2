@@ -83,7 +83,6 @@ const monthArcR = 27.0 / 31.0 * math.Pi / 6.0
 var SliceOfConstellations []ConstellationCoordPoints
 var Map MapStyle
 
-type greatCircleToEq func(float64, float64) (float64, float64)
 type isoLatitudeCircleToEq func(float64, float64, float64) (float64, float64)
 
 type EqCoords struct {
@@ -267,10 +266,6 @@ func AzimutalToEquatoreal_I(A, h, fi float64) (float64, float64) {
 	return t, de
 }
 
-func AzimutOnHorizonToEquatoreal_I(A, fi float64) (float64, float64) {
-	return AzimutalToEquatoreal_I(A, 0.0, fi)
-}
-
 /*
 cos𝛿*cos𝛼 = cos𝛽*cos𝜆 => cos𝛿 = cos𝛽*cos𝜆 / cos𝛼
 cos𝛿*sin𝛼 = cos𝛽*sin𝜆*cos𝜀 − sin𝜀*sin𝛽 = sin𝛼/cos𝛼 * cos𝛽*cos𝜆 = tan𝛼*cos𝛽*cos𝜆
@@ -427,9 +422,9 @@ func plotRaHourRoundScale() string {
 
 	form0 := `
 	<g id="plotRaHourScale">
-	<circle cx="0" cy="0" r="%.1f" stroke="white" stroke-width="%.1f" fill="none" />
-	<circle cx="0" cy="0" r="%.1f" stroke="black" stroke-width="0.5" fill="none" />
-	<circle cx="0" cy="0" r="%.1f" stroke="black" stroke-width="0.5" fill="none" />
+	  <circle cx="0" cy="0" r="%.1f" stroke="white" stroke-width="%.1f" fill="none" />
+	  <circle cx="0" cy="0" r="%.1f" stroke="black" stroke-width="0.5" fill="none" />
+	  <circle cx="0" cy="0" r="%.1f" stroke="black" stroke-width="0.5" fill="none" />
 	  %s
 	</g>
 `
@@ -593,7 +588,7 @@ func plotStars() string {
 
 	return s
 }
-func plotStarNames() string {
+func P_lotStarNames() string {
 	s := "      <g id=\"plotStarNames\">\n"
 
 	form1 := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"white\" stroke-width=\"0.05\" fill=\"%s\" />\n"
@@ -655,42 +650,11 @@ func plotConstellationNames() string {
 }
 
 // great circle or orthodrome is the circular intersection of a sphere and a plane passing through the sphere's center point
-func plotGreatCircle(g string, color string, dashed bool, fixAngleDeg float64, convertToEq greatCircleToEq) string {
-	//	s := "      <g id=\"plotEcliptic\">\n"
-	s := g
-	form1 := "        <path d=\"%s\" stroke=\"%s\" stroke-width=\"0.25\" fill=\"none\" />\n"
-	fixAngleR := fixAngleDeg * toRad
-	ra, de := convertToEq(0.0, fixAngleR)
-	x, y := eqToCartesianXY(ra*toDeg, de*toDeg)
-	d := fmt.Sprintf("M%.1f,%.1f ", x, y)
-	formContinual := "%.1f,%.1f "
-	form0 := formContinual
-	L := false
-	c := ""
-	if !dashed {
-		d += "L"
-	}
-	for la := 1.0; la < 360.1; la = la + 1.0 {
-		ra, de := convertToEq(la*toRad, fixAngleR)
-		x, y := eqToCartesianXY(ra*toDeg, de*toDeg)
-		if dashed {
-			if L {
-				c = "M"
-			} else {
-				c = "L"
-			}
-			L = !L
-		}
-		d += fmt.Sprintf(c+form0, x, y)
-	}
-	s += fmt.Sprintf(form1, d, color)
-	s += "      </g>\n"
-
-	return s
+func plotGreatCircle(color string, dashed bool, fixAngleDeg float64, convertToEq isoLatitudeCircleToEq) string {
+	return plotIsoLatitudeCircle(color, dashed, fixAngleDeg, 0.0, convertToEq)
 }
+
 func plotIsoLatitudeCircle(strokeColor string, dashed bool, fixAngleDeg float64, lat float64, convertToEq isoLatitudeCircleToEq) string {
-	//	s := "      <g id=\"plotEcliptic\">\n"
-	//	s := g
 	s := ""
 	form1 := "        <path d=\"%s\" stroke=\"%s\" stroke-width=\"%.2f\" fill=\"none\" />\n"
 	fixAngleR := fixAngleDeg * toRad
@@ -720,20 +684,22 @@ func plotIsoLatitudeCircle(strokeColor string, dashed bool, fixAngleDeg float64,
 	}
 	strokeWidth := 0.25
 	s += fmt.Sprintf(form1, d, strokeColor, strokeWidth)
-	//	s += "      </g>\n"
-
 	return s
 }
 func plotEcliptic() string {
-	g := "      <g id=\"plotEcliptic\">\n"
+	s := "      <g id=\"plotEcliptic\">\n"
 	eclipticLatitude := 0.0
-	return plotGreatCircle(g, Map.Colors.Ecliptic, Map.DashedEcliptic, eclipticLatitude, EclipticalToEquatorial)
+	s += plotGreatCircle(Map.Colors.Ecliptic, Map.DashedEcliptic, eclipticLatitude, EclipticalToEquatorial3)
+	s += "      </g>\n"
+	return s
 }
 
 func plotHorizon() string {
-	g := "      <g id=\"plotHorizon\" >\n"
+	s := "      <g id=\"plotHorizon\" >\n"
 	geographicLatitude := Map.Latitude
-	return plotGreatCircle(g, Map.Colors.Horizon, Map.DashedHorizon, geographicLatitude, AzimutOnHorizonToEquatoreal_I)
+	s += plotGreatCircle(Map.Colors.Horizon, Map.DashedHorizon, geographicLatitude, AzimutalToEquatoreal_I)
+	s += "      </g>\n"
+	return s
 }
 
 func plotAlmucantarats() string {
