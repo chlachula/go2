@@ -267,8 +267,8 @@ func AzimutalToEquatoreal_I(A, h, fi float64) (float64, float64) {
 }
 
 /*
-cos𝛿*cos𝛼 = cos𝛽*cos𝜆 => cos𝛿 = cos𝛽*cos𝜆 / cos𝛼
-cos𝛿*sin𝛼 = cos𝛽*sin𝜆*cos𝜀 − sin𝜀*sin𝛽 = sin𝛼/cos𝛼 * cos𝛽*cos𝜆 = tan𝛼*cos𝛽*cos𝜆
+cos𝛼*cos𝛿 = cos𝛽*cos𝜆 => cos𝛿 = cos𝛽*cos𝜆 / cos𝛼
+sin𝛼*cos𝛿 = cos𝛽*sin𝜆*cos𝜀 − sin𝜀*sin𝛽 = sin𝛼/cos𝛼 * cos𝛽*cos𝜆 = tan𝛼*cos𝛽*cos𝜆
 sin𝛿 = sin𝛽*cos𝜀 + sin𝜀*cos𝛽*sin𝜆
 */
 func EclipticalToEquatorial(La, Be, 𝜀 float64) (float64, float64) {
