@@ -286,7 +286,7 @@ func EclipticalToEquatorial(La, Be float64) (float64, float64) {
 	return RA, De
 }
 func EclipticalToEquatorial3(La, Be float64, none float64) (float64, float64) {
-	_ = none
+	_ = none //𝜀Deg2025 is built in the function already
 	return EclipticalToEquatorial(La, Be)
 }
 
