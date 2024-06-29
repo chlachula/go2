@@ -740,50 +740,12 @@ func plotAlmucantarats() string {
 	s := "      <g id=\"plotAlmucantarats\" >\n"
 	hInc := 10.0
 	for h := hInc; h < 90.0; h = h + hInc {
-		//s += plotAlmucantarat(Map.Colors.Horizon, Map.DashedHorizon, Map.Latitude, h)
 		s += plotIsoLatitudeCircle(Map.Colors.Horizon, Map.DashedHorizon, Map.Latitude, h, AzimutalToEquatoreal_I) // plot Almucantarat
 	}
 	s += "      </g>\n"
 	return s
 }
 
-/*
-	func plotAlmucantarat(){
-		return plotIsoLatitudeCircle()
-	}
-
-func plotAlmucantarat(color string, dashed bool, fixAngleDeg float64, h float64) string {
-	form1 := "        <path d=\"%s\" stroke=\"%s\" stroke-width=\"0.25\" fill=\"none\" />\n"
-	fixAngleR := fixAngleDeg * toRad
-	hR := h * toRad
-	ra, de := AzimutalToEquatoreal_I(0.0, hR, fixAngleR)
-	x, y := eqToCartesianXY(ra*toDeg, de*toDeg)
-	d := fmt.Sprintf("M%.1f,%.1f ", x, y)
-	formContinual := "%.1f,%.1f "
-	form0 := formContinual
-	L := false
-	c := ""
-	if !dashed {
-		d += "L"
-	}
-	for a := 1.0; a < 360.1; a = a + 1.0 {
-		ra, de := AzimutalToEquatoreal_I(a*toRad, hR, fixAngleR)
-		x, y := eqToCartesianXY(ra*toDeg, de*toDeg)
-		if dashed {
-			if L {
-				c = "M"
-			} else {
-				c = "L"
-			}
-			L = !L
-		}
-		d += fmt.Sprintf(c+form0, x, y)
-	}
-	s := fmt.Sprintf(form1, d, color)
-
-	return s
-}
-*/
 // Platon ecliptic move 50" per year ~ 25920 years
 func plotPlatonYear() string {
 	s := "      <g id=\"plotPlatonYear\"  >\n"
