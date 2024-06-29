@@ -271,8 +271,7 @@ cos𝛿*cos𝛼 = cos𝛽*cos𝜆 => cos𝛿 = cos𝛽*cos𝜆 / cos𝛼
 cos𝛿*sin𝛼 = cos𝛽*sin𝜆*cos𝜀 − sin𝜀*sin𝛽 = sin𝛼/cos𝛼 * cos𝛽*cos𝜆 = tan𝛼*cos𝛽*cos𝜆
 sin𝛿 = sin𝛽*cos𝜀 + sin𝜀*cos𝛽*sin𝜆
 */
-func EclipticalToEquatorial(La, Be float64) (float64, float64) {
-	𝜀 := 𝜀Deg2025 * toRad
+func EclipticalToEquatorial(La, Be, 𝜀 float64) (float64, float64) {
 	sinRAcosDe := math.Cos(Be)*math.Sin(La)*math.Cos(𝜀) - math.Sin(𝜀)*math.Sin(Be)
 
 	RA := math.Atan2(sinRAcosDe, (math.Cos(Be) * math.Cos(La)))
@@ -284,10 +283,6 @@ func EclipticalToEquatorial(La, Be float64) (float64, float64) {
 	De := math.Asin(sinDe)
 
 	return RA, De
-}
-func EclipticalToEquatorial3(La, Be float64, none float64) (float64, float64) {
-	_ = none //𝜀Deg2025 is built in the function already
-	return EclipticalToEquatorial(La, Be)
 }
 
 func SetVariables(top, bottom string) {
@@ -688,8 +683,7 @@ func plotIsoLatitudeCircle(strokeColor string, dashed bool, fixAngleDeg float64,
 }
 func plotEcliptic() string {
 	s := "      <g id=\"plotEcliptic\">\n"
-	eclipticLatitude := 0.0
-	s += plotGreatCircle(Map.Colors.Ecliptic, Map.DashedEcliptic, eclipticLatitude, EclipticalToEquatorial3)
+	s += plotGreatCircle(Map.Colors.Ecliptic, Map.DashedEcliptic, 𝜀Deg2025, EclipticalToEquatorial)
 	s += "      </g>\n"
 	return s
 }
@@ -715,7 +709,7 @@ func plotAlmucantarats() string {
 // Platon ecliptic move 50" per year ~ 25920 years
 func plotPlatonYear() string {
 	s := "      <g id=\"plotPlatonYear\"  >\n"
-	s += plotIsoLatitudeCircle(Map.Colors.Ecliptic, Map.DashedEcliptic, 0.0, 90.0-𝜀Deg2025, EclipticalToEquatorial3)
+	s += plotIsoLatitudeCircle(Map.Colors.Ecliptic, Map.DashedEcliptic, 𝜀Deg2025, 90.0-𝜀Deg2025, EclipticalToEquatorial)
 	s += "      </g>\n"
 	return s
 }
