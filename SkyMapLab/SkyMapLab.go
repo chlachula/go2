@@ -681,6 +681,35 @@ func plotIsoLatitudeCircle(strokeColor string, dashed bool, fixAngleDeg float64,
 	s += fmt.Sprintf(form1, d, strokeColor, strokeWidth)
 	return s
 }
+
+func ecliplicalLongitudeToCartesianXY(ecLongitudeR float64, ecLatitudeR float64) (float64, float64) {
+	𝜀Deg2025R := 𝜀Deg2025 * toRad
+	ra, de := EclipticalToEquatorial(ecLongitudeR, ecLatitudeR, 𝜀Deg2025R)
+	x, y := eqToCartesianXY(ra*toDeg, de*toDeg)
+	return x, y
+}
+func plotPlatonYearDescription() string {
+	speedByYear := 50.0 // angle seconds
+	speedByYearDeg := speedByYear / 3600.0
+	step500y := speedByYearDeg * 500.0
+	strokeColor := "brown"
+	strokeWidth := 0.25
+	form1 := "        <path d=\"M%.1f,%.1f L%.1f,%.1f \" stroke=\"%s\" stroke-width=\"%.2f\" fill=\"none\" />\n"
+	ecLat90R := (90.0 - 𝜀Deg2025) * toRad
+	ecLat89R := (89.0 - 𝜀Deg2025) * toRad
+	//ecLat88R := (88.0 - 𝜀Deg2025) * toRad
+
+	s := ""
+
+	for y := 1500; y > 1400; y = y - 500 {
+		eclipticalLongitudeR := (0.0 - float64(2000-y)*step500y) * toRad
+		x1, y1 := ecliplicalLongitudeToCartesianXY(eclipticalLongitudeR, ecLat90R)
+		x2, y2 := ecliplicalLongitudeToCartesianXY(eclipticalLongitudeR, ecLat89R)
+		s += fmt.Sprintf(form1, x1, y1, x2, y2, strokeColor, strokeWidth)
+	}
+
+	return s
+}
 func plotEcliptic() string {
 	s := "      <g id=\"plotEcliptic\">\n"
 	s += plotGreatCircle(Map.Colors.Ecliptic, Map.DashedEcliptic, 𝜀Deg2025, EclipticalToEquatorial)
@@ -710,6 +739,7 @@ func plotAlmucantarats() string {
 func plotPlatonYear() string {
 	s := "      <g id=\"plotPlatonYear\"  >\n"
 	s += plotIsoLatitudeCircle(Map.Colors.Ecliptic, Map.DashedEcliptic, 𝜀Deg2025, 90.0-𝜀Deg2025, EclipticalToEquatorial)
+	s += plotPlatonYearDescription()
 	s += "      </g>\n"
 	return s
 }
