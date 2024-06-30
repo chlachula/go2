@@ -160,11 +160,11 @@ const (
     <use xlink:href="#plotOuterCircle" />
     <use xlink:href="#plotEcliptic" />
     <use xlink:href="#plotPlatonYear" />
-	<g transform="rotate(180)">
+	<!--g transform="rotate(180)">
       <use xlink:href="#plotHorizon" />
       <use xlink:href="#plotAlmucantarats" />
 	  <use xlink:href="#plotMeridians" />	
-    </g>
+    </g-->
     <use xlink:href="#plotStars" />
     <use xlink:href="#plotDateRoundScale" />
     <use xlink:href="#plotRaHourScale" />
@@ -689,23 +689,32 @@ func ecliplicalLongitudeToCartesianXY(ecLongitudeR float64, ecLatitudeR float64)
 	return x, y
 }
 func plotPlatonYearDescription() string {
-	speedByYear := 50.0 // angle seconds
+	speedByYear := 50.3 // angle seconds
 	speedByYearDeg := speedByYear / 3600.0
-	step500y := speedByYearDeg * 500.0
 	strokeColor := "brown"
 	strokeWidth := 0.25
 	form1 := "        <path d=\"M%.1f,%.1f L%.1f,%.1f \" stroke=\"%s\" stroke-width=\"%.2f\" fill=\"none\" />\n"
+	form2 := `
+	    <path id="%s" d="M%.1f,%.1f L%.1f,%.1f" stroke="none" fill="none" />
+	    <text font-size="%.1f" font-family="Franklin Gothic, sans-serif" fill="%s" >
+	      <textPath xlink:href="#%s" alignment-baseline="middle" text-anchor="start"  startOffset="1"> %d</textPath>
+        </text>
+`
 	ecLat90R := (90.0 - 𝜀Deg2025) * toRad
 	ecLat89R := (89.0 - 𝜀Deg2025) * toRad
-	//ecLat88R := (88.0 - 𝜀Deg2025) * toRad
+	ecLat45R := (45.0 - 𝜀Deg2025) * toRad
 
 	s := ""
-
-	for y := 1500; y > 1400; y = y - 500 {
-		eclipticalLongitudeR := (0.0 - float64(2000-y)*step500y) * toRad
+	for y := 1500; y > -23100; y = y - 500 {
+		eclipticalLongitudeR := (90.0 + float64(2000-y)*speedByYearDeg) * toRad
 		x1, y1 := ecliplicalLongitudeToCartesianXY(eclipticalLongitudeR, ecLat90R)
 		x2, y2 := ecliplicalLongitudeToCartesianXY(eclipticalLongitudeR, ecLat89R)
+		x3, y3 := ecliplicalLongitudeToCartesianXY(eclipticalLongitudeR, ecLat45R)
+		id := fmt.Sprintf("PlatonY%d", y)
 		s += fmt.Sprintf(form1, x1, y1, x2, y2, strokeColor, strokeWidth)
+		if y%1000 == 0 {
+			s += fmt.Sprintf(form2, id, x2, y2, x3, y3, 3.0, strokeColor, id, y)
+		}
 	}
 
 	return s
