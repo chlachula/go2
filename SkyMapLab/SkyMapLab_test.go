@@ -23,10 +23,11 @@ func TestLoadECSV(t *testing.T) {
 
 }
 func TestEclipticalToEquatorial(t *testing.T) {
+	𝜀Deg2025 = 23.436040
 	toRad := math.Pi / 180.0
 	for La := 0.0; La < 360.1; La = La + 30.0 {
 		LaR := La * toRad
-		ra, de := EclipticalToEquatorial(LaR, 0.0)
+		ra, de := EclipticalToEquatorial(LaR, 0.0, 𝜀Deg2025)
 		raD := ra / toRad
 		deD := de / toRad
 		fmt.Printf("La:%3.0f    ra:%6.2f,de:%6.2f\n", La, raD, deD)
