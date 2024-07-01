@@ -26,6 +26,19 @@ type StarRecord struct {
 	Mag float64 `json:"Mag"`
 }
 
+type ObjectRecord struct {
+	CName string  `json:"CName"` // Common name
+	OType string  `json:"OType"` // Object type
+	Mes   int     `json:"Mes"`   // Messier
+	Cad   int     `json:"Cad"`   // Cadwell
+	NGC   int     `json:"NGC"`   // New General Catalogue
+	IC    int     `json:"IC"`    // Index Catalogue
+	RA    float64 `json:"RA"`
+	De    float64 `json:"De"`
+	Mag   float64 `json:"Mag"`
+	Size  string  `json:"Size"`
+}
+
 type MapColors struct {
 	ConstLine   string
 	ConstName   string
