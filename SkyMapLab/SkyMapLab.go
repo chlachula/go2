@@ -160,11 +160,11 @@ const (
     <use xlink:href="#plotOuterCircle" />
     <use xlink:href="#plotEcliptic" />
     <use xlink:href="#plotPlatonYear" />
-	<!--g transform="rotate(180)">
+	<g transform="rotate(180)">
       <use xlink:href="#plotHorizon" />
       <use xlink:href="#plotAlmucantarats" />
 	  <use xlink:href="#plotMeridians" />	
-    </g-->
+    </g>
     <use xlink:href="#plotStars" />
     <use xlink:href="#plotDateRoundScale" />
     <use xlink:href="#plotRaHourScale" />
@@ -800,6 +800,7 @@ func plotMeridian(color string, dashed bool, fixAngleDeg float64, a float64) str
 	return s
 }
 
+// Enhanced Character Separated Values table format https://docs.astropy.org/en/stable/io/ascii/ecsv.html
 func LoadECSV(filename string) ([][]string, error) {
 	rows := make([][]string, 0)
 	bytes, err := os.ReadFile(filename)
