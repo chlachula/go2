@@ -13,12 +13,16 @@ import (
 	"math"
 	"net/http"
 	"os"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
 	"text/template"
 	"time"
 )
+
+var reRA = regexp.MustCompile(`(?m)(\d\d(|\.\d*))<sup>.</sup>\s+`)
+var reDe = regexp.MustCompile(`(?m)(\+|-)(\d\d)°\s+(\d\d)′\s+(\d\d(\.\d*))″`)
 
 type StarRecord struct {
 	RA  float64 `json:"RA"`
@@ -29,8 +33,9 @@ type StarRecord struct {
 type ObjectRecord struct {
 	CName string  `json:"CName"` // Common name
 	OType string  `json:"OType"` // Object type
+	Const string  `json:"Const"` // Constellation
 	Mes   int     `json:"Mes"`   // Messier
-	Cad   int     `json:"Cad"`   // Cadwell
+	Cal   int     `json:"Cal"`   // Caldwell
 	NGC   int     `json:"NGC"`   // New General Catalogue
 	IC    int     `json:"IC"`    // Index Catalogue
 	RA    float64 `json:"RA"`
