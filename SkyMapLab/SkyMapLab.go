@@ -169,27 +169,37 @@ const (
 	 }
     </style>
   %s
- </defs> 
-  <rect width="500" height="{{.Height}}" x="-250" y="-{{.HeightHalf}}" stroke="blue" stroke-width="1" fill="azure" />
-  <text x="-244" y="-{{.HeightHalf}}" fill="blue" font-size="8"><tspan dy="10">{{.PaperName}} ({{.WidthMM}}mm by {{.HeightMM}}mm)</tspan></text>
-  <g id="draw_plots">
+	<g id="draw_AZ_grid" transform="rotate(180)">
+      <use xlink:href="#plotHorizon" />
+      <use xlink:href="#plotAlmucantarats" />
+	  <use xlink:href="#plotMeridians" />	
+    </g>
+  <g id="draw_map">
     <use xlink:href="#plotConstellations" />
     <use xlink:href="#plotConstellationNames" />
     <use xlink:href="#plotOuterCircle" />
     <use xlink:href="#plotEcliptic" />
     <use xlink:href="#plotPlatonYear" />
-	<g transform="rotate(180)">
-      <use xlink:href="#plotHorizon" />
-      <use xlink:href="#plotAlmucantarats" />
-	  <use xlink:href="#plotMeridians" />	
-    </g>
     <use xlink:href="#plotStars" />
     <use xlink:href="#plotDateRoundScale" />
     <use xlink:href="#plotRaHourScale" />
     <use xlink:href="#plotRaCross" />
     <use xlink:href="#plotAxisDeclinations" />
   </g>
-
+  <g id="draw_platonYear_map">
+    <use xlink:href="#plotPlatonYear" />
+    <use xlink:href="#draw_map" />
+  </g>
+  <g id="draw_all">
+    <use xlink:href="#plotPlatonYear" />
+    <use xlink:href="#draw_map" />
+    <use xlink:href="#draw_AZ_grid" />
+  </g>
+ </defs> 
+  <rect width="500" height="{{.Height}}" x="-250" y="-{{.HeightHalf}}" stroke="blue" stroke-width="1" fill="azure" />
+  <text x="-244" y="-{{.HeightHalf}}" fill="blue" font-size="8"><tspan dy="10">{{.PaperName}} ({{.WidthMM}}mm by {{.HeightMM}}mm)</tspan></text>
+  
+  <use xlink:href="#draw_all" />
 </svg>
 `
 )
