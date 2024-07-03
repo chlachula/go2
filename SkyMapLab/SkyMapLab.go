@@ -179,7 +179,6 @@ const (
     <use xlink:href="#plotConstellationNames" />
     <use xlink:href="#plotOuterCircle" />
     <use xlink:href="#plotEcliptic" />
-    <use xlink:href="#plotPlatonYear" />
     <use xlink:href="#plotStars" />
     <use xlink:href="#plotDateRoundScale" />
     <use xlink:href="#plotRaHourScale" />
@@ -336,7 +335,7 @@ func viewBox(w float64, h float64, rows, colums, rIndex, cIndex int) (float64, f
 	height = dh
 	return minX, minY, width, height
 }
-func getSvgData(color bool, i int64) SvgDataType {
+func getSvgData(color bool, i int) SvgDataType {
 	factor := Map.Rlat / 150.0
 
 	width := 500.0
@@ -900,7 +899,7 @@ func HandlerSkyMapLab(w http.ResponseWriter, r *http.Request) {
 		u +=  f.color_style.value + '/'
 		u +=  f.hemisphere.value + f.latitude.value + '/'
 		u +=  f.paper.value + '/'
-		u +=  'x'
+		u +=  f.draw.value 
 		
 		//alert('Hello from SkyMap submit! url='+u);		
 		//window.location.href = u; // in the same tab
@@ -934,12 +933,18 @@ func HandlerSkyMapLab(w http.ResponseWriter, r *http.Request) {
 	 <input type="radio" id="bw" name="color_style" value="bw">
      
  
-     <select name="paper" id="paper">
+     <select name="paper" id="paper" title="paper">
         <option value="0" >A4</option>
         <option value="1" >A3</option>
         <option value="2" selected="selected">Letter 8.5x11</option>
         <option value="3" >Legal 8.5x14</option>
         <option value="4" >Ledger 11x17</option>
+     </select>
+     <select name="draw" id="draw" title="draw">
+        <option value="0" selected="selected">Map + Platon Year</option>
+        <option value="1" >AZ grid</option>
+        <option value="2">Map only</option>
+        <option value="3" >All</option>
      </select>
 	 <br/>
 	 <br/>
@@ -968,6 +973,14 @@ func getLatitude(str string) float64 {
 		return float64(sign) * f
 	}
 }
+func intId0(idStr string) int {
+	var idInt int64
+	var err error
+	if idInt, err = strconv.ParseInt(idStr, 10, 64); err != nil {
+		idInt = 0
+	}
+	return int(idInt)
+}
 func HandlerSkyMapGeneral(w http.ResponseWriter, r *http.Request) {
 	colorId := r.PathValue("colorId")
 	colorfullMap := strings.HasPrefix(colorId, "co")
@@ -977,9 +990,8 @@ func HandlerSkyMapGeneral(w http.ResponseWriter, r *http.Request) {
 	} else {
 		SetMapStyle(249.0, lat, MapBlackAndWhite)
 	}
-	paperId := r.PathValue("paperId")
-	partId := r.PathValue("partId")
-	_ = partId
+	paperIdInt := intId0(r.PathValue("paperId"))
+	drawIdInt := intId0(r.PathValue("drawId"))
 
 	w.Header().Set("Content-Type", "image/svg+xml")
 	defs := plotRaCross()
@@ -996,15 +1008,11 @@ func HandlerSkyMapGeneral(w http.ResponseWriter, r *http.Request) {
 	defs += plotPlatonYear()
 	defs += plotStars()
 
-	draw := "draw_platonYear_map" // _AZ_grid _platonYear_map _map _all
+	var draws = []string{"draw_platonYear_map", "draw_AZ_grid", "draw_map", "draw_all"}
+	draw := draws[drawIdInt]
 
 	svgTemplate2 := fmt.Sprintf(svgTemplate1, defs, draw)
 	if t, err := template.New("SkyMap").Parse(svgTemplate2); err == nil {
-		var paperIdInt int64
-		var err error
-		if paperIdInt, err = strconv.ParseInt(paperId, 10, 64); err != nil {
-			paperIdInt = 0
-		}
 		data := getSvgData(colorfullMap, paperIdInt)
 		if err = t.Execute(w, data); err != nil {
 			fmt.Fprintf(w, "<h1>error %s</h1>", err.Error())
