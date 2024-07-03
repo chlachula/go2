@@ -996,7 +996,7 @@ func HandlerSkyMapGeneral(w http.ResponseWriter, r *http.Request) {
 	defs += plotPlatonYear()
 	defs += plotStars()
 
-	draw := "draw_AZ_grid"
+	draw := "draw_platonYear_map" // _AZ_grid _platonYear_map _map _all
 
 	svgTemplate2 := fmt.Sprintf(svgTemplate1, defs, draw)
 	if t, err := template.New("SkyMap").Parse(svgTemplate2); err == nil {
