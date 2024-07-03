@@ -444,7 +444,7 @@ func plotRaHourRoundScale() string {
 	s := "\n"
 	form1 := "      <line x1=\"%.1f\" y1=\"%.1f\" x2=\"%.1f\" y2=\"%.1f\" class=\"cross\" />\n"
 	strokeWidth := 0.3 / 150.0 * Map.Rlat
-	form2 := `      <path id="raHour%d" d="M%.1f,%.1f A%.1f,%.1f 0 0,0  %.1f,%.1f " style="fill:none;fill-opacity: 1;stroke:green;stroke-width: %.1f"/>
+	form2 := `      <path id="raHour%d" d="M%.1f,%.1f A%.1f,%.1f 0 0,0  %.1f,%.1f " style="fill:none;fill-opacity: 1;stroke:none;stroke-width: %.1f"/>
       <text alignment-baseline="baseline" text-anchor="start" class="font1 downFont">
 	    <textPath xlink:href="#raHour%d">%d</textPath>
       </text>
