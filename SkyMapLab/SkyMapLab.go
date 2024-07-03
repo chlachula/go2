@@ -199,7 +199,7 @@ const (
   <rect width="500" height="{{.Height}}" x="-250" y="-{{.HeightHalf}}" stroke="blue" stroke-width="1" fill="azure" />
   <text x="-244" y="-{{.HeightHalf}}" fill="blue" font-size="8"><tspan dy="10">{{.PaperName}} ({{.WidthMM}}mm by {{.HeightMM}}mm)</tspan></text>
   
-  <use xlink:href="#draw_all" />
+  <use xlink:href="#%s" />
 </svg>
 `
 )
@@ -996,7 +996,9 @@ func HandlerSkyMapGeneral(w http.ResponseWriter, r *http.Request) {
 	defs += plotPlatonYear()
 	defs += plotStars()
 
-	svgTemplate2 := fmt.Sprintf(svgTemplate1, defs)
+	draw := "draw_AZ_grid"
+
+	svgTemplate2 := fmt.Sprintf(svgTemplate1, defs, draw)
 	if t, err := template.New("SkyMap").Parse(svgTemplate2); err == nil {
 		var paperIdInt int64
 		var err error
