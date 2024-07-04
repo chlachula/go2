@@ -13,16 +13,12 @@ import (
 	"math"
 	"net/http"
 	"os"
-	"regexp"
 	"sort"
 	"strconv"
 	"strings"
 	"text/template"
 	"time"
 )
-
-var reRA = regexp.MustCompile(`(?m)(\d\d(|\.\d*))<sup>.</sup>\s+`)
-var reDe = regexp.MustCompile(`(?m)(\+|-)(\d\d)°\s+(\d\d)′\s+(\d\d(\.\d*))″`)
 
 type StarRecord struct {
 	RA  float64 `json:"RA"`
@@ -59,7 +55,7 @@ var (
 	toDeg    = 180.0 / math.Pi
 	𝜀Deg2025 = 23.436040
 
-	MapColorsRed     = MapColors{ConstLine: "red", OuterCircle: "#ffeee6", Months: "red", ConstName: "green", Star: "blue", Ecliptic: "orange", Horizon: "green"}
+	MapColorsRed     = MapColors{ConstLine: "red", OuterCircle: "#ffeee6", Months: "black", ConstName: "green", Star: "blue", Ecliptic: "orange", Horizon: "green"}
 	MapBlackAndWhite = MapColors{ConstLine: "black", OuterCircle: "silver", Months: "black", ConstName: "black", Star: "black", Ecliptic: "black", Horizon: "black"}
 	MapColorsOrange  = MapColors{ConstLine: "orange", OuterCircle: "#f2e1e9", Months: "orange", ConstName: "green", Star: "darkblue", Ecliptic: "yellow", Horizon: "darkgreen"}
 )
@@ -391,7 +387,10 @@ func eqToCartesianXY(RA, De float64) (float64, float64) {
 	r1 := declinationToRadius(De)
 	return cartesianXY(r1, a)
 }
-
+func plotDirectionOfTheApparentRotationOfTheSky() string {
+	s := ""
+	return s
+}
 func plotRaCross() string {
 	r2 := Map.Axis //154
 	w := Map.AxisWidth
@@ -727,13 +726,19 @@ func plotPlatonYearDescription() string {
 	      <textPath xlink:href="#%s" alignment-baseline="middle" text-anchor="start"  startOffset="1"> %d</textPath>
         </text>
 `
-	ecLat90R := (90.0 - 𝜀Deg2025) * toRad
-	ecLat89R := (89.0 - 𝜀Deg2025) * toRad
-	ecLat45R := (45.0 - 𝜀Deg2025) * toRad
+	angle := 90.0
+	sign := 1.0
+	if Map.Latitude < 0 {
+		sign = -1.0
+		angle = -90.0
+	}
+	ecLat90R := sign * (90.0 - 𝜀Deg2025) * toRad
+	ecLat89R := sign * (89.0 - 𝜀Deg2025) * toRad
+	ecLat45R := sign * (45.0 - 𝜀Deg2025) * toRad
 
 	s := ""
 	for y := 1500; y > -23100; y = y - 500 {
-		eclipticalLongitudeR := (90.0 + float64(2000-y)*speedByYearDeg) * toRad
+		eclipticalLongitudeR := (angle + float64(2000-y)*speedByYearDeg) * toRad
 		x1, y1 := ecliplicalLongitudeToCartesianXY(eclipticalLongitudeR, ecLat90R)
 		x2, y2 := ecliplicalLongitudeToCartesianXY(eclipticalLongitudeR, ecLat89R)
 		x3, y3 := ecliplicalLongitudeToCartesianXY(eclipticalLongitudeR, ecLat45R)
@@ -774,7 +779,11 @@ func plotAlmucantarats() string {
 // Platon ecliptic move 50" per year ~ 25920 years
 func plotPlatonYear() string {
 	s := "      <g id=\"plotPlatonYear\"  >\n"
-	s += plotIsoLatitudeCircle(Map.Colors.Ecliptic, Map.DashedEcliptic, 𝜀Deg2025, 90.0-𝜀Deg2025, EclipticalToEquatorial)
+	eclLatitude := 90.0 - 𝜀Deg2025
+	if Map.Latitude < 0.0 {
+		eclLatitude *= -1.0
+	}
+	s += plotIsoLatitudeCircle(Map.Colors.Ecliptic, Map.DashedEcliptic, 𝜀Deg2025, eclLatitude, EclipticalToEquatorial)
 	s += plotPlatonYearDescription()
 	s += "      </g>\n"
 	return s
@@ -924,15 +933,14 @@ func HandlerSkyMapLab(w http.ResponseWriter, r *http.Request) {
      <label for="latitude">Latitude:</label>
      <input type="number" id="latitude" name="latitude" value="44" step="1"  min="0" max="90" size="2">
 	 
-	 
+	 <br/>
 	 <label for="color">Color:</label>
 	 <input type="radio" id="co" name="color_style" value="co" checked="checked">
 	 <label for="bw">Black &amp; White</label>
 	 
-	 
 	 <input type="radio" id="bw" name="color_style" value="bw">
      
- 
+    <br/>
      <select name="paper" id="paper" title="paper">
         <option value="0" >A4</option>
         <option value="1" >A3</option>
