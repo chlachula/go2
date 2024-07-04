@@ -942,11 +942,11 @@ func HandlerSkyMapLab(w http.ResponseWriter, r *http.Request) {
      
     <br/>
      <select name="paper" id="paper" title="paper">
-        <option value="0" >A4</option>
-        <option value="1" >A3</option>
-        <option value="2" selected="selected">Letter 8.5x11</option>
-        <option value="3" >Legal 8.5x14</option>
-        <option value="4" >Ledger 11x17</option>
+        <option value="0" title="297x210">A4</option>
+        <option value="1" title="420x297" >A3</option>
+        <option value="2" title="215.9x279.4" selected="selected">Letter 8.5x11</option>
+        <option value="3" title="215.9x355.6"  >Legal 8.5x14</option>
+        <option value="4" title="279.4x431.8" >Ledger 11x17</option>
      </select>
      <select name="draw" id="draw" title="draw">
         <option value="0" selected="selected">Map + Platon Year</option>
