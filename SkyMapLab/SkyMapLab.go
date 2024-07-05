@@ -459,11 +459,19 @@ func plotRaHourRoundScale() string {
 
 `
 	aQuaterHour := math.Pi / 48.0
+	aMinute := math.Pi / 720.0
 	for ra := 0; ra <= 23; ra++ {
 		a := float64(ra*15) * math.Pi / 180.0
 		x1, y1 := cartesianXY(r1, a)
 		x2, y2 := cartesianXY(r3, a)
 		s += fmt.Sprintf(form1, x1, y1, x2, y2) // concentric hour short line
+
+		for min := 5; min <= 55; min = min + 5 {
+			a5min := a + float64(min)*aMinute
+			x1, y1 = cartesianXY(r1, a5min)
+			x2, y2 = cartesianXY(r2, a5min)
+			s += fmt.Sprintf(form1, x1, y1, x2, y2) // concentric 5 minutes steps
+		}
 
 		x1, y1 = cartesianXY(r1, a+2.0*aQuaterHour)
 		x2, y2 = cartesianXY(r4, a+2.0*aQuaterHour)
