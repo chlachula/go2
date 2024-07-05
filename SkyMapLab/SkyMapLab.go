@@ -341,7 +341,7 @@ func getSvgData(color bool, i int) SvgDataType {
 	vMinX, vMinY, vWidth, vHeight := viewBox(width, height, rowsNumber, columnsNumber, rowIndex, columnIndex)
 	data := SvgDataType{
 		TopColor:         "green",
-		BottomColor:      "red",
+		BottomColor:      "black",
 		FontSize:         8.0 * factor,
 		FontSizeAxis:     4.0 * factor,
 		CrossStrokeWidth: 0.25 * factor,
@@ -950,9 +950,9 @@ func HandlerSkyMapLab(w http.ResponseWriter, r *http.Request) {
      </select>
      <select name="draw" id="draw" title="draw">
         <option value="0" selected="selected">Map + Platon Year</option>
-        <option value="1" >AZ grid</option>
+        <option value="1">AZ grid</option>
         <option value="2">Map only</option>
-        <option value="3" >All</option>
+        <option value="3">All</option>
      </select>
 	 <br/>
 	 <br/>
