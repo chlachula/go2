@@ -399,16 +399,12 @@ func eqToCartesianXY(RA, De float64) (float64, float64) {
 	return cartesianXY(r1, a)
 }
 func plotDirectionsOfTheApparentRotationOfTheSky() string {
-	/*
-	   <path id="abs" d="M61.5661,-78.8011      A100,100 0 0,1  78.8011,-61.5661 " style="fill:none;fill-opacity: 1;stroke:green;stroke-width: 5"/>
-	   <path id="rel" d="M0,0 m61.5661,-78.8011 a100,100 0 0,1  17.235,17.235 " style="fill:none;fill-opacity: 1;stroke:lightgreen;stroke-width: 5"/>
-	*/
 	form1 := `
-	       <path id="dirArrow" d="M%.1f,%.1f A%.1f,%.1f 0 0,0 %.1f,%.1f " 
+	    <path id="dirArrow" d="M%.1f,%.1f A%.1f,%.1f 0 0,0 %.1f,%.1f " 
 		      style="fill:none;stroke:black;stroke-width: 0.432"  marker-end="url(#arrow_head)" />
-	<text alignment-baseline="baseline" text-anchor="start" font-size="3.4" font-family="Franklin Gothic, sans-serif" fill="black" dy="-1.0">
-	  <textPath xlink:href="#dirArrow">%s</textPath>
-    </text>
+	    <text alignment-baseline="baseline" text-anchor="start" font-size="3.4" font-family="Franklin Gothic, sans-serif" fill="black" dy="-1.0">
+	      <textPath xlink:href="#dirArrow">%s</textPath>
+        </text>
 `
 	arcAngle := 14.0
 	a1 := (90.0 - arcAngle) * 0.5
