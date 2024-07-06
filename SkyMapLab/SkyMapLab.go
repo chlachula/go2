@@ -61,8 +61,8 @@ var (
 )
 
 type MapStyle struct {
-	NorthMap              bool
-	Radius                float64
+	NorthMap bool
+	//	Radius                float64
 	Rlat                  float64
 	RadiusDeclinationZero float64
 	RAwidth               float64
@@ -164,6 +164,16 @@ const (
 		fill:none
 	 }
     </style>
+	<marker 
+      id='arrow_head' 
+      orient="auto" 
+      markerWidth='15' 
+      markerHeight='20' 
+      refX='0.1' 
+      refY='2'
+     >
+     <path d='M0,0 V4 L2,2 Z' fill="black" />
+    </marker>
   %s
 	<g id="draw_AZ_grid" transform="rotate(180)">
       <use xlink:href="#plotHorizon" />
@@ -180,6 +190,7 @@ const (
     <use xlink:href="#plotRaHourScale" />
     <use xlink:href="#plotRaCross" />
     <use xlink:href="#plotAxisDeclinations" />
+    <use xlink:href="#plotDirectionsOfTheApparentRotationOfTheSky" />	
   </g>
   <g id="draw_platonYear_map">
     <use xlink:href="#plotPlatonYear" />
@@ -387,9 +398,30 @@ func eqToCartesianXY(RA, De float64) (float64, float64) {
 	r1 := declinationToRadius(De)
 	return cartesianXY(r1, a)
 }
-func plotDirectionOfTheApparentRotationOfTheSky() string {
-	s := ""
-	return s
+func plotDirectionsOfTheApparentRotationOfTheSky() string {
+	/*
+	   <path id="abs" d="M61.5661,-78.8011      A100,100 0 0,1  78.8011,-61.5661 " style="fill:none;fill-opacity: 1;stroke:green;stroke-width: 5"/>
+	   <path id="rel" d="M0,0 m61.5661,-78.8011 a100,100 0 0,1  17.235,17.235 " style="fill:none;fill-opacity: 1;stroke:lightgreen;stroke-width: 5"/>
+	*/
+	arcAngle := 12.0
+	a1 := (90.0 - arcAngle) * 0.5
+	a2 := a1 + arcAngle
+	r := Map.RadiusDeclinationZero * 2.1
+	x1, y1 := cartesianXY(r, a1*toRad)
+	x2, y2 := cartesianXY(r, a2*toRad)
+	g := "\n      <g id=\"directionOfTheApparentRotationOfTheSky\">"
+	texts := ""
+	path := fmt.Sprintf("\n       <path d=\"M%.1f,%.1f A%.1f,%.1f 0 0,1 %.1f,%.1f ", x1, y1, r, r, x2, y2)
+	path += "\" style=\"fill:none;stroke:black;stroke-width: 0.432\"  marker-end='url(#arrow_head)' />\n"
+	g += path + texts + "      </g>\n"
+
+	paths := "      <g id=\"plotDirectionsOfTheApparentRotationOfTheSky\" >\n"
+	paths += "        <use xlink:href=\"#directionOfTheApparentRotationOfTheSky\" />\n"
+	paths += "        <use xlink:href=\"#directionOfTheApparentRotationOfTheSky\"  transform=\"rotate(090)\" />\n"
+	paths += "        <use xlink:href=\"#directionOfTheApparentRotationOfTheSky\"  transform=\"rotate(180)\" />\n"
+	paths += "        <use xlink:href=\"#directionOfTheApparentRotationOfTheSky\"  transform=\"rotate(270)\" />\n"
+	paths += "      </g>\n"
+	return g + paths
 }
 func plotRaCross() string {
 	r2 := Map.Axis //154
@@ -1022,6 +1054,7 @@ func HandlerSkyMapGeneral(w http.ResponseWriter, r *http.Request) {
 	defs += plotAlmucantarats()
 	defs += plotMeridians()
 	defs += plotPlatonYear()
+	defs += plotDirectionsOfTheApparentRotationOfTheSky()
 	defs += plotStars()
 
 	var draws = []string{"draw_platonYear_map", "draw_AZ_grid", "draw_map", "draw_all"}
