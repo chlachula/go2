@@ -403,6 +403,13 @@ func plotDirectionsOfTheApparentRotationOfTheSky() string {
 	   <path id="abs" d="M61.5661,-78.8011      A100,100 0 0,1  78.8011,-61.5661 " style="fill:none;fill-opacity: 1;stroke:green;stroke-width: 5"/>
 	   <path id="rel" d="M0,0 m61.5661,-78.8011 a100,100 0 0,1  17.235,17.235 " style="fill:none;fill-opacity: 1;stroke:lightgreen;stroke-width: 5"/>
 	*/
+	form1 := `
+	       <path id="dirArrow" d="M%.1f,%.1f A%.1f,%.1f 0 0,1 %.1f,%.1f " 
+		      style="fill:none;stroke:black;stroke-width: 0.432"  marker-end="url(#arrow_head)" />
+	<text alignment-baseline="baseline" text-anchor="start" font-size="3.1" font-family="Franklin Gothic, sans-serif" fill="black">
+	  <textPath xlink:href="#dirArrow">%s</textPath>
+    </text>
+`
 	arcAngle := 12.0
 	a1 := (90.0 - arcAngle) * 0.5
 	a2 := a1 + arcAngle
@@ -410,10 +417,9 @@ func plotDirectionsOfTheApparentRotationOfTheSky() string {
 	x1, y1 := cartesianXY(r, a1*toRad)
 	x2, y2 := cartesianXY(r, a2*toRad)
 	g := "\n      <g id=\"directionOfTheApparentRotationOfTheSky\">"
-	texts := ""
-	path := fmt.Sprintf("\n       <path d=\"M%.1f,%.1f A%.1f,%.1f 0 0,1 %.1f,%.1f ", x1, y1, r, r, x2, y2)
-	path += "\" style=\"fill:none;stroke:black;stroke-width: 0.432\"  marker-end='url(#arrow_head)' />\n"
-	g += path + texts + "      </g>\n"
+	text := "direction of the apparent rotation of the sky"
+	g += fmt.Sprintf(form1, x1, y1, r, r, x2, y2, text)
+	g += "      </g>\n"
 
 	paths := "      <g id=\"plotDirectionsOfTheApparentRotationOfTheSky\" >\n"
 	paths += "        <use xlink:href=\"#directionOfTheApparentRotationOfTheSky\" />\n"
