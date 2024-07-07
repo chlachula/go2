@@ -203,7 +203,7 @@ const (
   </g>
  </defs> 
   <rect width="500" height="{{.Height}}" x="-250" y="-{{.HeightHalf}}" stroke="blue" stroke-width="1" fill="azure" />
-  <text x="-244" y="-{{.HeightHalf}}" fill="blue" font-size="8"><tspan dy="10">{{.PaperName}} ({{.WidthMM}}mm by {{.HeightMM}}mm)</tspan></text>
+  <text x="-244" y="-{{.HeightHalf}}" fill="blue" font-size="8"><tspan dy="10">{{.PaperName}} ({{.WidthMM}}mm by {{.HeightMM}}mm) - Latitude: {{.Latitude}}</tspan></text>
   
   <use xlink:href="#%s" />
 </svg>
@@ -217,6 +217,7 @@ type SvgDataType = struct {
 	BottomColor      string
 	CrossStrokeWidth float64
 	PaperName        string
+	Latitude         string
 	WidthMM          float64
 	HeightMM         float64
 	Height           float64
@@ -356,6 +357,7 @@ func getSvgData(color bool, i int) SvgDataType {
 		FontSize:         8.0 * factor,
 		FontSizeAxis:     4.0 * factor,
 		CrossStrokeWidth: 0.25 * factor,
+		Latitude:         fmt.Sprintf("%.f", Map.Latitude),
 		PaperName:        papers[i].Name,
 		WidthMM:          papers[i].WidthMM,
 		HeightMM:         papers[i].HeightMM,
