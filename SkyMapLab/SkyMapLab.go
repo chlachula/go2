@@ -176,6 +176,7 @@ const (
     </marker>
   %s
 	<g id="draw_AZ_grid" transform="rotate(180)">
+	  <circle cx="0" cy="0" r="{{.RLat}}" stroke="black" stroke-width="0.5" fill="none" />
       <use xlink:href="#plotHorizon" />
       <use xlink:href="#plotAlmucantarats" />
 	  <use xlink:href="#plotMeridians" />	
@@ -218,6 +219,7 @@ type SvgDataType = struct {
 	CrossStrokeWidth float64
 	PaperName        string
 	Latitude         string
+	RLat             float64
 	WidthMM          float64
 	HeightMM         float64
 	Height           float64
@@ -358,6 +360,7 @@ func getSvgData(color bool, i int) SvgDataType {
 		FontSizeAxis:     4.0 * factor,
 		CrossStrokeWidth: 0.25 * factor,
 		Latitude:         fmt.Sprintf("%.f", Map.Latitude),
+		RLat:             Map.Rlat,
 		PaperName:        papers[i].Name,
 		WidthMM:          papers[i].WidthMM,
 		HeightMM:         papers[i].HeightMM,
