@@ -188,6 +188,7 @@ const (
     <use xlink:href="#plotOuterCircle" />
     <use xlink:href="#plotEcliptic" />
     <use xlink:href="#plotStars" />
+    <use xlink:href="#plotObjects" />
     <use xlink:href="#plotDateRoundScale" />
     <use xlink:href="#plotRaHourScale" />
     <use xlink:href="#plotRaCross" />
@@ -657,6 +658,20 @@ func plotStars() string {
 
 	return s
 }
+func plotObjects() string {
+	s := "      <g id=\"plotObjects\">\n"
+
+	form1 := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"pink\" stroke-width=\"0.05\" fill=\"%s\" />\n"
+	//sort.SliceStable(SliceOfStars, func(i, j int) bool { return SliceOfStars[i].Mag < SliceOfStars[j].Mag })
+	for _, star := range SliceOfObjects {
+		x, y := eqToCartesianXY(star.RA, star.De)
+		rMag := magToRadius(0.0)
+		s += fmt.Sprintf(form1, x, y, rMag, "brown")
+	}
+	s += "      </g>\n"
+
+	return s
+}
 func P_lotStarNames() string {
 	s := "      <g id=\"plotStarNames\">\n"
 
@@ -937,6 +952,16 @@ func LoadObjects(filename string) {
 		}
 	}
 }
+func LoadJsonFileSlice(filename string, SliceOfAnyStructs *any) {
+	if bytes, err := os.ReadFile(filename); err != nil {
+		fmt.Printf("Error loading file %s: %s\n", filename, err.Error())
+		return
+	} else {
+		if err1 := json.Unmarshal([]byte(bytes), SliceOfAnyStructs); err1 != nil {
+			fmt.Printf("Error unmarshaling content of the json file %s: %s\n", filename, err1.Error())
+		}
+	}
+}
 func HandlerHome(w http.ResponseWriter, r *http.Request) {
 	//writeHtmlHeadAndMenu(w, "/", "Home")
 	fmt.Fprint(w, `<html>
@@ -1074,6 +1099,7 @@ func HandlerSkyMapGeneral(w http.ResponseWriter, r *http.Request) {
 	defs += plotPlatonYear()
 	defs += plotDirectionsOfTheApparentRotationOfTheSky()
 	defs += plotStars()
+	defs += plotObjects()
 
 	var draws = []string{"draw_platonYear_map", "draw_AZ_grid", "draw_map", "draw_all"}
 	draw := draws[drawIdInt]
