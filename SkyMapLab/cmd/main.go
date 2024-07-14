@@ -71,6 +71,7 @@ func main() {
 				}
 				a.LoadStars("data/SkyMap-stars.json")
 				a.LoadConstellations("data/SkyMap-constellations.json")
+				a.LoadObjects("data/SkyMap-objects.json")
 				a.SetMapStyle(radius, lat, a.MapColorsRed)
 				http.HandleFunc("/", a.HandlerHome)
 				http.HandleFunc("/img/svg/skymap/{colorId}/{latId}/{paperId}/{drawId}", a.HandlerSkyMapGeneral)
