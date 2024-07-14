@@ -87,6 +87,7 @@ type MapStyle struct {
 }
 
 var SliceOfStars []StarRecord
+var SliceOfObjects []ObjectRecord
 
 // var magBrightest = -1.5 // Sirius
 // var magMin = 5.0
@@ -922,6 +923,16 @@ func LoadConstellations(filename string) {
 		return
 	} else {
 		if err1 := json.Unmarshal([]byte(bytes), &SliceOfConstellations); err1 != nil {
+			fmt.Printf("Error unmarshaling content of the json file %s: %s\n", filename, err1.Error())
+		}
+	}
+}
+func LoadObjects(filename string) {
+	if bytes, err := os.ReadFile(filename); err != nil {
+		fmt.Printf("Error loading file %s: %s\n", filename, err.Error())
+		return
+	} else {
+		if err1 := json.Unmarshal([]byte(bytes), &SliceOfObjects); err1 != nil {
 			fmt.Printf("Error unmarshaling content of the json file %s: %s\n", filename, err1.Error())
 		}
 	}
