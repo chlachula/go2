@@ -658,15 +658,23 @@ func plotStars() string {
 
 	return s
 }
+func plotObject(obj ObjectRecord) string {
+	s := fmt.Sprintf("       <g id=\"obj_%s%d\">\n", "M", obj.Mes)
+	x, y := eqToCartesianXY(obj.RA, obj.De)
+	rMag := magToRadius(0.0)
+	width := 0.1 * rMag
+	dash := width
+	//<circle r="45" cx="350" cy="100" fill="pink" stroke="blue" stroke-width="4" stroke-dasharray="10,5" />
+	form1 := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"%s\" stroke-width=\"%.1f\" stroke-dasharray=\"%.1f,%.1f\"  fill=\"none\" />\n"
+	s += fmt.Sprintf(form1, x, y, rMag, "brown", width, dash, dash)
+	s += "       </g>\n"
+
+	return s
+}
 func plotObjects() string {
 	s := "      <g id=\"plotObjects\">\n"
-
-	form1 := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"pink\" stroke-width=\"0.05\" fill=\"%s\" />\n"
-	//sort.SliceStable(SliceOfStars, func(i, j int) bool { return SliceOfStars[i].Mag < SliceOfStars[j].Mag })
-	for _, star := range SliceOfObjects {
-		x, y := eqToCartesianXY(star.RA, star.De)
-		rMag := magToRadius(0.0)
-		s += fmt.Sprintf(form1, x, y, rMag, "brown")
+	for _, obj := range SliceOfObjects {
+		s += plotObject(obj)
 	}
 	s += "      </g>\n"
 
