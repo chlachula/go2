@@ -664,9 +664,15 @@ func plotObject(obj ObjectRecord) string {
 	rMag := magToRadius(0.0)
 	width := 0.1 * rMag
 	dash := width
+	color := "brown"
 	//<circle r="45" cx="350" cy="100" fill="pink" stroke="blue" stroke-width="4" stroke-dasharray="10,5" />
-	form1 := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"%s\" stroke-width=\"%.1f\" stroke-dasharray=\"%.1f,%.1f\"  fill=\"none\" />\n"
-	s += fmt.Sprintf(form1, x, y, rMag, "brown", width, dash, dash)
+	formGC := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"%s\" stroke-width=\"%.1f\" stroke-dasharray=\"%.1f,%.1f\"  fill=\"none\" />\n"
+	formGA := "        <ellipse cx=\"%.1f\" cy=\"%.1f\" rx=\"%.1f\" ry=\"%.1f\" stroke=\"%s\" stroke-width=\"%.1f\" stroke-dasharray=\"%.1f,%.1f\"  fill=\"none\" />\n"
+	if obj.OType != "whatever" {
+		s += fmt.Sprintf(formGA, x, y, rMag, rMag*0.5, color, width, dash, dash)
+	} else {
+		s += fmt.Sprintf(formGC, x, y, rMag, color, width, dash, dash)
+	}
 	s += "       </g>\n"
 
 	return s
