@@ -194,6 +194,7 @@ const (
     <use xlink:href="#plotRaCross" />
     <use xlink:href="#plotAxisDeclinations" />
     <use xlink:href="#plotDirectionsOfTheApparentRotationOfTheSky" />	
+    <use xlink:href="#plotObjectsLegend" />	
   </g>
   <g id="draw_platonYear_map">
     <use xlink:href="#plotPlatonYear" />
@@ -686,6 +687,11 @@ func plotObjects() string {
 
 	return s
 }
+func plotObjectsLegend() string {
+	s := "      <g id=\"plotObjectsLegend\">\n"
+	s += "      </g>\n"
+	return s
+}
 func P_lotStarNames() string {
 	s := "      <g id=\"plotStarNames\">\n"
 
@@ -1114,6 +1120,7 @@ func HandlerSkyMapGeneral(w http.ResponseWriter, r *http.Request) {
 	defs += plotDirectionsOfTheApparentRotationOfTheSky()
 	defs += plotStars()
 	defs += plotObjects()
+	defs += plotObjectsLegend()
 
 	var draws = []string{"draw_platonYear_map", "draw_AZ_grid", "draw_map", "draw_all"}
 	draw := draws[drawIdInt]
