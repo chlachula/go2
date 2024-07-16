@@ -61,8 +61,8 @@ var (
 )
 
 type MapStyle struct {
-	NorthMap bool
-	//	Radius                float64
+	NorthMap              bool
+	Radius                float64
 	Rlat                  float64
 	RadiusDeclinationZero float64
 	RAwidth               float64
@@ -175,6 +175,16 @@ const (
      >
      <path d='M0,0 V8 L4,4 Z' fill="black" />
     </marker>
+    <pattern id="PatternOpenCluster" width="0.3" height="0.2" patternContentUnits="objectBoundingBox">
+      <rect x="0" y="0.03" width="0.12" height=".12" fill="silver"/>
+    </pattern>	
+    <pattern id="PatternDiffuseNebula" width="0.11" height="0.11" patternContentUnits="objectBoundingBox">
+      <rect x="0" y="0" width="0.125" height=".0085" fill="silver"/>
+    </pattern>
+    <pattern id="PatternPlanetaryNebula" width="0.11" height="0.11" patternContentUnits="objectBoundingBox">
+      <rect x="0" y="0" width="0.125" height=".0085" fill="silver"/>
+    </pattern>
+
   %s
 	<g id="draw_AZ_grid" transform="rotate(180)">
 	  <circle cx="0" cy="0" r="{{.RLat}}" stroke="black" stroke-width="0.5" fill="none" />
@@ -246,7 +256,7 @@ func SetMapStyle(r, lat float64, c MapColors) {
 	}
 	//	r2 := Map.Rlat * 1.12 //170
 	//	w := Map.Rlat * 0.23  //40 1.12+0.23/2=1.235
-
+	m.Radius = r
 	m.Rlat = r * 0.80971659919028340080971659919028
 	m.Latitude = lat
 	m.Colors = c
@@ -668,11 +678,23 @@ func plotObject(obj ObjectRecord) string {
 	color := "brown"
 	//<circle r="45" cx="350" cy="100" fill="pink" stroke="blue" stroke-width="4" stroke-dasharray="10,5" />
 	formGC := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"%s\" stroke-width=\"%.1f\" stroke-dasharray=\"%.1f,%.1f\"  fill=\"none\" />\n"
+	formOC := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke-width=\"0\" fill=\"url(#PatternOpenCluster)\" />\n"
+	formDN := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke-width=\"0\" fill=\"url(#PatternDiffuseNebula)\" />\n"
+	formPN := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke-width=\"0\" fill=\"url(#PatternPlanetaryNebula)\" />\n"
 	formGA := "        <g transform=\"translate(%.1f,%.1f)\"><ellipse cx=\"0\" cy=\"0\" rx=\"%.1f\" ry=\"%.1f\" stroke=\"%s\" stroke-width=\"%.1f\" stroke-dasharray=\"%.1f,%.1f\"  fill=\"none\" transform=\"rotate(%.1f)\" /></g>\n"
-	if obj.OType != "whatever" {
+	switch obj.OType {
+	case "OC": // Open Cluster
+		s += fmt.Sprintf(formOC, x, y, rMag)
+	case "GC": // Globular Cluster
 		s += fmt.Sprintf(formGA, x, y, rMag, rMag*0.5, color, width, dash, dash, obj.RA)
-	} else {
+	case "DN": // Diffuse Nebula
+		s += fmt.Sprintf(formDN, x, y, rMag)
+	case "PN": // Planetary Nebula
+		s += fmt.Sprintf(formPN, x, y, rMag)
+	case "SR": // Supernova Remnant
+	case "GA": // Galaxy
 		s += fmt.Sprintf(formGC, x, y, rMag, color, width, dash, dash)
+	default:
 	}
 	s += "       </g>\n"
 
@@ -688,8 +710,11 @@ func plotObjects() string {
 	return s
 }
 func plotObjectsLegend() string {
-	s := "      <g id=\"plotObjectsLegend\">\n"
-	s += "      </g>\n"
+	s := fmt.Sprintf("      <g id=\"plotObjectsLegend\" transform=\"translate(0, %.1f)\">\n", 1.1*Map.Radius)
+	s += `      <text x="0" y="0" fill="none" stroke="black" font-size="5">Objects Legend</text>`
+	var obj = ObjectRecord{Mes: 1, De: 89.9}
+	s += plotObject(obj)
+	s += "\n      </g>\n"
 	return s
 }
 func P_lotStarNames() string {
