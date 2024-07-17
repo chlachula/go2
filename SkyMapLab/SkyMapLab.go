@@ -711,7 +711,7 @@ func plotObjects() string {
 }
 func plotObjectsLegend() string {
 	s := fmt.Sprintf("      <g id=\"plotObjectsLegend\" transform=\"translate(0, %.1f)\">\n", 1.1*Map.Radius)
-	s += `      <text x="0" y="0" fill="none" stroke="black" font-size="5">Objects Legend</text>`
+	s += `      <text x="0" y="0" fill="none"  class="font1 downFont">Objects Legend</text>`
 	var obj = ObjectRecord{Mes: 1, De: 89.9}
 	s += plotObject(obj)
 	s += "\n      </g>\n"
