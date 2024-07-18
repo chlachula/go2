@@ -184,6 +184,27 @@ const (
     <pattern id="PatternPlanetaryNebula" width="0.11" height="0.11" patternContentUnits="objectBoundingBox">
       <rect x="0" y="0" width="0.125" height=".0085" fill="silver"/>
     </pattern>
+    <pattern id="PatternSupernovaRemnant" width="1" height="1" patternContentUnits="objectBoundingBox">
+	<path style="stroke:blue;stroke-width:0.02" d="M0.67,0.50 L1.00,0.50
+    M0.66,0.56 L0.97,0.67
+    M0.63,0.61 L0.88,0.82
+    M0.58,0.64 L0.75,0.93
+    M0.53,0.66 L0.59,0.99
+    M0.47,0.66 L0.41,0.99
+    M0.42,0.64 L0.25,0.93
+    M0.37,0.61 L0.12,0.82
+    M0.34,0.56 L0.03,0.67
+    M0.33,0.50 L0.00,0.50
+    M0.34,0.44 L0.03,0.33
+    M0.37,0.39 L0.12,0.18
+    M0.42,0.36 L0.25,0.07
+    M0.47,0.34 L0.41,0.01
+    M0.53,0.34 L0.59,0.01
+    M0.58,0.36 L0.75,0.07
+    M0.63,0.39 L0.88,0.18
+    M0.66,0.44 L0.97,0.33
+    " />
+    </pattern>
 
   %s
 	<g id="draw_AZ_grid" transform="rotate(180)">
@@ -681,6 +702,7 @@ func plotObject(obj ObjectRecord) string {
 	formOC := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke-width=\"0\" fill=\"url(#PatternOpenCluster)\" />\n"
 	formDN := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke-width=\"0\" fill=\"url(#PatternDiffuseNebula)\" />\n"
 	formPN := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke-width=\"0\" fill=\"url(#PatternPlanetaryNebula)\" />\n"
+	formSR := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke-width=\"0\" fill=\"url(#PatternSupernovaRemnant)\" />\n"
 	formGA := "        <g transform=\"translate(%.1f,%.1f)\"><ellipse cx=\"0\" cy=\"0\" rx=\"%.1f\" ry=\"%.1f\" stroke=\"%s\" stroke-width=\"%.1f\" stroke-dasharray=\"%.1f,%.1f\"  fill=\"none\" transform=\"rotate(%.1f)\" /></g>\n"
 	switch obj.OType {
 	case "OC": // Open Cluster
@@ -692,6 +714,7 @@ func plotObject(obj ObjectRecord) string {
 	case "PN": // Planetary Nebula
 		s += fmt.Sprintf(formPN, x, y, rMag)
 	case "SR": // Supernova Remnant
+		s += fmt.Sprintf(formSR, x, y, rMag)
 	case "GA": // Galaxy
 		s += fmt.Sprintf(formGC, x, y, rMag, color, width, dash, dash)
 	default:
