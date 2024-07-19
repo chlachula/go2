@@ -1076,10 +1076,8 @@ func HandlerSkyMapLab(w http.ResponseWriter, r *http.Request) {
 	  }
 	</script>	
   </head>
-	 `)
-	fmt.Fprint(w, "<body style=\"text-align: center;\">\n")
-	fmt.Fprint(w, "<h1>SkyMap Lab select page</h1>\n")
-	fmt.Fprint(w, `	
+<body style=\"text-align: center;\">
+  <h1>SkyMap Lab select page</h1>
 	<form action="javascript:;" onsubmit=" openSkyMap( this ) ">  
      <select name="hemisphere" id="hemisphere">
         <option value="s" >S</option>
@@ -1116,16 +1114,17 @@ func HandlerSkyMapLab(w http.ResponseWriter, r *http.Request) {
 	 <input type="submit" value="SUBMIT">
 
     </form>
-	<!-- 
-	https://github.com/kpawlik/svg2pdf/
-	https://pkg.go.dev/github.com/nicholasblaskey/svg-rasterizer#section-readme
-	https://helpx.adobe.com/acrobat/kb/print-posters-banners-acrobat-reader.html
-	Poster: TileScale, OverLap 0.005 in, Cut marks
-	Orientation: Portrate Landscape 
-  -->
-
-	`)
+ </body>
+</html>`)
 }
+
+/*
+https://github.com/kpawlik/svg2pdf/
+https://pkg.go.dev/github.com/nicholasblaskey/svg-rasterizer#section-readme
+https://helpx.adobe.com/acrobat/kb/print-posters-banners-acrobat-reader.html
+Poster: TileScale, OverLap 0.005 in, Cut marks
+Orientation: Portrate Landscape
+*/
 func getLatitude(str string) float64 {
 	sign := 1
 	if strings.HasPrefix(str, "s") || strings.HasPrefix(str, "S") {
