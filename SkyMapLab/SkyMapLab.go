@@ -713,7 +713,7 @@ func plotObject(obj ObjectRecord) string {
 		s += fmt.Sprintf(formDN, x, y, rMag)
 	case "PN": // Planetary Nebula
 		s += fmt.Sprintf(formPN, x, y, rMag)
-	case "SR": // Supernova Remnant
+	case "SR": // Supernova Remnant https://go.dev/play/p/Eeucxt-Jl-l
 		s += fmt.Sprintf(formSR, x, y, rMag)
 	case "GA": // Galaxy
 		s += fmt.Sprintf(formGC, x, y, rMag, color, width, dash, dash)
