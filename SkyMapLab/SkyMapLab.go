@@ -206,7 +206,8 @@ const (
     " />
     </pattern>
 
-  %s
+    {{.Defs}}
+
 	<g id="draw_AZ_grid" transform="rotate(180)">
 	  <circle cx="0" cy="0" r="{{.RLat}}" stroke="black" stroke-width="0.5" fill="none" />
       <use xlink:href="#plotHorizon" />
@@ -240,7 +241,7 @@ const (
   <rect width="500" height="{{.Height}}" x="-250" y="-{{.HeightHalf}}" stroke="blue" stroke-width="1" fill="azure" />
   <text x="-244" y="-{{.HeightHalf}}" fill="blue" font-size="8"><tspan dy="10">{{.PaperName}} ({{.WidthMM}}mm by {{.HeightMM}}mm) - Latitude: {{.Latitude}}</tspan></text>
   
-  <use xlink:href="#%s" />
+  <use xlink:href="#{{.Draw}}" />
 </svg>
 `
 )
@@ -262,6 +263,8 @@ type SvgDataType = struct {
 	VBminY           float64
 	VBwidth          float64
 	VBheight         float64
+	Defs             string
+	Draw             string
 }
 
 var (
@@ -379,7 +382,7 @@ func viewBox(w float64, h float64, rows, colums, rIndex, cIndex int) (float64, f
 	height = dh
 	return minX, minY, width, height
 }
-func getSvgData(color bool, i int) SvgDataType {
+func getSvgData(color bool, i int, defs string, draw string) SvgDataType {
 	factor := Map.Rlat / 150.0
 
 	width := 500.0
@@ -404,6 +407,8 @@ func getSvgData(color bool, i int) SvgDataType {
 		VBminY:           vMinY,
 		VBwidth:          vWidth,
 		VBheight:         vHeight,
+		Defs:             defs,
+		Draw:             draw,
 	}
 	if !color {
 		data.TopColor = "black"
@@ -1172,10 +1177,8 @@ func HandlerSkyMapGeneral(w http.ResponseWriter, r *http.Request) {
 
 	var draws = []string{"draw_platonYear_map", "draw_AZ_grid", "draw_map", "draw_all"}
 	draw := draws[drawIdInt]
-
-	svgTemplate2 := fmt.Sprintf(svgTemplate1, defs, draw)
-	if t, err := template.New("SkyMap").Parse(svgTemplate2); err == nil {
-		data := getSvgData(colorfullMap, paperIdInt)
+	if t, err := template.New("SkyMap").Parse(svgTemplate1); err == nil {
+		data := getSvgData(colorfullMap, paperIdInt, defs, draw)
 		if err = t.Execute(w, data); err != nil {
 			fmt.Fprintf(w, "<h1>error %s</h1>", err.Error())
 		}
