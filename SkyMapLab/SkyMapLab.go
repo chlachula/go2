@@ -623,11 +623,19 @@ func plotObjects() string {
 
 	return s
 }
+func plotLegendObject(obj ObjectRecord, dx, dy float64) string {
+	s := fmt.Sprintf("     <g id=\"LegendObj_%s\" transform=\"translate(%.2f,%.2f)\" >\n", obj.OType, dx, dy)
+	s += plotObject(obj)
+	s += `<text x="10" y="5" fill="none"  class="font1 downFont">Supernova remnant</text>`
+	s += "     </g>\n"
+	return s
+}
 func plotObjectsLegend() string {
 	s := fmt.Sprintf("      <g id=\"plotObjectsLegend\" transform=\"translate(0, %.1f)\">\n", 1.1*Map.Radius)
-	s += `      <text x="0" y="0" fill="none"  class="font1 downFont">Objects Legend</text>`
-	var obj = ObjectRecord{Mes: 1, De: 89.9}
-	s += plotObject(obj)
+	s += `       <text x="0" y="0" fill="none"  class="font1 downFont">Objects Legend</text>`
+	s += "\n"
+	var obj = ObjectRecord{Mes: 1, De: 89.9, OType: "SR"}
+	s += plotLegendObject(obj, 5.0, 10.0)
 	s += "\n      </g>\n"
 	return s
 }
