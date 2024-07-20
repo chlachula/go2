@@ -40,6 +40,15 @@ type ObjectRecord struct {
 	Size  string  `json:"Size"`
 }
 
+var ObjectTypeNames = map[string]string{
+	"OC": "Open cluster",
+	"GC": "Globular cluster",
+	"DN": "Diffuse nebula",
+	"PN": "Planetary nebula",
+	"SR": "Supernova remnant",
+	"GA": "Galaxy",
+}
+
 type MapColors struct {
 	ConstLine   string
 	ConstName   string
@@ -611,9 +620,9 @@ func plotObject(obj ObjectRecord) string {
 	default:
 	}
 	s += "       </g>\n"
-
 	return s
 }
+
 func plotObjects() string {
 	s := "      <g id=\"plotObjects\">\n"
 	for _, obj := range SliceOfObjects {
@@ -626,16 +635,23 @@ func plotObjects() string {
 func plotLegendObject(obj ObjectRecord, dx, dy float64) string {
 	s := fmt.Sprintf("     <g id=\"LegendObj_%s\" transform=\"translate(%.2f,%.2f)\" >\n", obj.OType, dx, dy)
 	s += plotObject(obj)
-	s += `<text x="10" y="5" fill="none"  class="font1 downFont">Supernova remnant</text>`
+	s += fmt.Sprintf(`<text x="10" y="5" fill="none"  class="font1 downFont">%s</text>`, ObjectTypeNames[obj.OType])
+	s += "\n"
 	s += "     </g>\n"
 	return s
 }
 func plotObjectsLegend() string {
-	s := fmt.Sprintf("      <g id=\"plotObjectsLegend\" transform=\"translate(0, %.1f)\">\n", 1.1*Map.Radius)
+	s := fmt.Sprintf("      <g id=\"plotObjectsLegend\" transform=\"translate(0, %.1f)\">\n", 1.05*Map.Radius)
 	s += `       <text x="0" y="0" fill="none"  class="font1 downFont">Objects Legend</text>`
 	s += "\n"
+	var oTypes = []string{"OC", "GC", "DN", "PN", "SR", "GA"}
 	var obj = ObjectRecord{Mes: 1, De: 89.9, OType: "SR"}
-	s += plotLegendObject(obj, 5.0, 10.0)
+	y := 10.0
+	for _, ot := range oTypes {
+		obj.OType = ot
+		s += plotLegendObject(obj, 5.0, y)
+		y += 9.0
+	}
 	s += "\n      </g>\n"
 	return s
 }
