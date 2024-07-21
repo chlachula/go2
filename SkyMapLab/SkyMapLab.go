@@ -608,15 +608,15 @@ func plotObject(obj ObjectRecord) string {
 	case "OC": // Open Cluster
 		s += fmt.Sprintf(formOC, x, y, rMag)
 	case "GC": // Globular Cluster
-		s += fmt.Sprintf(formGA, x, y, rMag, rMag*0.5, color, width, dash, dash, obj.RA)
+		s += fmt.Sprintf(formGC, x, y, rMag, color, width, dash, dash)
 	case "DN": // Diffuse Nebula
 		s += fmt.Sprintf(formDN, x, y, rMag)
-	case "PN": // Planetary Nebula
+	case "PN": // Planetary Nebula https://go.dev/play/p/4LVBZpXDMUG
 		s += fmt.Sprintf(formPN, x, y, rMag)
 	case "SR": // Supernova Remnant https://go.dev/play/p/Eeucxt-Jl-l
 		s += fmt.Sprintf(formSR, x, y, rMag)
 	case "GA": // Galaxy
-		s += fmt.Sprintf(formGC, x, y, rMag, color, width, dash, dash)
+		s += fmt.Sprintf(formGA, x, y, rMag, rMag*0.5, color, width, dash, dash, obj.RA)
 	default:
 	}
 	s += "       </g>\n"
@@ -645,7 +645,7 @@ func plotObjectsLegend() string {
 	s += `       <text x="0" y="0" fill="none"  class="font1 downFont">Objects Legend</text>`
 	s += "\n"
 	var oTypes = []string{"OC", "GC", "DN", "PN", "SR", "GA"}
-	var obj = ObjectRecord{Mes: 1, De: 89.9, OType: "SR"}
+	var obj = ObjectRecord{Mes: 1, De: 89.9999, OType: "SR"}
 	y := 10.0
 	for _, ot := range oTypes {
 		obj.OType = ot
