@@ -46,8 +46,24 @@ const (
      >
      <path d='M0,0 V8 L4,4 Z' fill="black" />
     </marker>
-    <pattern id="PatternOpenCluster" width="0.3" height="0.2" patternContentUnits="objectBoundingBox">
-      <rect x="0" y="0.03" width="0.12" height=".12" fill="silver"/>
+    <pattern id="PatternOpenCluster" width="1" height="1" patternContentUnits="objectBoundingBox">
+      <!--rect x="0" y="0.03" width="0.12" height=".12" fill="silver"/-->
+<path style="stroke:black;stroke-width:0.05" d="M0.50,0.50 h0.06
+M0.71,0.40 h0.06
+M0.96,0.50 h0.06
+M0.71,0.60 h0.06
+M0.78,0.86 h0.06
+M0.55,0.72 h0.06
+M0.39,0.95 h0.06
+M0.35,0.68 h0.06
+M0.08,0.69 h0.06
+M0.27,0.49 h0.06
+M0.09,0.28 h0.06
+M0.36,0.31 h0.06
+M0.42,0.05 h0.06
+M0.56,0.28 h0.06
+M0.81,0.16 h0.06
+" />
     </pattern>	
     <pattern id="PatternDiffuseNebula" width="0.11" height="0.11" patternContentUnits="objectBoundingBox">
       <rect x="0" y="0" width="0.125" height=".0085" fill="black"/>

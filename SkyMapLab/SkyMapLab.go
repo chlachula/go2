@@ -605,7 +605,7 @@ func plotObject(obj ObjectRecord) string {
 	formSR := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke-width=\"0\" fill=\"url(#PatternSupernovaRemnant)\" />\n"
 	formGA := "        <g transform=\"translate(%.1f,%.1f)\"><ellipse cx=\"0\" cy=\"0\" rx=\"%.1f\" ry=\"%.1f\" stroke=\"%s\" stroke-width=\"%.1f\" stroke-dasharray=\"%.1f,%.1f\"  fill=\"none\" transform=\"rotate(%.1f)\" /></g>\n"
 	switch obj.OType {
-	case "OC": // Open Cluster
+	case "OC": // Open Cluster https://go.dev/play/p/2hKU_pWuzi7
 		s += fmt.Sprintf(formOC, x, y, rMag)
 	case "GC": // Globular Cluster
 		s += fmt.Sprintf(formGC, x, y, rMag, color, width, dash, dash)
