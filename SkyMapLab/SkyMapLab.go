@@ -597,7 +597,6 @@ func plotObject(obj ObjectRecord) string {
 	width := 0.1 * rMag
 	dash := width
 	color := "brown"
-	//<circle r="45" cx="350" cy="100" fill="pink" stroke="blue" stroke-width="4" stroke-dasharray="10,5" />
 	formGC := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"%s\" stroke-width=\"%.1f\" stroke-dasharray=\"%.1f,%.1f\"  fill=\"none\" />\n"
 	formOC := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke-width=\"0\" fill=\"url(#PatternOpenCluster)\" />\n"
 	formDN := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke-width=\"0\" fill=\"url(#PatternDiffuseNebula)\" />\n"
