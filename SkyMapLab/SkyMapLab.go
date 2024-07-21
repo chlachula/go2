@@ -144,6 +144,7 @@ const (
 type SvgDataType = struct {
 	FontSize         float64
 	FontSizeAxis     float64
+	FontSizeLegend   float64
 	TopColor         string
 	BottomColor      string
 	CrossStrokeWidth float64
@@ -289,6 +290,7 @@ func getSvgData(color bool, i int, defs string, draw string) SvgDataType {
 		TopColor:         "green",
 		BottomColor:      "black",
 		FontSize:         8.0 * factor,
+		FontSizeLegend:   5.8 * factor,
 		FontSizeAxis:     4.0 * factor,
 		CrossStrokeWidth: 0.25 * factor,
 		Latitude:         fmt.Sprintf("%.f", Map.Latitude),
@@ -634,18 +636,18 @@ func plotObjects() string {
 func plotLegendObject(obj ObjectRecord, dx, dy float64) string {
 	s := fmt.Sprintf("     <g id=\"LegendObj_%s\" transform=\"translate(%.2f,%.2f)\" >\n", obj.OType, dx, dy)
 	s += plotObject(obj)
-	s += fmt.Sprintf(`<text x="10" y="5" fill="none"  class="font1 downFont">%s</text>`, ObjectTypeNames[obj.OType])
+	s += fmt.Sprintf(`<text x="10" y="3" fill="none"  class="fontLegend downFont">%s</text>`, ObjectTypeNames[obj.OType])
 	s += "\n"
 	s += "     </g>\n"
 	return s
 }
 func plotObjectsLegend() string {
 	s := fmt.Sprintf("      <g id=\"plotObjectsLegend\" transform=\"translate(0, %.1f)\">\n", 1.05*Map.Radius)
-	s += `       <text x="0" y="0" fill="none"  class="font1 downFont">Objects Legend</text>`
+	s += `       <text x="0" y="0" fill="none"  class="fontLegend downFont">Objects Legend</text>`
 	s += "\n"
 	var oTypes = []string{"OC", "GC", "DN", "PN", "SR", "GA"}
 	var obj = ObjectRecord{Mes: 1, De: 89.9999, OType: "SR"}
-	y := 10.0
+	y := 9.0
 	for _, ot := range oTypes {
 		obj.OType = ot
 		s += plotLegendObject(obj, 5.0, y)
