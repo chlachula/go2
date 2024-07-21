@@ -67,6 +67,7 @@ var (
 	MapColorsRed     = MapColors{ConstLine: "red", OuterCircle: "#ffeee6", Months: "black", ConstName: "green", Star: "blue", Ecliptic: "orange", Horizon: "green"}
 	MapBlackAndWhite = MapColors{ConstLine: "black", OuterCircle: "silver", Months: "black", ConstName: "black", Star: "black", Ecliptic: "black", Horizon: "black"}
 	MapColorsOrange  = MapColors{ConstLine: "orange", OuterCircle: "#f2e1e9", Months: "orange", ConstName: "green", Star: "darkblue", Ecliptic: "yellow", Horizon: "darkgreen"}
+	legendColor      = "darkBlue"
 )
 
 type MapStyle struct {
@@ -145,6 +146,7 @@ type SvgDataType = struct {
 	FontSize         float64
 	FontSizeAxis     float64
 	FontSizeLegend   float64
+	LegendColor      string
 	TopColor         string
 	BottomColor      string
 	CrossStrokeWidth float64
@@ -293,6 +295,7 @@ func getSvgData(color bool, i int, defs string, draw string) SvgDataType {
 		FontSizeLegend:   5.8 * factor,
 		FontSizeAxis:     4.0 * factor,
 		CrossStrokeWidth: 0.25 * factor,
+		LegendColor:      legendColor,
 		Latitude:         fmt.Sprintf("%.f", Map.Latitude),
 		RLat:             Map.Rlat,
 		PaperName:        papers[i].Name,
@@ -598,7 +601,7 @@ func plotObject(obj ObjectRecord) string {
 	rMag := magToRadius(0.0)
 	width := 0.1 * rMag
 	dash := width
-	color := "brown"
+	color := legendColor
 	formGC := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke=\"%s\" stroke-width=\"%.1f\" stroke-dasharray=\"%.1f,%.1f\"  fill=\"none\" />\n"
 	formOC := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke-width=\"0\" fill=\"url(#PatternOpenCluster)\" />\n"
 	formDN := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke-width=\"0\" fill=\"url(#PatternDiffuseNebula)\" />\n"

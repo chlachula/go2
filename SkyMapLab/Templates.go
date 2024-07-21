@@ -15,6 +15,12 @@ const (
 		font-weight: 90; 		
 		letter-spacing: 2px;
 	 }
+	 .fontLegend { 
+		font-size: {{.FontSizeLegend}}px;
+		font-family: Franklin Gothic, sans-serif;
+    font-weight: 90; 
+    letter-spacing: 2px;
+	 }
 	 .upFont { 
 		fill: {{.TopColor}};
 	 }
@@ -47,8 +53,7 @@ const (
      <path d='M0,0 V8 L4,4 Z' fill="black" />
     </marker>
     <pattern id="PatternOpenCluster" width="1" height="1" patternContentUnits="objectBoundingBox">
-      <!--rect x="0" y="0.03" width="0.12" height=".12" fill="silver"/-->
-<path style="stroke:black;stroke-width:0.05" d="M0.50,0.50 h0.06
+<path style="stroke:{{.LegendColor}};stroke-width:0.05" d="M0.50,0.50 h0.06
 M0.71,0.40 h0.06
 M0.96,0.50 h0.06
 M0.71,0.60 h0.06
@@ -66,17 +71,17 @@ M0.81,0.16 h0.06
 " />
     </pattern>	
     <pattern id="PatternDiffuseNebula" width="0.11" height="0.11" patternContentUnits="objectBoundingBox">
-      <rect x="0" y="0" width="0.125" height=".0085" fill="black"/>
+      <rect x="0" y="0" width="0.125" height=".0085" fill="{{.LegendColor}}"/>
     </pattern>
     <pattern id="PatternPlanetaryNebula" width="1" height="1" patternContentUnits="objectBoundingBox">
-      <g style="fill:none;stroke:blue;stroke-width:0.02">
+      <g style="fill:none;stroke:{{.LegendColor}};stroke-width:0.02">
        <circle cx="0.50" cy="0.50" r="0.17" />
        <path d="M0.65,0.57 L0.95,0.71  A1,1 0 0,0 0.95,0.29  L0.65,0.43     
                 M0.35,0.57 L0.05,0.71  A1,1 0 0,1 0.05,0.29  L0.35,0.43 " />
      </g>
     </pattern>
     <pattern id="PatternSupernovaRemnant" width="1" height="1" patternContentUnits="objectBoundingBox">
-	<path style="stroke:blue;stroke-width:0.02" d="M0.67,0.50 L1.00,0.50
+	<path style="stroke:{{.LegendColor}};stroke-width:0.02" d="M0.67,0.50 L1.00,0.50
     M0.66,0.56 L0.97,0.67
     M0.63,0.61 L0.88,0.82
     M0.58,0.64 L0.75,0.93
