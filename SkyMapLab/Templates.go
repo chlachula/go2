@@ -55,7 +55,8 @@ const (
     <pattern id="PatternPlanetaryNebula" width="1" height="1" patternContentUnits="objectBoundingBox">
       <g style="fill:none;stroke:blue;stroke-width:0.02">
        <circle cx="0.50" cy="0.50" r="0.17" />
-       <path style="stroke:blue;stroke-width:0.02" d="M0.65,0.57 L0.95,0.71 L0.95,0.29 L0.65,0.43 M0.35,0.57 L0.05,0.71 L0.05,0.29 L0.35,0.43 " />
+       <path d="M0.65,0.57 L0.95,0.71  A1,1 0 0,0 0.95,0.29  L0.65,0.43     
+                M0.35,0.57 L0.05,0.71  A1,1 0 0,1 0.05,0.29  L0.35,0.43 " />
      </g>
     </pattern>
     <pattern id="PatternSupernovaRemnant" width="1" height="1" patternContentUnits="objectBoundingBox">
