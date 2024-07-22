@@ -30,7 +30,7 @@ type ObjectRecord struct {
 	CName string  `json:"CName"` // Common name
 	OType string  `json:"OType"` // Object type
 	Const string  `json:"Const"` // Constellation
-	Mes   int     `json:"Mes"`   // Messier
+	Mes   int     `json:"M"`     // Messier
 	Cal   int     `json:"Cal"`   // Caldwell
 	NGC   int     `json:"NGC"`   // New General Catalogue
 	IC    int     `json:"IC"`    // Index Catalogue
@@ -608,6 +608,7 @@ func plotObject(obj ObjectRecord) string {
 	formPN := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke-width=\"0\" fill=\"url(#PatternPlanetaryNebula)\" />\n"
 	formSR := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke-width=\"0\" fill=\"url(#PatternSupernovaRemnant)\" />\n"
 	formGA := "        <g transform=\"translate(%.1f,%.1f)\"><ellipse cx=\"0\" cy=\"0\" rx=\"%.1f\" ry=\"%.1f\" stroke=\"%s\" stroke-width=\"%.1f\" stroke-dasharray=\"%.1f,%.1f\"  fill=\"none\" transform=\"rotate(%.1f)\" /></g>\n"
+	formTXT := "        <g transform=\"translate(%.1f,%.1f)\"><text x=\"0\" y=\"0\" class=\"fontLegend downFont\" transform=\"rotate(%.1f)\" >%s</text></g>\n"
 	switch obj.OType {
 	case "OC": // Open Cluster https://go.dev/play/p/2hKU_pWuzi7
 		s += fmt.Sprintf(formOC, x, y, rMag)
@@ -623,6 +624,8 @@ func plotObject(obj ObjectRecord) string {
 		s += fmt.Sprintf(formGA, x, y, rMag, rMag*0.5, color, width, dash, dash, obj.RA)
 	default:
 	}
+	ctlName := fmt.Sprintf("M%d", obj.Mes)
+	s += fmt.Sprintf(formTXT, x, y, obj.RA, ctlName)
 	s += "       </g>\n"
 	return s
 }
