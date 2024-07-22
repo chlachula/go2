@@ -595,6 +595,19 @@ func plotStars() string {
 
 	return s
 }
+
+// Messier or Caldwell objects lime M1 or C109
+func catalogueName(obj ObjectRecord) string {
+	ctlName := "??"
+	if obj.Mes > 0 {
+		ctlName = fmt.Sprintf("%s%d", "M", obj.Mes)
+	} else {
+		if obj.Cal > 0 {
+			ctlName = fmt.Sprintf("%s%d", "C", obj.Cal)
+		}
+	}
+	return ctlName
+}
 func plotObject(obj ObjectRecord) string {
 	s := fmt.Sprintf("       <g id=\"obj_%s%d\">\n", "M", obj.Mes)
 	x, y := eqToCartesianXY(obj.RA, obj.De)
@@ -624,7 +637,7 @@ func plotObject(obj ObjectRecord) string {
 		s += fmt.Sprintf(formGA, x, y, rMag, rMag*0.5, color, width, dash, dash, obj.RA)
 	default:
 	}
-	ctlName := fmt.Sprintf("M%d", obj.Mes)
+	ctlName := catalogueName(obj)
 	s += fmt.Sprintf(formTXT, x, y, obj.RA, ctlName)
 	s += "       </g>\n"
 	return s
