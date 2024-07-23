@@ -144,6 +144,7 @@ const (
 
 type SvgDataType = struct {
 	FontSize         float64
+	FontSizeObj      float64
 	FontSizeAxis     float64
 	FontSizeLegend   float64
 	LegendColor      string
@@ -294,6 +295,7 @@ func getSvgData(color bool, i int, defs string, draw string) SvgDataType {
 		FontSize:         8.0 * factor,
 		FontSizeLegend:   5.8 * factor,
 		FontSizeAxis:     4.0 * factor,
+		FontSizeObj:      2.0 * factor,
 		CrossStrokeWidth: 0.25 * factor,
 		LegendColor:      legendColor,
 		Latitude:         fmt.Sprintf("%.f", Map.Latitude),
@@ -579,6 +581,15 @@ func starCanBeVisible(m MapStyle, star StarRecord) bool {
 	}
 	return false
 }
+func objectCanBeVisible(m MapStyle, obj ObjectRecord) bool {
+	if m.NorthMap && obj.De > m.LowestStarDecl {
+		return true
+	}
+	if !m.NorthMap && obj.De < m.LowestStarDecl {
+		return true
+	}
+	return false
+}
 func plotStars() string {
 	s := "      <g id=\"plotStars\">\n"
 
@@ -621,7 +632,7 @@ func plotObject(obj ObjectRecord) string {
 	formPN := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke-width=\"0\" fill=\"url(#PatternPlanetaryNebula)\" />\n"
 	formSR := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke-width=\"0\" fill=\"url(#PatternSupernovaRemnant)\" />\n"
 	formGA := "        <g transform=\"translate(%.1f,%.1f)\"><ellipse cx=\"0\" cy=\"0\" rx=\"%.1f\" ry=\"%.1f\" stroke=\"%s\" stroke-width=\"%.1f\" stroke-dasharray=\"%.1f,%.1f\"  fill=\"none\" transform=\"rotate(%.1f)\" /></g>\n"
-	formTXT := "        <g transform=\"translate(%.1f,%.1f)\"><text x=\"0\" y=\"0\" class=\"fontLegend downFont\" transform=\"rotate(%.1f)\" >%s</text></g>\n"
+	formTXT := "        <g transform=\"translate(%.1f,%.1f)\"><text x=\"0\" y=\"0\" class=\"fontObj downFont\" transform=\"rotate(%.1f)\" >%s</text></g>\n"
 	switch obj.OType {
 	case "OC": // Open Cluster https://go.dev/play/p/2hKU_pWuzi7
 		s += fmt.Sprintf(formOC, x, y, rMag)
@@ -636,6 +647,7 @@ func plotObject(obj ObjectRecord) string {
 	case "GA": // Galaxy
 		s += fmt.Sprintf(formGA, x, y, rMag, rMag*0.5, color, width, dash, dash, obj.RA)
 	default:
+		s += fmt.Sprintf(formGC, x, y, rMag*0.2, color, width, dash, dash)
 	}
 	ctlName := catalogueName(obj)
 	s += fmt.Sprintf(formTXT, x, y, obj.RA, ctlName)
@@ -646,10 +658,11 @@ func plotObject(obj ObjectRecord) string {
 func plotObjects() string {
 	s := "      <g id=\"plotObjects\">\n"
 	for _, obj := range SliceOfObjects {
-		s += plotObject(obj)
+		if objectCanBeVisible(Map, obj) {
+			s += plotObject(obj)
+		}
 	}
 	s += "      </g>\n"
-
 	return s
 }
 func plotLegendObject(obj ObjectRecord, dx, dy float64) string {
