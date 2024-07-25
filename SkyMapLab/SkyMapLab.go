@@ -553,7 +553,10 @@ func plotDateRoundScale() string {
 
 	return s
 }
-func magToRadius(mag float64) float64 {
+func objMagToRadius(mag float64) float64 {
+	return starMagToRadius(mag)
+}
+func starMagToRadius(mag float64) float64 {
 	r0 := Map.Rlat / 500.0 // 0.3
 	r1 := Map.Rlat / 58.0  //2.6
 	if mag < Map.MagBrightest {
@@ -598,7 +601,7 @@ func plotStars() string {
 	for _, star := range SliceOfStars {
 		if star.Mag < Map.MagMin && starCanBeVisible(Map, star) {
 			x, y := eqToCartesianXY(star.RA, star.De)
-			rMag := magToRadius(star.Mag)
+			rMag := starMagToRadius(star.Mag)
 			s += fmt.Sprintf(form1, x, y, rMag, Map.Colors.Star)
 		}
 	}
@@ -622,7 +625,7 @@ func catalogueName(obj ObjectRecord) string {
 func plotObject(obj ObjectRecord) string {
 	s := fmt.Sprintf("       <g id=\"obj_%s%d\">\n", "M", obj.Mes)
 	x, y := eqToCartesianXY(obj.RA, obj.De)
-	rMag := magToRadius(0.0)
+	rMag := objMagToRadius(0.0)
 	width := 0.1 * rMag
 	dash := width
 	color := legendColor
@@ -696,7 +699,7 @@ func P_lotStarNames() string {
 	for _, star := range SliceOfStars {
 		if star.Mag < Map.MagMinName && starCanBeVisible(Map, star) {
 			x, y := eqToCartesianXY(star.RA, star.De)
-			rMag := magToRadius(star.Mag)
+			rMag := starMagToRadius(star.Mag)
 			s += fmt.Sprintf(form1, x, y, rMag, "blue")
 		}
 	}
