@@ -554,7 +554,16 @@ func plotDateRoundScale() string {
 	return s
 }
 func objMagToRadius(mag float64) float64 {
-	return starMagToRadius(mag)
+	r0 := Map.Rlat / 50.0  // 3.0
+	r1 := Map.Rlat / 200.0 // 0.75
+	//if mag < Map.MagBrightest {
+	//	mag = Map.MagBrightest
+	//}
+	//magRange := Map.MagMin - Map.MagBrightest
+	magRange := 13.0
+	objMagMin := 13.0
+	rMag := r0 + r1*(objMagMin-mag)/magRange
+	return rMag
 }
 func starMagToRadius(mag float64) float64 {
 	r0 := Map.Rlat / 500.0 // 0.3
@@ -659,13 +668,24 @@ func plotObject(obj ObjectRecord) string {
 }
 
 func plotObjects() string {
+	min, max := 100.0, 0.0
 	s := "      <g id=\"plotObjects\">\n"
 	for _, obj := range SliceOfObjects {
 		if objectCanBeVisible(Map, obj) {
+			if min > obj.Mag {
+				min = obj.Mag
+			}
+			if max < obj.Mag {
+				max = obj.Mag
+			}
+			if obj.Mag < 3.0 {
+				fmt.Printf("obj %+v\n", obj)
+			}
 			s += plotObject(obj)
 		}
 	}
 	s += "      </g>\n"
+	fmt.Printf("\nobj min=%.2f max=%.2f\n", min, max)
 	return s
 }
 func plotLegendObject(obj ObjectRecord, dx, dy float64) string {
