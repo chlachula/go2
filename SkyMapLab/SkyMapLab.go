@@ -629,6 +629,9 @@ func catalogueName(obj ObjectRecord) string {
 			ctlName = fmt.Sprintf("%s%d", "C", obj.Cal)
 		}
 	}
+	if obj.Mes == 999 {
+		ctlName = ""
+	}
 	return ctlName
 }
 func plotObject(obj ObjectRecord) string {
@@ -645,22 +648,27 @@ func plotObject(obj ObjectRecord) string {
 	formSR := "        <circle cx=\"%.1f\" cy=\"%.1f\" r=\"%.1f\" stroke-width=\"0\" fill=\"url(#PatternSupernovaRemnant)\" />\n"
 	formGA := "        <g transform=\"translate(%.1f,%.1f)\"><ellipse cx=\"0\" cy=\"0\" rx=\"%.1f\" ry=\"%.1f\" stroke=\"%s\" stroke-width=\"%.1f\" stroke-dasharray=\"%.1f,%.1f\"  fill=\"none\" transform=\"rotate(%.1f)\" /></g>\n"
 	formTXT := "        <g transform=\"translate(%.1f,%.1f)\"><text x=\"0\" y=\"0\" class=\"fontObj downFont\" transform=\"rotate(%.1f)\" >%s</text></g>\n"
+	var icon string
 	switch obj.OType {
 	case "OC": // Open Cluster https://go.dev/play/p/2hKU_pWuzi7
-		s += fmt.Sprintf(formOC, x, y, rMag)
+		icon = fmt.Sprintf(formOC, x, y, rMag)
 	case "GC": // Globular Cluster
-		s += fmt.Sprintf(formGC, x, y, rMag, color, width, dash, dash)
+		icon = fmt.Sprintf(formGC, x, y, rMag, color, width, dash, dash)
 	case "DN": // Diffuse Nebula
-		s += fmt.Sprintf(formDN, x, y, rMag)
+		icon = fmt.Sprintf(formDN, x, y, rMag)
 	case "PN": // Planetary Nebula https://go.dev/play/p/4LVBZpXDMUG
-		s += fmt.Sprintf(formPN, x, y, rMag)
+		icon = fmt.Sprintf(formPN, x, y, rMag)
 	case "SR": // Supernova Remnant https://go.dev/play/p/Eeucxt-Jl-l
-		s += fmt.Sprintf(formSR, x, y, rMag)
+		icon = fmt.Sprintf(formSR, x, y, rMag)
 	case "GA": // Galaxy
-		s += fmt.Sprintf(formGA, x, y, rMag, rMag*0.5, color, width, dash, dash, obj.RA)
+		icon = fmt.Sprintf(formGA, x, y, rMag, rMag*0.5, color, width, dash, dash, obj.RA)
 	default:
-		s += fmt.Sprintf(formGC, x, y, rMag*0.2, color, width, dash, dash)
+		icon = fmt.Sprintf(formGC, x, y, rMag*0.2, color, width, dash, dash)
 	}
+	if obj.Mag > 1.0 { // Not Hyades
+		s += icon
+	}
+
 	ctlName := catalogueName(obj)
 	s += fmt.Sprintf(formTXT, x, y, obj.RA, ctlName)
 	s += "       </g>\n"
@@ -701,7 +709,7 @@ func plotObjectsLegend() string {
 	s += `       <text x="0" y="0" fill="none"  class="fontLegend downFont">Objects Legend</text>`
 	s += "\n"
 	var oTypes = []string{"OC", "GC", "DN", "PN", "SR", "GA"}
-	var obj = ObjectRecord{Mes: 1, De: 89.9999, OType: "SR"}
+	var obj = ObjectRecord{Mes: 999, Mag: 3.1, De: 89.9999, OType: "SR"}
 	y := 9.0
 	for _, ot := range oTypes {
 		obj.OType = ot
