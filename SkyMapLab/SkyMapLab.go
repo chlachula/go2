@@ -383,16 +383,28 @@ func plotRaCross() string {
 `
 	return fmt.Sprintf(formCross, r2, r2, r2, r2, Map.RadiusDeclinationZero, w)
 }
+func mapVisibleDeclination(declination float64) bool {
+	if Map.Latitude > 0.0 {
+		return declination > -Map.Latitude
+	} else {
+		return declination < -Map.Latitude
+	}
+}
 func plotAxisDeclinations() string {
+	a90 := 90.0
 	stepDegs := 30.0
-	a := 90.0 - stepDegs
+	if !Map.NorthMap {
+		a90 = -90
+		stepDegs = -30.0
+	}
+	a := a90 - stepDegs
 	dx := 3.5
-	dy := Map.RadiusDeclinationZero / 90.0 * stepDegs
+	dy := Map.RadiusDeclinationZero / a90 * stepDegs
 	y := dy
 	g := "\n    <g id=\"AxisDeclMarks\">"
 	texts := ""
 	path := fmt.Sprintf("\n       <path d=\"M%.1f,0 ", dx)
-	for ; a > -44.0; a = a - stepDegs {
+	for ; mapVisibleDeclination(a); a = a - stepDegs {
 		//exclude marks for zero declination
 		if math.Abs(a) < 1.0 {
 			path += fmt.Sprintf("m0,%.1f ", dy)
