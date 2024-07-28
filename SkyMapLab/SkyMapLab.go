@@ -675,7 +675,26 @@ func plotObject(obj ObjectRecord) string {
 	return s
 }
 
+/*
+Lat+44 objects occurence
+13  messierQuadrants: [18 19 44 29]-sum:110   caldwellQuadrants: [23 15 18 22]-sum: 78
+8.5 messierQuadrants: [13 11 26 25]-sum: 75   caldwellQuadrants: [12  6  3 12]-sum: 33
+7.1 messierQuadrants: [ 7 10 12 14]-sum: 43   caldwellQuadrants: [ 5  3  3  9]-sum: 20
+6.1 messierQuadrants: [ 5  8  6  7]-sum: 26   caldwellQuadrants: [ 4  3  2  2]-sum: 11
+5.1 messierQuadrants: [ 3  3  2  4]-sum: 12   caldwellQuadrants: [ 2  2  1  0]-sum:  5
+4.1 messierQuadrants: [ 3  1  1  1]-sum:  6   caldwellQuadrants: [ 1  0  1  0]-sum:  2
+*/
+func sumQuadrants(q [4]int) int {
+	sum := 0
+	for _, val := range q {
+		sum += val
+	}
+	return sum
+}
 func plotObjects() string {
+	var messierQuadrants [4]int
+	var caldwellQuadrants [4]int
+	objMinMag := 6.1 //5.1 //7.1 //8.5
 	min, max := 100.0, 0.0
 	s := "      <g id=\"plotObjects\">\n"
 	for _, obj := range SliceOfObjects {
@@ -689,9 +708,19 @@ func plotObjects() string {
 			if obj.Mag < 3.0 {
 				fmt.Printf("obj %+v\n", obj)
 			}
-			s += plotObject(obj)
+			if obj.Mag < objMinMag {
+				s += plotObject(obj)
+				q := int(obj.RA) / 90
+				if obj.Mes > 0 {
+					messierQuadrants[q] += 1
+				}
+				if obj.Cal > 0 {
+					caldwellQuadrants[q] += 1
+				}
+			}
 		}
 	}
+	fmt.Printf("\n messierQuadrants: %+v-sum:%3d   caldwellQuadrants: %+v-sum:%3d\n", messierQuadrants, sumQuadrants(messierQuadrants), caldwellQuadrants, sumQuadrants(caldwellQuadrants))
 	s += "      </g>\n"
 	fmt.Printf("\nobj min=%.2f max=%.2f\n", min, max)
 	return s
