@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 )
@@ -31,6 +32,8 @@ func CreateIndexFile(dir string) {
 	if _, err := f.Write([]byte(html)); err != nil {
 		panic(err)
 	}
+	fmt.Printf(" Created %s\n", filename)
+
 }
 func htmlErrorPage(errMsg string) string {
 	return fmt.Sprintf(formHtml1, "<h1>"+errMsg+"</h1>")
@@ -52,12 +55,14 @@ func pngFilesToIndex(dir string) string {
 			PNGfiles = append(PNGfiles, f.Name())
 		}
 	}
-	//fmt.Printf("PNG files  %+v\n", PNGfiles)
+	sort.SliceStable(PNGfiles, func(i, j int) bool { return PNGfiles[i] < PNGfiles[j] })
 
 	s := ""
 	s += time.Now().Format("Generated 2006-01-02 Monday 15:04 <br/>\n")
 	for _, f := range PNGfiles {
 		s += "\n<br/>" + f[:3] + "<img valign=\"top\" src=\"" + f + "\" />"
 	}
+	fmt.Printf(" Found   %+v\n", PNGfiles)
+
 	return s
 }
