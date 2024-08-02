@@ -726,11 +726,12 @@ func plotObjects() string {
 			if obj.Mag < Map.ObjMinMag {
 				s += plotObject(obj)
 				q := int(obj.RA) / 90
-				objectsMapCount[obj.OType]++
 				if obj.Mes > 0 {
+					objectsMapCount[obj.OType+"M"]++
 					messierQuadrants[q] += 1
 				}
 				if obj.Cal > 0 {
+					objectsMapCount[obj.OType+"C"]++
 					caldwellQuadrants[q] += 1
 				}
 			}
@@ -744,7 +745,8 @@ func plotObjects() string {
 func plotLegendObject(obj ObjectRecord, dx, dy float64) string {
 	s := fmt.Sprintf("     <g id=\"LegendObj_%s\" transform=\"translate(%.2f,%.2f)\" >\n", obj.OType, dx, dy)
 	s += plotObject(obj)
-	s += fmt.Sprintf(`<text x="10" y="3" fill="none"  class="fontLegend downFont">%s: %d</text>`, ObjectTypeNames[obj.OType], objectsMapCount[obj.OType])
+	s += fmt.Sprintf(`<text x="10" y="3" fill="none"  class="fontLegend downFont">%s: M:%d+C:%d</text>`, ObjectTypeNames[obj.OType],
+		objectsMapCount[obj.OType+"M"], objectsMapCount[obj.OType+"C"])
 	s += "\n"
 	s += "     </g>\n"
 	return s
