@@ -89,6 +89,7 @@ type MapStyle struct {
 	DateNRadius           float64
 	MonthsRadius          float64
 	MagMin                float64
+	ObjMinMag             float64
 	MagBrightest          float64
 	MagMinName            float64
 	Colors                MapColors
@@ -98,6 +99,7 @@ type MapStyle struct {
 
 var SliceOfStars []StarRecord
 var SliceOfObjects []ObjectRecord
+var objectsMapCount map[string]int = map[string]int{} // or make(map[string]int)
 
 // var magBrightest = -1.5 // Sirius
 // var magMin = 5.0
@@ -193,9 +195,11 @@ func SetMapStyle(r, lat float64, c MapColors) {
 	m.DateRadius = r * 0.92874493927125506072874493927126
 	m.DateNRadius = r * 0.945
 	m.MonthsRadius = r * 0.98137651821862348178137651821862
+
 	m.MagBrightest = -1.5 // Sirius
 	m.MagMin = 5.0
 	m.MagMinName = 1.0
+	m.ObjMinMag = 6.1 // 5.1 6.1 7.1 8.5
 
 	m.RadiusDeclinationZero = 90.0 * m.Rlat / (180.0 + lat)
 	m.LowestConstDecl = 60.0      //Southern sky map
@@ -706,7 +710,6 @@ func sumQuadrants(q [4]int) int {
 func plotObjects() string {
 	var messierQuadrants [4]int
 	var caldwellQuadrants [4]int
-	objMinMag := 6.1 //5.1 //7.1 //8.5
 	min, max := 100.0, 0.0
 	s := "      <g id=\"plotObjects\">\n"
 	for _, obj := range SliceOfObjects {
@@ -720,9 +723,10 @@ func plotObjects() string {
 			if obj.Mag < 3.0 {
 				fmt.Printf("obj %+v\n", obj)
 			}
-			if obj.Mag < objMinMag {
+			if obj.Mag < Map.ObjMinMag {
 				s += plotObject(obj)
 				q := int(obj.RA) / 90
+				objectsMapCount[obj.OType]++
 				if obj.Mes > 0 {
 					messierQuadrants[q] += 1
 				}
@@ -732,7 +736,7 @@ func plotObjects() string {
 			}
 		}
 	}
-	fmt.Printf("\nobjMinMag:%.1f messierQuadrants: %+v-sum:%3d   caldwellQuadrants: %+v-sum:%3d\n", objMinMag, messierQuadrants, sumQuadrants(messierQuadrants), caldwellQuadrants, sumQuadrants(caldwellQuadrants))
+	fmt.Printf("\nobjMinMag:%.1f messierQuadrants: %+v-sum:%3d   caldwellQuadrants: %+v-sum:%3d\n", Map.ObjMinMag, messierQuadrants, sumQuadrants(messierQuadrants), caldwellQuadrants, sumQuadrants(caldwellQuadrants))
 	s += "      </g>\n"
 	fmt.Printf("\nobj min=%.2f max=%.2f\n", min, max)
 	return s
@@ -740,14 +744,14 @@ func plotObjects() string {
 func plotLegendObject(obj ObjectRecord, dx, dy float64) string {
 	s := fmt.Sprintf("     <g id=\"LegendObj_%s\" transform=\"translate(%.2f,%.2f)\" >\n", obj.OType, dx, dy)
 	s += plotObject(obj)
-	s += fmt.Sprintf(`<text x="10" y="3" fill="none"  class="fontLegend downFont">%s</text>`, ObjectTypeNames[obj.OType])
+	s += fmt.Sprintf(`<text x="10" y="3" fill="none"  class="fontLegend downFont">%s: %d</text>`, ObjectTypeNames[obj.OType], objectsMapCount[obj.OType])
 	s += "\n"
 	s += "     </g>\n"
 	return s
 }
 func plotObjectsLegend() string {
 	s := fmt.Sprintf("      <g id=\"plotObjectsLegend\" transform=\"translate(0, %.1f)\">\n", 1.05*Map.Radius)
-	s += `       <text x="0" y="0" fill="none"  class="fontLegend downFont">Objects Legend</text>`
+	s += fmt.Sprintf(`       <text x="0" y="0" fill="none"  class="fontLegend downFont">Objects Legend: brigher %.1f</text>`, Map.ObjMinMag)
 	s += "\n"
 	var oTypes = []string{"OC", "GC", "DN", "PN", "SR", "GA"}
 	var obj = ObjectRecord{Mes: 999, Mag: 3.1, De: 89.9999, OType: "SR"}
