@@ -732,7 +732,7 @@ func plotObjects() string {
 			}
 		}
 	}
-	fmt.Printf("\n messierQuadrants: %+v-sum:%3d   caldwellQuadrants: %+v-sum:%3d\n", messierQuadrants, sumQuadrants(messierQuadrants), caldwellQuadrants, sumQuadrants(caldwellQuadrants))
+	fmt.Printf("\nobjMinMag:%.1f messierQuadrants: %+v-sum:%3d   caldwellQuadrants: %+v-sum:%3d\n", objMinMag, messierQuadrants, sumQuadrants(messierQuadrants), caldwellQuadrants, sumQuadrants(caldwellQuadrants))
 	s += "      </g>\n"
 	fmt.Printf("\nobj min=%.2f max=%.2f\n", min, max)
 	return s
