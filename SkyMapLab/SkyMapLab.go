@@ -712,6 +712,8 @@ func plotObjects() string {
 	var caldwellQuadrants [4]int
 	min, max := 100.0, 0.0
 	s := "      <g id=\"plotObjects\">\n"
+	//sort to have a brighter objects first
+	sort.SliceStable(SliceOfObjects, func(i, j int) bool { return SliceOfObjects[i].Mag < SliceOfObjects[j].Mag })
 	for _, obj := range SliceOfObjects {
 		if objectCanBeVisible(Map, obj) {
 			if min > obj.Mag {
@@ -723,9 +725,9 @@ func plotObjects() string {
 			if obj.Mag < 3.0 {
 				fmt.Printf("obj %+v\n", obj)
 			}
+			q := int(obj.RA) / 90
 			if obj.Mag < Map.ObjMinMag {
 				s += plotObject(obj)
-				q := int(obj.RA) / 90
 				if obj.Mes > 0 {
 					objectsMapCount[obj.OType+"M"]++
 					messierQuadrants[q] += 1
@@ -734,7 +736,19 @@ func plotObjects() string {
 					objectsMapCount[obj.OType+"C"]++
 					caldwellQuadrants[q] += 1
 				}
+			} else {
+				//to have at least one object of each type
+				if objectsMapCount[obj.OType+"M"] < 1 {
+					objectsMapCount[obj.OType+"M"]++
+					messierQuadrants[q] += 1
+				}
+				if objectsMapCount[obj.OType+"C"] < 1 {
+					objectsMapCount[obj.OType+"C"]++
+					caldwellQuadrants[q] += 1
+				}
+
 			}
+
 		}
 	}
 	fmt.Printf("\nobjMinMag:%.1f messierQuadrants: %+v-sum:%3d   caldwellQuadrants: %+v-sum:%3d\n", Map.ObjMinMag, messierQuadrants, sumQuadrants(messierQuadrants), caldwellQuadrants, sumQuadrants(caldwellQuadrants))
