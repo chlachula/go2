@@ -727,22 +727,25 @@ func plotObjects() string {
 			}
 			q := int(obj.RA) / 90
 			if obj.Mag < Map.ObjMinMag {
-				s += plotObject(obj)
 				if obj.Mes > 0 {
+					s += plotObject(obj)
 					objectsMapCount[obj.OType+"M"]++
 					messierQuadrants[q] += 1
 				}
 				if obj.Cal > 0 {
+					s += plotObject(obj)
 					objectsMapCount[obj.OType+"C"]++
 					caldwellQuadrants[q] += 1
 				}
 			} else {
 				//to have at least one object of each type
 				if objectsMapCount[obj.OType+"M"] < 1 {
+					s += plotObject(obj)
 					objectsMapCount[obj.OType+"M"]++
 					messierQuadrants[q] += 1
 				}
 				if objectsMapCount[obj.OType+"C"] < 1 {
+					s += plotObject(obj)
 					objectsMapCount[obj.OType+"C"]++
 					caldwellQuadrants[q] += 1
 				}
