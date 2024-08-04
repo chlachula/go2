@@ -739,12 +739,12 @@ func plotObjects() string {
 				}
 			} else {
 				//to have at least one object of each type
-				if objectsMapCount[obj.OType+"M"] < 1 {
+				if obj.Mes > 0 && objectsMapCount[obj.OType+"M"] < 1 {
 					s += plotObject(obj)
 					objectsMapCount[obj.OType+"M"]++
 					messierQuadrants[q] += 1
 				}
-				if objectsMapCount[obj.OType+"C"] < 1 {
+				if obj.Cal > 0 && objectsMapCount[obj.OType+"C"] < 1 {
 					s += plotObject(obj)
 					objectsMapCount[obj.OType+"C"]++
 					caldwellQuadrants[q] += 1
