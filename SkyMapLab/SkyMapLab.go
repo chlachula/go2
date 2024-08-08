@@ -168,11 +168,6 @@ type SvgDataType = struct {
 	Draw             string
 }
 
-var (
-	TopText    string
-	BottomText string
-)
-
 func SetMapStyle(r, lat float64, c MapColors) {
 	var m MapStyle
 	m.NorthMap = false
@@ -262,11 +257,6 @@ func EclipticalToEquatorial(La, Be, 𝜀 float64) (float64, float64) {
 	return RA, De
 }
 
-func SetVariables(top, bottom string) {
-	TopText = top
-	BottomText = bottom
-	fmt.Printf("TOP:    %s\nBOTTOM: %s\n", TopText, BottomText)
-}
 func viewBox(w float64, h float64, rows, colums, rIndex, cIndex int) (float64, float64, float64, float64) {
 	minX, minY := -0.5*w, -0.5*h
 	width, height := w, h
@@ -749,7 +739,6 @@ func plotObjects() string {
 					objectsMapCount[obj.OType+"C"]++
 					caldwellQuadrants[q] += 1
 				}
-
 			}
 
 		}
