@@ -47,3 +47,13 @@ func TestAzimutalToEquatoreal_I(t *testing.T) {
 		fmt.Printf("Az:%3.0f    t:%6.2f,de:%6.2f\n", Az, tD, deD)
 	}
 }
+
+func TestCartesianXY(t *testing.T) {
+	gotX, gotY := cartesianXY(1.0, 0.0)
+	if gotX != 0.0 {
+		t.Errorf("unexpected X %.4f instead of 0.0", gotX)
+	}
+	if gotY != 1.0 {
+		t.Errorf("unexpected Y %.4f instead of 1.0", gotY)
+	}
+}
