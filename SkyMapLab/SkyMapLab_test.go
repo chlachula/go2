@@ -57,3 +57,12 @@ func TestCartesianXY(t *testing.T) {
 		t.Errorf("unexpected Y %.4f instead of 1.0", gotY)
 	}
 }
+
+func TestSumQuadrants(t *testing.T) {
+	var q = [4]int{1, 2, 3, 4}
+	want := 10
+	got := sumQuadrants(q)
+	if got != want {
+		t.Errorf("unexpected result of sumQuadrants %d instead of %d", got, want)
+	}
+}
