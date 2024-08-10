@@ -66,3 +66,23 @@ func TestSumQuadrants(t *testing.T) {
 		t.Errorf("unexpected result of sumQuadrants %d instead of %d", got, want)
 	}
 }
+
+func TestIintId0(t *testing.T) {
+	want := 42
+	got := intId0("42")
+	if got != want {
+		t.Errorf("unexpected result of intId0 %d instead of %d", got, want)
+	}
+
+	want = 0
+	got = intId0("blabla ")
+	if got != want {
+		t.Errorf("unexpected result of intId0 %d instead of %d", got, want)
+	}
+
+	got = intId0(" 31")
+	if got != want {
+		t.Errorf("unexpected result of intId0 %d instead of %d", got, want)
+	}
+
+}
