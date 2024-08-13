@@ -76,7 +76,7 @@ func main() {
 				http.HandleFunc("/", a.HandlerHome)
 				http.HandleFunc("/img/svg/skymap/{colorId}/{latId}/{paperId}/{drawId}", a.HandlerSkyMapGeneral)
 				http.HandleFunc("/SkyMapLab", a.HandlerSkyMapLab)
-				print("Serving SVG page Listenning at " + colonPort + ". CTRL+C to stop.")
+				print("Serving SVG page Listenning at " + colonPort + ". CTRL+C to stop.\n")
 				http.ListenAndServe(colonPort, nil)
 			default:
 				help("Unexpected argument " + arg)

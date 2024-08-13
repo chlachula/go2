@@ -697,11 +697,20 @@ func sumQuadrants(q [4]int) int {
 	}
 	return sum
 }
+
+/*
+Objects brighter than 3.0 magnitude
+obj < 3.0 {CName:Hyades 								OType:OC Const:Tau 	Mes:0 	Cal:41 NGC:0 IC:0 	 RA:66.75 De:16 Mag:1 Size:330}
+obj < 3.0 {CName:Pleiades</i>, <i>Seven Sisters,Subaru 	OType:OC Const:Tau 	Mes:45 	Cal:0  NGC:0 IC:0 	 RA:56.75 De:24.116666666666667 Mag:1.6 Size:2°}
+obj < 3.0 {CName:Small Sagittarius Star Cloud 			OType:DN Const:Sgr 	Mes:24 	Cal:0  NGC:0 IC:4715 RA:274.25 De:-18.55 Mag:2.5 Size:2°x1°}
+obj < 3.0 {CName: 										OType:OC Const:Sco  Mes:0 	Cal:76 NGC:6231 IC:0 RA:253.49999999999997 De:-41.8 Mag:2.6 Size:15}
+*/
 func plotObjects() string {
 	var messierQuadrants [4]int
 	var caldwellQuadrants [4]int
 	min, max := 100.0, 0.0
 	s := "      <g id=\"plotObjects\">\n"
+	magLess := 3.0
 	//sort to have a brighter objects first
 	sort.SliceStable(SliceOfObjects, func(i, j int) bool { return SliceOfObjects[i].Mag < SliceOfObjects[j].Mag })
 	for _, obj := range SliceOfObjects {
@@ -712,8 +721,8 @@ func plotObjects() string {
 			if max < obj.Mag {
 				max = obj.Mag
 			}
-			if obj.Mag < 3.0 {
-				fmt.Printf("obj %+v\n", obj)
+			if obj.Mag < magLess {
+				fmt.Printf("obj < %.1f %+v\n", magLess, obj)
 			}
 			q := int(obj.RA) / 90
 			if obj.Mag < Map.ObjMinMag {
