@@ -377,6 +377,21 @@ func plotRaCross() string {
 `
 	return fmt.Sprintf(formCross, r2, r2, r2, r2, Map.RadiusDeclinationZero, w)
 }
+
+func plotZenithBelts() string {
+	rZenith := Map.RadiusDeclinationZero / 90.0 * Map.Latitude
+	wZ10 := Map.RadiusDeclinationZero / 90.0 * 10.0
+	w := Map.AxisWidth
+	form1 := `
+	<g id="plotZenithBelts">	  
+	  <circle cx="0" cy="0" r="%.1f" stroke="lightblue" stroke-opacity="0.4" stroke-width="%.1f" fill="none" />
+	  <circle cx="0" cy="0" r="%.1f" stroke="lightblue" stroke-opacity="0.4" stroke-width="%.1f" fill="none" />
+	  <circle cx="0" cy="0" r="%.1f" stroke="darkblue" stroke-width="%.1f" fill="none" />
+	</g>
+`
+	return fmt.Sprintf(form1, rZenith, 2.0*wZ10, rZenith, wZ10, rZenith, w)
+}
+
 func mapVisibleDeclination(declination float64) bool {
 	if Map.Latitude > 0.0 {
 		return declination > -Map.Latitude
@@ -1130,6 +1145,7 @@ func HandlerSkyMapGeneral(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "image/svg+xml")
 	defs := plotRaCross()
+	defs += plotZenithBelts()
 	defs += plotAxisDeclinations()
 	defs += plotRaHourRoundScale()
 	defs += plotDateRoundScale()
