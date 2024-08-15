@@ -31,6 +31,10 @@ const (
 		font-size: {{.FontSizeAxis}}px;
 		font-family: Franklin Gothic, sans-serif;
 	 }
+	 .fontObj{
+		font-size: {{.FontSizeObj}}px;
+		font-family: Franklin Gothic, sans-serif;
+	 }
 	 .board {
 		stroke:orange;
 		stroke-width:0.5
@@ -112,6 +116,7 @@ M0.81,0.16 h0.06
     </g>
   <g id="draw_map">
     <use xlink:href="#plotConstellations" />
+    <use xlink:href="#plotZenithBelts" />
     <use xlink:href="#plotConstellationNames" />
     <use xlink:href="#plotOuterCircle" />
     <use xlink:href="#plotEcliptic" />
@@ -178,11 +183,14 @@ M0.81,0.16 h0.06
    <br/>
    <label for="color">Color:</label>
    <input type="radio" id="co" name="color_style" value="co" checked="checked">
-   <label for="bw">Black &amp; White</label>
-   
+   <label for="bw">Black &amp; White</label>   
    <input type="radio" id="bw" name="color_style" value="bw">
    
   <br/>
+   <input type="checkbox" id="zb" name="zenith_belt" value="zb" >
+   <label for="zb">Zenith belt</label> 
+  <br/>
+
    <select name="paper" id="paper" title="paper">
 	  <option value="0" title="297x210">A4</option>
 	  <option value="1" title="420x297" >A3</option>
