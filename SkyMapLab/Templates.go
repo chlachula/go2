@@ -193,6 +193,13 @@ M0.81,0.16 h0.06
    <input type="checkbox" id="zb" name="zenith_belt" value="zb" >
    <label for="zb">Zenith belt</label> 
   <br/>
+   <input type="checkbox" id="ply" name="platon_year" value="ply" >
+   <label for="ply">Platon year</label> 
+  <br/>
+  <br/>
+   <input type="checkbox" id="az" name="AZ grid" value="az" >
+   <label for="az">AZ grid</label> 
+  <br/>
 
    <select name="paper" id="paper" title="paper">
 	  <option value="0" title="297x210">A4</option>
