@@ -187,6 +187,9 @@ M0.81,0.16 h0.06
    <input type="radio" id="bw" name="color_style" value="bw">
    
   <br/>
+   <input type="checkbox" id="starnames" name="starnames" value="starnames" >
+   <label for="starnames">Star names</label> 
+  <br/>
    <input type="checkbox" id="zb" name="zenith_belt" value="zb" >
    <label for="zb">Zenith belt</label> 
   <br/>
