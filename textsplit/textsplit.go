@@ -24,29 +24,35 @@ Number Date
 */
 
 var (
-	OutFilePrefix = "Prefix"
-	InpFile       = "InpFile.txt"
-	InpDir        = "."
-	OutDir        = "."
+	OutFilePrefix    = "Prefix"
+	OutFileExtension = ".txt"
+	InpFile          = "InpFile.txt"
+	InpDir           = "."
+	OutDir           = "."
+	OutName          = "Newsletter"
 )
 
 func createFile(headerLine, fileLines string) {
 	NNN := headerLine[:3]
 	Date := headerLine[4:]
 	Date = strings.Trim(Date, " ")
-	fname := OutFilePrefix + "-" + NNN + ".txt"
+	fname := OutFilePrefix + "-" + NNN + OutFileExtension
+	fullPath := filepath.Join(OutDir, fname)
 
-	f, err := os.Create(fname)
+	f, err := os.Create(fullPath)
 	if err != nil {
-		fmt.Printf("Error creating file %s: %s\n", fname, err.Error())
+		fmt.Printf("Error creating file %s: %s\n", fullPath, err.Error())
 		return
 	}
 	defer f.Close()
 
-	bytes := []byte(NNN + " " + Date + "\n\n" + fileLines)
+	bytes := []byte("Zpravodaj " + NNN + "   " + Date + "\n\n" + fileLines)
 	if _, err := f.Write(bytes); err != nil {
-		fmt.Printf("Error writting into file %s: %s\n", fname, err.Error())
+		fmt.Printf("Error writting into file %s: %s\n", fullPath, err.Error())
 	}
+
+	pdfName := strings.ReplaceAll(fname, ".txt", ".pdf")
+	fmt.Printf("cupsfilter -t \"%s.%s - content\" %s > %s\n", NNN, OutName, fname, pdfName)
 }
 
 func ProcessFile() {
@@ -79,9 +85,10 @@ func ProcessFile() {
 			if strings.HasPrefix(line, "---END") {
 				break
 			}
+		} else {
+			fileLines += line
+			fileLines += "\n"
 		}
-		fileLines += line
-		fileLines += "\n"
 	}
 
 	fmt.Printf("\n%d files has been created\n", countFiles)
