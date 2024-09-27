@@ -1,7 +1,7 @@
 package starsAngle
 
 
-// Angular distance of two stars
+// Angular distance of two stars https://go.dev/play/p/TPzBZTueA0i
 package main
 
 import (
