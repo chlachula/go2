@@ -116,7 +116,7 @@ M0.81,0.16 h0.06
     </g>
   <g id="draw_map">
     <use xlink:href="#plotConstellations" />
-    <use xlink:href="#plotZenithBelts" />
+    <!--use xlink:href="#plotZenithBelts" /-->
     <use xlink:href="#plotConstellationNames" />
     <use xlink:href="#plotOuterCircle" />
     <use xlink:href="#plotEcliptic" />
@@ -187,6 +187,9 @@ M0.81,0.16 h0.06
    <input type="radio" id="bw" name="color_style" value="bw">
    
   <br/>
+   <input type="checkbox" id="starmap" name="starmap" value="starmap" >
+   <label for="starnames">Map</label> 
+  <br/>
    <input type="checkbox" id="starnames" name="starnames" value="starnames" >
    <label for="starnames">Star names</label> 
   <br/>
@@ -195,7 +198,6 @@ M0.81,0.16 h0.06
   <br/>
    <input type="checkbox" id="ply" name="platon_year" value="ply" >
    <label for="ply">Platon year</label> 
-  <br/>
   <br/>
    <input type="checkbox" id="az" name="AZ grid" value="az" >
    <label for="az">AZ grid</label> 
