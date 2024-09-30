@@ -67,7 +67,7 @@ func TestSumQuadrants(t *testing.T) {
 	}
 }
 
-func TestIintId0(t *testing.T) {
+func TestIntId0(t *testing.T) {
 	want := 42
 	got := intId0("42")
 	if got != want {

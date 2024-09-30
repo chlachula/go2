@@ -35,7 +35,8 @@ func help(msg string) {
  -r radius
  -p [port] preview to port 8080 
  Example:
-
+ -p
+ -p 8081 -l 50
 `
 	fmt.Println(helptext)
 }
