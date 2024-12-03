@@ -40,7 +40,9 @@ func main() {
 				http.HandleFunc("/", a.HandlerHome)
 				http.HandleFunc("/svgImages", a.HandlerSvgImages)
 				http.HandleFunc("/svgImages/roundLogo1", a.HandlerHtmlRoundLogo1)
-				http.HandleFunc("/img/svg/roundLogo1", a.HandlerImgSvgRoundLogo1)
+				http.HandleFunc("/img/svg/roundLogo_BW", a.HandlerImgSvgRoundLogo_BW)
+				http.HandleFunc("/img/svg/roundLogo_Color", a.HandlerImgSvgRoundLogo_Color)
+				http.HandleFunc("/img/svg/roundLogo_Color2", a.HandlerImgSvgRoundLogo_Color2)
 				what := "svgExamples"
 				print("Serving " + what + " at " + colonPort + ". CTRL+C to stop.")
 				http.ListenAndServe(colonPort, nil)
