@@ -38,9 +38,9 @@ func main() {
 				os.Exit(0)
 			case "-p":
 				http.HandleFunc("/", a.HandlerHome)
-				http.HandleFunc("/svgExamples", a.HandlerSvgExamples)
-				http.HandleFunc("/svgExamples/textPath1", a.HandlerHtmlTextPath1)
-				http.HandleFunc("/img/svg/textPath1", a.HandlerImgSvgTextPath1)
+				http.HandleFunc("/svgImages", a.HandlerSvgImages)
+				http.HandleFunc("/svgImages/roundLogo1", a.HandlerHtmlRoundLogo1)
+				http.HandleFunc("/img/svg/roundLogo1", a.HandlerImgSvgRoundLogo1)
 				what := "svgExamples"
 				print("Serving " + what + " at " + colonPort + ". CTRL+C to stop.")
 				http.ListenAndServe(colonPort, nil)
