@@ -1,0 +1,43 @@
+{
+ "pageTitle": "Full Moon features visible by naked eye",
+  "svgWidth": 900,
+  "svgHeight": 500,
+  "svgViewBox": "-450 -250 900 500",
+  
+  "svgBgRect": {
+    "x": -450,
+    "y": -250,
+    "width": 900,
+    "height": 500,
+    "fill": "lightblue"
+  },
+  "moonCircle": {
+      "cx": 0,
+      "cy": 0,
+      "r": 100,
+      "fill": "whitesmoke"
+  },
+  "moonImage": {
+    "href": "rrp-full-moon-t2.png",
+    "x": -100,
+    "y": -100,
+    "width": 200,
+    "height": 200
+  },
+
+
+"diameter": 100,
+"leftX": -150,
+"rightX": 150,
+    "features":[
+    {"name":"Mare Imbrium", "lat":32.80, "lon":-15.6, "side":"left"},
+    {"name":"Oceanus Procellarum", "lat":18.4, "lon":-57.4, "side":"left"},
+    {"name":"Crater Kepler", "lat":7, "lon":-33.0, "side":"left"},
+    {"name":"Crater Copernicus", "lat":8, "lon":-15, "side":"left"},
+
+    {"name":"Mare Serenitatis", "lat":28.0, "lon":17.5, "side":"right"},
+    {"name":"Mare Crissium", "lat":17.0, "lon":59.1, "side":"right"},
+    {"name":"Mare Tranquillitatis", "lat":8.5, "lon":31.4, "side":"right"},
+    {"name":"Crater Tycho", "lat":-43.31, "lon":-4, "side":"right"}
+]
+}
